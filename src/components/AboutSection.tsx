@@ -19,12 +19,13 @@ import { ActivePage } from '../types';
 
 interface AboutSectionProps {
   onNavigate: (page: ActivePage) => void;
-  onOpenCreditModal: () => void;
+  // TODO: Admin-only — onOpenCreditModal
+  // onOpenCreditModal: () => void;
 }
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ 
   onNavigate,
-  onOpenCreditModal
+  // onOpenCreditModal // TODO: Admin-only
 }) => {
   return (
     <div className="bg-[#FAF9F6] dark:bg-[#0c0c14] text-gray-900 dark:text-gray-100 min-h-screen py-6 sm:py-8 transition-colors duration-200">
@@ -41,7 +42,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               <span>Founded in Eldoret, Kenya • Certified Wholesale Distributor</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight font-display text-white leading-tight">
+            <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight font-display text-white leading-tight">
               Elevating the Beverage <br />
               <span className="text-[#FFD700]">Experience in Kenya</span>
             </h1>
@@ -313,6 +314,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto shrink-0">
+            {/* TODO: Admin-only - Credit Application
             <button
               type="button"
               onClick={onOpenCreditModal}
@@ -320,6 +322,15 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             >
               Apply for B2B Trade Credit
             </button>
+            */}
+            <a
+              href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#F2C200] text-[#171728] px-5 py-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all shadow-md text-center"
+            >
+              Order on The Bar Kenya
+            </a>
             <button
               type="button"
               onClick={() => onNavigate('contact')}

@@ -17,7 +17,7 @@ import {
   Calendar,
   FileSpreadsheet
 } from 'lucide-react';
-import { B2BProfile, B2BOrder, Product, CatalogSyncStatus } from '../types';
+import { B2BProfile, B2BOrder, Product } from '../types';
 import { formatKes } from '../utils/formatters';
 import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
 
@@ -31,8 +31,6 @@ interface B2BPortalSectionProps {
   onReorder: (order: B2BOrder) => void;
   onViewInvoice: (order: B2BOrder) => void;
   onNavigateToPricelist: () => void;
-  syncStatus?: CatalogSyncStatus;
-  onManualSync?: () => void;
 }
 
 export const B2BPortalSection: React.FC<B2BPortalSectionProps> = ({
@@ -45,8 +43,6 @@ export const B2BPortalSection: React.FC<B2BPortalSectionProps> = ({
   onReorder,
   onViewInvoice,
   onNavigateToPricelist,
-  syncStatus,
-  onManualSync,
 }) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'credit' | 'compliance'>('profile');
 
@@ -157,50 +153,6 @@ export const B2BPortalSection: React.FC<B2BPortalSectionProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Real-time Website Catalog Sync Module (Option 1) */}
-      {syncStatus && (
-        <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-emerald-500/30 dark:border-emerald-500/20 shadow-xs">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className={`absolute inline-flex h-full w-full rounded-full ${syncStatus.isSyncing ? 'bg-amber-400 animate-ping' : 'bg-emerald-400 animate-ping'} opacity-75`}></span>
-                  <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${syncStatus.isSyncing ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
-                </span>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                  Real-Time Live Catalog Sync Active (Option 1)
-                </span>
-                <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
-                  Auto-Polling & Dynamic Extraction
-                </span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-300 max-w-3xl leading-relaxed">
-                This platform is connected in real time to <a href="https://www.bessichdistributors.co.ke/" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-[#0E01B5] dark:hover:text-[#8c82ff]">www.bessichdistributors.co.ke</a>. Any addition or reduction of SKUs on the main website is dynamically scraped and reflected live in your wholesale catalog, matrix order pad, and price list.
-              </p>
-              <div className="flex items-center gap-4 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap pt-1">
-                <span>Active SKUs: <strong className="text-gray-900 dark:text-white font-bold">{products.length}</strong></span>
-                <span>•</span>
-                <span>Active Bundle: <code className="bg-gray-100 dark:bg-black/30 px-1 py-0.5 rounded text-[10px] font-mono">{syncStatus.bundleHash || 'index-CdsTTZlQ.js'}</code></span>
-                <span>•</span>
-                <span>Last Synced: <strong className="text-gray-900 dark:text-white">{syncStatus.lastSyncedAt ? new Date(syncStatus.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Initial Load'}</strong></span>
-              </div>
-            </div>
-
-            {onManualSync && (
-              <button
-                type="button"
-                onClick={onManualSync}
-                disabled={syncStatus.isSyncing}
-                className="shrink-0 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${syncStatus.isSyncing ? 'animate-spin' : ''}`} />
-                <span>{syncStatus.isSyncing ? 'Synchronizing Catalog...' : 'Sync Catalog Now'}</span>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Tab Navigation */}
       <div className="flex overflow-x-auto scrollbar-none border-b border-gray-200 dark:border-gray-800 text-xs font-bold gap-4 sm:gap-6 pb-px">

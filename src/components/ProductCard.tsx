@@ -1,74 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   ShieldCheck, 
-  Plus, 
-  Minus, 
-  Check, 
   Info, 
   Sparkles,
-  Package
+  Package,
+  ExternalLink
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatKes } from '../utils/formatters';
 import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
 
+// PUBLIC MODE: Cart/ordering functionality commented out. Orders redirect to The Bar Kenya.
+
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
   onOpenDetails: (product: Product) => void;
+  // TODO: Admin-only — onAddToCart for cart functionality
+  // onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
-  onAddToCart,
   onOpenDetails,
 }) => {
-  const [orderType, setOrderType] = useState<'case' | 'bottle'>('case');
-  const [quantity, setQuantity] = useState<number>(orderType === 'case' ? product.moqCases : 1);
-  const [addedAnimation, setAddedAnimation] = useState(false);
-
-  const pricePerUnit = orderType === 'case' ? product.casePriceKes : product.bottlePriceKes;
-  const currentTotal = pricePerUnit * quantity;
-
-  // Find active discount percentage if ordering cases
-  let activeDiscountPct = 0;
-  if (orderType === 'case') {
-    for (const tier of product.tiers) {
-      if (quantity >= tier.minCases && tier.discountPercentage > activeDiscountPct) {
-        activeDiscountPct = tier.discountPercentage;
-      }
-    }
-  }
-
-  const discountedTotal = activeDiscountPct > 0 
-    ? Math.round(currentTotal * (1 - activeDiscountPct / 100)) 
-    : currentTotal;
-
-  const handleTypeChange = (type: 'case' | 'bottle') => {
-    setOrderType(type);
-    setQuantity(type === 'case' ? product.moqCases : 1);
-  };
-
-  const handleIncrement = () => {
-    setQuantity((prev) => prev + 1);
-  };
-
-  const handleDecrement = () => {
-    const min = orderType === 'case' ? product.moqCases : 1;
-    if (quantity > min) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
-
-  const handleAdd = () => {
-    onAddToCart(product, orderType, quantity);
-    setAddedAnimation(true);
-    setTimeout(() => setAddedAnimation(false), 1200);
-  };
-
   return (
     <div 
-      id={`product-card-${product.id}`}
       className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:border-[#0E01B5]/40 dark:hover:border-[#8c82ff]/60 hover:shadow-lg transition-all flex flex-col justify-between group"
     >
       <div>
@@ -83,7 +39,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             onError={(e) => handleImageError(e, product.fallbackImage)}
           />
 
-          {/* KRA Stamp badge */}
           {product.kraStampVerified && (
             <div className="absolute top-2 left-2 bg-emerald-600/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-2xs backdrop-blur-xs">
               <ShieldCheck className="w-3 h-3" />
@@ -91,7 +46,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           )}
 
-          {/* Featured / High Velocity badge */}
           {product.featured && (
             <div className="absolute top-2 right-2 bg-[#171728] text-[#FFD700] text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-2xs">
               <Sparkles className="w-3 h-3 text-[#FFD700]" />
@@ -99,18 +53,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           )}
 
-          {/* Quick info button */}
           <button
             type="button"
             onClick={() => onOpenDetails(product)}
             className="absolute bottom-2 right-2 bg-white/90 dark:bg-[#1f1f33]/90 hover:bg-white dark:hover:bg-[#282844] text-gray-700 dark:text-gray-200 p-1.5 rounded-lg text-xs shadow-xs border border-gray-200 dark:border-gray-700 hover:text-[#0E01B5] dark:hover:text-[#8c82ff] transition-colors cursor-pointer"
-            title="View full specs & tasting notes"
+            title="View full specs"
           >
             <Info className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Product Content Details */}
+        {/* Product Details */}
         <div className="p-3.5 sm:p-4 space-y-2 sm:space-y-2.5">
           <div className="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400">
             <span className="font-semibold text-[#0E01B5] dark:text-[#8c82ff] uppercase tracking-wider">
@@ -141,7 +94,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
 
-          {/* Pricing Box */}
+          {/* Pricing */}
           <div className="bg-[#FAF9F6] dark:bg-[#12121e] p-2 sm:p-2.5 rounded-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-baseline justify-between">
               <div>
@@ -162,7 +115,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             </div>
 
-            {/* Volume Tiers Notice */}
             {product.tiers.length > 0 && (
               <div className="mt-1 pt-1 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-[9px] sm:text-[10px]">
                 <span className="text-emerald-700 dark:text-emerald-400 font-medium truncate">
@@ -177,84 +129,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* Interactive Order Area */}
-      <div className="p-3.5 sm:p-4 pt-0 border-t border-gray-100 dark:border-gray-800 mt-1.5 space-y-2 sm:space-y-2.5">
-        {/* Unit Selector: Case vs Bottle */}
-        <div className="grid grid-cols-2 p-0.5 sm:p-1 bg-gray-100 dark:bg-[#12121e] rounded-lg text-[11px] sm:text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => handleTypeChange('case')}
-            className={`py-1 rounded-md transition-all text-center cursor-pointer ${
-              orderType === 'case'
-                ? 'bg-white dark:bg-[#25253d] text-[#0E01B5] dark:text-[#8c82ff] shadow-xs'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Case ({product.casePack} btls)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTypeChange('bottle')}
-            className={`py-1 rounded-md transition-all text-center cursor-pointer ${
-              orderType === 'bottle'
-                ? 'bg-white dark:bg-[#25253d] text-[#0E01B5] dark:text-[#8c82ff] shadow-xs'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Single Bottle
-          </button>
-        </div>
-
-        {/* Quantity Stepper & Add Button */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-[#1b1b2d] shrink-0">
-            <button
-              type="button"
-              onClick={handleDecrement}
-              className="p-1 sm:p-1.5 px-1.5 sm:px-2 hover:bg-gray-100 dark:hover:bg-[#25253d] text-gray-600 dark:text-gray-300 transition-colors cursor-pointer"
-              aria-label="Decrease quantity"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <span className="px-1.5 sm:px-2 py-1 text-xs font-bold text-center min-w-[26px] sm:min-w-[30px] text-gray-900 dark:text-white">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              onClick={handleIncrement}
-              className="p-1 sm:p-1.5 px-1.5 sm:px-2 hover:bg-gray-100 dark:hover:bg-[#25253d] text-gray-600 dark:text-gray-300 transition-colors cursor-pointer"
-              aria-label="Increase quantity"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleAdd}
-            className={`flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer truncate ${
-              addedAnimation
-                ? 'bg-emerald-600 text-white'
-                : 'bg-[#0E01B5] hover:bg-[#09007A] text-white active:scale-95'
-            }`}
-          >
-            {addedAnimation ? (
-              <>
-                <Check className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">Added ({quantity})</span>
-              </>
-            ) : (
-              <>
-                <span className="truncate">Add • {formatKes(discountedTotal)}</span>
-                {activeDiscountPct > 0 && (
-                  <span className="bg-[#FFD700] text-[#171728] text-[9px] px-1 rounded font-extrabold shrink-0">
-                    -{activeDiscountPct}%
-                  </span>
-                )}
-              </>
-            )}
-          </button>
-        </div>
+      {/* Order Action — redirects to The Bar Kenya */}
+      <div className="px-3.5 sm:px-4 pb-3.5 sm:pb-4">
+        <a
+          href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          <span>Order on The Bar Kenya</span>
+        </a>
       </div>
     </div>
   );

@@ -28,24 +28,26 @@ import {
   Warehouse
 } from 'lucide-react';
 import { Hero } from './Hero';
-import { Product, ProductCategory, B2BProfile, ActivePage } from '../types';
+import { Product, ProductCategory, ActivePage } from '../types';
 
 interface HomeSectionProps {
   products: Product[];
-  b2bProfile: B2BProfile;
-  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
   onOpenDetails: (product: Product) => void;
   onNavigate: (page: ActivePage, category?: ProductCategory) => void;
-  onOpenCreditModal: () => void;
-  onOpenMatrix: () => void;
+  // TODO: Admin-only props
+  // b2bProfile: B2BProfile;
+  // onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
+  // onOpenCreditModal: () => void;
+  // onOpenMatrix: () => void;
 }
 
 export const HomeSection: React.FC<HomeSectionProps> = ({
   products,
-  b2bProfile,
   onNavigate,
-  onOpenCreditModal,
-  onOpenMatrix,
+  onOpenDetails,
+  // b2bProfile,       // TODO: Admin-only
+  // onOpenCreditModal, // TODO: Admin-only
+  // onOpenMatrix,      // TODO: Admin-only
 }) => {
   const categoryHighlights = [
     {
@@ -145,9 +147,6 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
       {/* 1. Hero Corporate Introduction */}
       <Hero
         onExploreCatalog={() => onNavigate('catalog')}
-        onOpenMatrix={onOpenMatrix}
-        onOpenCreditModal={onOpenCreditModal}
-        b2bProfile={b2bProfile}
       />
 
       {/* 2. Operational Metrics Ribbon */}
@@ -181,7 +180,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               The Supply Chain Authority
             </div>
             
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white leading-tight">
+            <h2 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white leading-tight">
               Empowering Hospitality Excellence Through Unbroken Beverage Supply
             </h2>
             
@@ -269,7 +268,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-[#0E01B5] dark:text-[#8c82ff]">
                 Portfolio Categories
               </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
+              <h2 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
                 Comprehensive Beverage Collections
               </h2>
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 max-w-xl">
@@ -358,6 +357,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               </div>
 
               <div className="pt-6">
+                {/* TODO: Admin-only - Matrix Order Pad
                 <button
                   type="button"
                   onClick={onOpenMatrix}
@@ -366,6 +366,16 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                   Launch Quick Order Pad
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
+                */}
+                <a
+                  href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] py-2.5 px-4 rounded-xl font-bold text-xs transition-all shadow-md text-center flex items-center justify-center gap-2"
+                >
+                  Place Orders on The Bar Kenya
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
               </div>
             </div>
           </div>
@@ -379,7 +389,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           <span className="text-xs font-bold uppercase tracking-wider text-[#0E01B5] dark:text-[#8c82ff]">
             Frictionless Procurement
           </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
+          <h2 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
             How Wholesale Distribution Works
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -449,7 +459,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           <span className="text-xs uppercase font-bold tracking-wider text-[#D4AF37] dark:text-[#FFD700]">
             Partners in Hospitality
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-gray-900 dark:text-white">
+          <h2 className="hero-heading text-2xl sm:text-3xl font-extrabold font-display text-gray-900 dark:text-white">
             Trusted by the Rift Valley’s Leading Venues
           </h2>
         </div>
@@ -528,6 +538,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <ArrowRight className="w-4 h-4" />
             </button>
 
+            {/* TODO: Admin-only - Trade Credit Application
             <button
               type="button"
               onClick={onOpenCreditModal}
@@ -536,6 +547,16 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <FileText className="w-4 h-4 text-[#FFD700]" />
               Apply for Trade Credit Facility
             </button>
+            */}
+
+            <a
+              href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2"
+            >
+              Order on The Bar Kenya
+            </a>
 
             <button
               type="button"

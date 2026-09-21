@@ -9,31 +9,26 @@ import {
   SlidersHorizontal,
   X,
   Layers,
-  RefreshCw,
   Globe
 } from 'lucide-react';
-import { Product, ProductCategory, CatalogSyncStatus } from '../types';
+import { Product, ProductCategory } from '../types';
 import { ProductCard } from './ProductCard';
 import { Pagination } from './Pagination';
 
 interface CatalogSectionProps {
   products: Product[];
-  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
   onOpenDetails: (product: Product) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  syncStatus?: CatalogSyncStatus;
-  onManualSync?: () => void;
+  // TODO: Admin-only — onAddToCart for cart functionality
+  // onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const CatalogSection: React.FC<CatalogSectionProps> = ({
   products,
-  onAddToCart,
   onOpenDetails,
   searchQuery,
   setSearchQuery,
-  syncStatus,
-  onManualSync,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('all');
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
@@ -145,7 +140,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
           <div className="text-[11px] sm:text-xs font-bold text-[#0E01B5] dark:text-[#8c82ff] uppercase tracking-wider mb-0.5">
             Direct Importer & Wholesale Supply
           </div>
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#171728] dark:text-white font-display">
+          <h2 className="hero-heading text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#171728] dark:text-white font-display">
             Online Beverage Catalog
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-xl">
@@ -154,21 +149,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {onManualSync && (
-            <button
-              type="button"
-              onClick={onManualSync}
-              disabled={syncStatus?.isSyncing}
-              title="Synchronize catalog with live outlet (Cyden General Enterprises - Rupa Mall)"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/40 cursor-pointer transition-colors"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${syncStatus?.isSyncing ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">
-                {syncStatus?.isSyncing ? 'Syncing...' : 'Live Sync'}
-              </span>
-            </button>
-          )}
-
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
@@ -220,45 +200,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
           );
         })}
       </div>
-
-      {/* Real-Time Live Sync Status Banner */}
-      {syncStatus && (
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/20 border border-emerald-500/25 text-xs text-gray-700 dark:text-gray-200">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className={`absolute inline-flex h-full w-full rounded-full ${syncStatus.isSyncing ? 'bg-amber-400 animate-ping' : 'bg-emerald-400 animate-ping'} opacity-75`}></span>
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${syncStatus.isSyncing ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
-            </span>
-            <span className="font-bold text-gray-900 dark:text-white">
-              Live Catalog Sync:
-            </span>
-            <span className="text-gray-600 dark:text-gray-300">
-              Directly mirrors <a href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44" target="_blank" rel="noreferrer" className="underline hover:text-[#0E01B5] dark:hover:text-[#8c82ff] font-medium">Cyden General Enterprises - Rupa Mall (thebar.com)</a>
-            </span>
-            <span className="hidden md:inline text-gray-400">•</span>
-            <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-              {products.length} live SKUs available
-            </span>
-          </div>
-          <div className="flex items-center gap-3 text-[11px] text-gray-500 dark:text-gray-400">
-            {syncStatus.lastSyncedAt && (
-              <span>
-                Updated: {new Date(syncStatus.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-              </span>
-            )}
-            {onManualSync && (
-              <button
-                type="button"
-                onClick={onManualSync}
-                disabled={syncStatus.isSyncing}
-                className="text-[#0E01B5] dark:text-[#8c82ff] hover:underline font-bold cursor-pointer disabled:opacity-50"
-              >
-                {syncStatus.isSyncing ? 'Refreshing...' : 'Refresh'}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Expanded Filter Panel */}
       {showFilters && (
@@ -423,7 +364,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
               <ProductCard
                 key={product.id}
                 product={product}
-                onAddToCart={onAddToCart}
                 onOpenDetails={onOpenDetails}
               />
             ))}

@@ -3,26 +3,23 @@ import {
   Truck, 
   ShieldCheck, 
   Percent, 
-  Clock, 
-  ArrowRight, 
-  CheckCircle2, 
-  FileText,
-  BadgeAlert
+  ArrowRight
 } from 'lucide-react';
-import { B2BProfile } from '../types';
+
+// PUBLIC MODE: B2B account card, credit buttons, and stats commented out for admin-only restoration later
 
 interface HeroProps {
   onExploreCatalog: () => void;
-  onOpenMatrix: () => void;
-  onOpenCreditModal: () => void;
-  b2bProfile: B2BProfile;
+  // onOpenMatrix: () => void;          // TODO: Admin-only - matrix order pad
+  // onOpenCreditModal: () => void;     // TODO: Admin-only - credit application
+  // b2bProfile: B2BProfile;            // TODO: Admin-only - account status
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onExploreCatalog,
-  onOpenMatrix,
-  onOpenCreditModal,
-  b2bProfile,
+  // onOpenMatrix,        // TODO: Admin-only
+  // onOpenCreditModal,   // TODO: Admin-only
+  // b2bProfile,          // TODO: Admin-only
 }) => {
   return (
     <div className="relative bg-[#171728] text-white overflow-hidden border-b border-white/10">
@@ -37,10 +34,10 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="lg:col-span-7 space-y-4 sm:space-y-5">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#0E01B5]/40 border border-[#0E01B5] text-[11px] sm:text-xs font-semibold text-[#FFD700]">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              B2B Wholesale Portal Active • 2026 Direct Pricing
+              Official Wholesale Catalog • 2026 Pricing
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
+            <h1 className="hero-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
               Elevating the Beverage <br />
               <span className="text-[#FFD700]">Experience in Kenya</span>
             </h1>
@@ -79,8 +76,18 @@ export const Hero: React.FC<HeroProps> = ({
                 <ArrowRight className="w-4 h-4" />
               </button>
 
+              <a
+                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md text-center"
+              >
+                Place Orders on The Bar Kenya
+                <ArrowRight className="w-4 h-4" />
+              </a>
+
+              {/* TODO: Admin-only - Matrix Order Pad & Credit Application
               <button
-                id="hero-btn-matrix"
                 type="button"
                 onClick={onOpenMatrix}
                 className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#FAF9F6] border border-white/20 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
@@ -90,7 +97,6 @@ export const Hero: React.FC<HeroProps> = ({
 
               {!b2bProfile.isVerified && (
                 <button
-                  id="hero-btn-apply-credit"
                   type="button"
                   onClick={onOpenCreditModal}
                   className="w-full sm:w-auto text-xs text-[#FFD700] hover:underline flex items-center justify-center sm:justify-start gap-1 font-semibold py-1.5 cursor-pointer"
@@ -99,72 +105,62 @@ export const Hero: React.FC<HeroProps> = ({
                   Apply for Net-30 Trade Credit →
                 </button>
               )}
+              */}
             </div>
           </div>
 
-          {/* Right Hero B2B Account Status Card */}
+          {/* Right Hero - Outlet Info Card (replaces B2B Account Card) */}
           <div className="lg:col-span-5">
             <div className="bg-[#1f1f35]/90 border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl relative backdrop-blur-xs">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
-                <div>
-                  <span className="text-[10px] font-bold tracking-wider uppercase text-[#D4AF37]">
-                    B2B Commercial Account Status
-                  </span>
-                  <h3 className="font-bold text-base sm:text-lg text-white truncate max-w-[220px] sm:max-w-[260px]">
-                    {b2bProfile.businessName}
-                  </h3>
-                </div>
-                {b2bProfile.isVerified ? (
-                  <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] sm:text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    Verified
-                  </span>
-                ) : (
-                  <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] sm:text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-                    <BadgeAlert className="w-3.5 h-3.5" />
-                    Pending PIN
-                  </span>
-                )}
+              <div className="border-b border-white/10 pb-3 mb-3">
+                <span className="text-[10px] font-bold tracking-wider uppercase text-[#D4AF37]">
+                  Official Distribution Partner
+                </span>
+                <h3 className="font-bold text-base sm:text-lg text-white mt-1">
+                  Cyden General Enterprises
+                </h3>
+                <p className="text-[11px] text-gray-400 mt-0.5">Rupa Mall, Eldoret — Outlet #44</p>
               </div>
 
-              {/* Account Data Grid */}
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">Business Sector:</span>
-                  <span className="font-semibold text-[#FAF9F6]">{b2bProfile.businessType}</span>
+                  <span className="text-gray-400">Catalog Source:</span>
+                  <a 
+                    href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="font-semibold text-[#FFD700] hover:underline"
+                  >
+                    thebar.com
+                  </a>
                 </div>
                 <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">KRA PIN Status:</span>
-                  <span className="font-mono text-[#FFD700] font-medium">{b2bProfile.kraPin}</span>
+                  <span className="text-gray-400">Product Range:</span>
+                  <span className="font-semibold text-[#FAF9F6]">220+ Premium SKUs</span>
                 </div>
                 <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">County Liquor License:</span>
-                  <span className="font-mono text-gray-300 truncate max-w-[150px]">{b2bProfile.liquorLicenseNumber}</span>
+                  <span className="text-gray-400">Categories:</span>
+                  <span className="font-semibold text-[#FAF9F6]">Spirits, Beer, Wine</span>
                 </div>
                 <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">Approved Payment Terms:</span>
-                  <span className="font-semibold text-emerald-400">
-                    {b2bProfile.paymentTermsDays > 0 ? `Net ${b2bProfile.paymentTermsDays} Days Revolving` : 'Cash on Delivery / M-PESA'}
-                  </span>
+                  <span className="text-gray-400">Coverage:</span>
+                  <span className="font-semibold text-emerald-400">Eldoret & Western Kenya</span>
                 </div>
-                {b2bProfile.isVerified && (
-                  <div className="flex justify-between py-0.5 border-b border-white/5">
-                    <span className="text-gray-400">Available Credit Line:</span>
-                    <span className="font-bold text-[#FFD700] text-sm">
-                      KES {b2bProfile.availableCreditKes.toLocaleString()}
-                    </span>
-                  </div>
-                )}
               </div>
 
-              {/* Bottom Quick Benefits */}
               <div className="mt-3.5 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] text-gray-400">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-[#F2693F]" /> Next Dispatch: Tomorrow 08:00
+                  <Truck className="w-3 h-3 text-[#F2693F]" /> Same-day dispatch available
                 </span>
-                <span className="text-[#FFD700] font-medium">Free shipping &gt; KES 30k</span>
+                <span className="text-[#FFD700] font-medium">Free delivery &gt; KES 30k</span>
               </div>
             </div>
+
+            {/* TODO: Admin-only - B2B Account Status Card
+            <div className="bg-[#1f1f35]/90 border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl relative backdrop-blur-xs">
+              ... (B2B account card with KRA PIN, credit limits, etc.)
+            </div>
+            */}
           </div>
 
         </div>

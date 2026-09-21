@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { Hero } from './components/Hero';
 import { CatalogSection } from './components/CatalogSection';
-import { MatrixOrderPad } from './components/MatrixOrderPad';
-import { B2BPortalSection } from './components/B2BPortalSection';
+// import { MatrixOrderPad } from './components/MatrixOrderPad';          // TODO: Admin-only
+// import { B2BPortalSection } from './components/B2BPortalSection';      // TODO: Admin-only
 import { DepotsSection } from './components/DepotsSection';
 import { PriceListSection } from './components/PriceListSection';
 import { HomeSection } from './components/HomeSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { ProductDetailModal } from './components/ProductDetailModal';
-import { CartDrawer } from './components/CartDrawer';
-import { CheckoutModal } from './components/CheckoutModal';
-import { CreditApplicationModal } from './components/CreditApplicationModal';
-import { InvoiceViewerModal } from './components/InvoiceViewerModal';
+// import { CartDrawer } from './components/CartDrawer';                    // TODO: Admin-only
+// import { CheckoutModal } from './components/CheckoutModal';              // TODO: Admin-only
+// import { CreditApplicationModal } from './components/CreditApplicationModal'; // TODO: Admin-only
+// import { InvoiceViewerModal } from './components/InvoiceViewerModal';   // TODO: Admin-only
 import { AgeGateModal } from './components/AgeGateModal';
 import { Footer } from './components/Footer';
 
 import { PRODUCTS } from './data/products';
 import { DEPOTS } from './data/depots';
-import { Product, CartItem, Depot, B2BProfile, B2BOrder, ActivePage, ProductCategory, CatalogSyncStatus } from './types';
+import { Product, Depot, ActivePage, ProductCategory } from './types';
 import { fetchLiveCatalog, getStoredCatalog } from './services/catalogSync';
-import { CheckCircle2, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
 
-// Pre-configured commercial accounts for testing different tiers
+// TODO: Admin-only — B2B profiles, orders, and cart state commented out for public access
+/*
+import { CartItem, B2BProfile, B2BOrder } from './types';
+
 const INITIAL_PROFILES: B2BProfile[] = [
   {
     id: 'B2B-ELD-4902',
@@ -78,7 +79,6 @@ const INITIAL_PROFILES: B2BProfile[] = [
   },
 ];
 
-// Initial seeded B2B orders to demonstrate order history, tracking & invoices
 const INITIAL_ORDERS: B2BOrder[] = [
   {
     id: 'BD-2026-98124',
@@ -124,102 +124,43 @@ const INITIAL_ORDERS: B2BOrder[] = [
     businessName: 'The Loft Lounge & Grill',
   },
 ];
+*/
 
 export default function App() {
   // Navigation & View state
   const [activeTab, setActiveTab] = useState<ActivePage>('home');
   
-  // Real-time catalog sync state (Option 1: Live Scraping & Auto-Polling)
+  // Real-time catalog sync state — auto-synced silently in background
   const [products, setProducts] = useState<Product[]>(() => {
     const cached = getStoredCatalog();
     return cached.products.length > 0 ? cached.products : PRODUCTS;
   });
 
-  const [syncStatus, setSyncStatus] = useState<CatalogSyncStatus>(() => {
-    const cached = getStoredCatalog();
-    return cached.status;
-  });
-
-  const [syncToast, setSyncToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
-
   // Background live catalog sync on mount and auto-refresh every 3 minutes
   useEffect(() => {
     let isMounted = true;
 
-    const performSync = async (force: boolean, isUserInitiated: boolean) => {
-      if (isUserInitiated) {
-        setSyncStatus((prev) => ({ ...prev, isSyncing: true, error: null }));
-      }
+    const performSync = async () => {
       try {
-        const result = await fetchLiveCatalog(force);
+        const result = await fetchLiveCatalog(false);
         if (!isMounted) return;
 
-        setSyncStatus(result.status);
         if (result.products.length > 0) {
           setProducts(result.products);
-          if (isUserInitiated) {
-            setSyncToast({
-              message: `Synchronized ${result.products.length} live SKUs from Cyden General Enterprises / The Bar Kenya`,
-              type: 'success',
-            });
-            setTimeout(() => setSyncToast(null), 4000);
-          }
-        } else if (result.status.error && isUserInitiated) {
-          setSyncToast({
-            message: `Sync notice: ${result.status.error}. Utilizing local catalog cache.`,
-            type: 'info',
-          });
-          setTimeout(() => setSyncToast(null), 4500);
         }
-      } catch (err: any) {
-        if (!isMounted) return;
-        setSyncStatus((prev) => ({
-          ...prev,
-          isSyncing: false,
-          error: err.message || 'Catalog synchronization error',
-        }));
+      } catch {
+        // Silent — fallback to baseline products
       }
     };
 
-    // Initial silent sync check
-    performSync(false, false);
-
-    // Periodic background refresh every 3 minutes
-    const interval = setInterval(() => {
-      performSync(false, false);
-    }, 180000);
+    performSync();
+    const interval = setInterval(performSync, 180000);
 
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
   }, []);
-
-  const handleManualSync = async () => {
-    setSyncStatus((prev) => ({ ...prev, isSyncing: true, error: null }));
-    try {
-      const result = await fetchLiveCatalog(true);
-      setSyncStatus(result.status);
-      if (result.products.length > 0) {
-        setProducts(result.products);
-        setSyncToast({
-          message: `Successfully synchronized ${result.products.length} live SKUs from Cyden General Enterprises / The Bar Kenya`,
-          type: 'success',
-        });
-      } else {
-        setSyncToast({
-          message: result.status.error || 'Live synchronization finished with cached catalog baseline.',
-          type: 'info',
-        });
-      }
-    } catch (err: any) {
-      setSyncToast({
-        message: `Sync failed: ${err.message}`,
-        type: 'error',
-      });
-    }
-    setTimeout(() => setSyncToast(null), 4500);
-  };
   
   // Catalog search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -232,31 +173,10 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Profiles & Auth simulation
-  const [availableProfiles, setAvailableProfiles] = useState<B2BProfile[]>(INITIAL_PROFILES);
-  const [activeProfile, setActiveProfile] = useState<B2BProfile>(INITIAL_PROFILES[0]);
-
-  // Orders state
-  const [orders, setOrders] = useState<B2BOrder[]>(INITIAL_ORDERS);
-
-  // Cart state
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    // Seed with initial high-velocity commercial order
-    { product: PRODUCTS[0], orderType: 'case', quantity: 2 },
-    { product: PRODUCTS[2], orderType: 'case', quantity: 1 },
-  ]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [poNumber, setPoNumber] = useState('PO-LOFT-2026-089');
-  const [orderNotes, setOrderNotes] = useState('Offload at Service Entrance B, check with Brian');
-
-  // Modals state
+  // Product detail modal
   const [selectedProductDetail, setSelectedProductDetail] = useState<Product | null>(null);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
-  const [activeInvoiceOrder, setActiveInvoiceOrder] = useState<B2BOrder | null>(null);
-  const [showProFormaQuote, setShowProFormaQuote] = useState(false);
 
-  // Dark / Light mode state with persistence & system preference fallback
+  // Dark / Light mode state
   const [isDark, setIsDark] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('bessich_theme');
@@ -279,7 +199,23 @@ export default function App() {
     setIsDark((prev) => !prev);
   };
 
-  // Cart operations
+  // TODO: Admin-only — Cart, orders, profiles, credit, checkout state and handlers commented out
+  /*
+  const [availableProfiles, setAvailableProfiles] = useState<B2BProfile[]>(INITIAL_PROFILES);
+  const [activeProfile, setActiveProfile] = useState<B2BProfile>(INITIAL_PROFILES[0]);
+  const [orders, setOrders] = useState<B2BOrder[]>(INITIAL_ORDERS);
+  const [cartItems, setCartItems] = useState<CartItem[]>([
+    { product: PRODUCTS[0], orderType: 'case', quantity: 2 },
+    { product: PRODUCTS[2], orderType: 'case', quantity: 1 },
+  ]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [poNumber, setPoNumber] = useState('PO-LOFT-2026-089');
+  const [orderNotes, setOrderNotes] = useState('Offload at Service Entrance B, check with Brian');
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
+  const [activeInvoiceOrder, setActiveInvoiceOrder] = useState<B2BOrder | null>(null);
+  const [showProFormaQuote, setShowProFormaQuote] = useState(false);
+
   const handleAddToCart = (product: Product, orderType: 'case' | 'bottle', quantity: number) => {
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
@@ -306,10 +242,7 @@ export default function App() {
           (item) => item.product.id === newItem.product.id && item.orderType === newItem.orderType
         );
         if (idx > -1) {
-          updated[idx] = {
-            ...updated[idx],
-            quantity: updated[idx].quantity + newItem.quantity,
-          };
+          updated[idx] = { ...updated[idx], quantity: updated[idx].quantity + newItem.quantity };
         } else {
           updated.push(newItem);
         }
@@ -320,35 +253,20 @@ export default function App() {
   };
 
   const handleUpdateQuantity = (index: number, quantity: number) => {
-    if (quantity <= 0) {
-      handleRemoveItem(index);
-      return;
-    }
-    setCartItems((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], quantity };
-      return updated;
-    });
+    if (quantity <= 0) { handleRemoveItem(index); return; }
+    setCartItems((prev) => { const updated = [...prev]; updated[index] = { ...updated[index], quantity }; return updated; });
   };
 
-  const handleRemoveItem = (index: number) => {
-    setCartItems((prev) => prev.filter((_, i) => i !== index));
-  };
+  const handleRemoveItem = (index: number) => { setCartItems((prev) => prev.filter((_, i) => i !== index)); };
+  const handleClearCart = () => { setCartItems([]); };
 
-  const handleClearCart = () => {
-    setCartItems([]);
-  };
-
-  // Reorder past order
   const handleReorder = (order: B2BOrder) => {
     handleAddBulkToCart(order.items);
     setIsCartOpen(true);
   };
 
-  // Order success handler
   const handleOrderSuccess = (newOrder: B2BOrder) => {
     setOrders((prev) => [newOrder, ...prev]);
-    // Deduct available credit if ordered on credit
     if (newOrder.paymentMethod === 'credit') {
       setActiveProfile((prev) => ({
         ...prev,
@@ -358,70 +276,52 @@ export default function App() {
     setCartItems([]);
   };
 
-  // Credit approval callback
   const handleCreditApproved = (updatedProfile: B2BProfile) => {
     setActiveProfile(updatedProfile);
     setAvailableProfiles((prev) =>
       prev.map((p) => (p.id === updatedProfile.id ? updatedProfile : p))
     );
   };
+  */
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] dark:bg-[#0c0c14] text-gray-900 dark:text-[#FAF9F6] flex flex-col font-sans selection:bg-[#0E01B5] selection:text-white transition-colors duration-200">
       {/* Kenyan Legal Drinking Age Verification Modal */}
       <AgeGateModal />
 
-      {/* Header Bar with Top Right Theme Switcher & Live Sync Controls */}
+      {/* Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        cartItems={cartItems}
-        onOpenCart={() => setIsCartOpen(true)}
         activeDepot={activeDepot}
         allDepots={DEPOTS}
         onSelectDepot={setActiveDepot}
-        b2bProfile={activeProfile}
-        availableProfiles={availableProfiles}
-        onSwitchProfile={setActiveProfile}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        onOpenApplyCredit={() => setIsCreditModalOpen(true)}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
-        syncStatus={syncStatus}
-        onManualSync={handleManualSync}
       />
 
-      {/* Main Content Area based on activeTab */}
+      {/* Main Content Area */}
       <main className="flex-1">
         {activeTab === 'home' && (
           <HomeSection
             products={products}
-            b2bProfile={activeProfile}
-            onAddToCart={handleAddToCart}
             onOpenDetails={setSelectedProductDetail}
             onNavigate={handleNavigate}
-            onOpenCreditModal={() => setIsCreditModalOpen(true)}
-            onOpenMatrix={() => setActiveTab('matrix')}
           />
         )}
 
         {activeTab === 'about' && (
-          <AboutSection
-            onNavigate={handleNavigate}
-            onOpenCreditModal={() => setIsCreditModalOpen(true)}
-          />
+          <AboutSection onNavigate={handleNavigate} />
         )}
 
         {activeTab === 'catalog' && (
           <CatalogSection
             products={products}
-            onAddToCart={handleAddToCart}
             onOpenDetails={setSelectedProductDetail}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            syncStatus={syncStatus}
-            onManualSync={handleManualSync}
           />
         )}
 
@@ -429,136 +329,43 @@ export default function App() {
           <DepotsSection
             depots={DEPOTS}
             activeDepot={activeDepot}
-            onSelectDepot={(depot) => {
-              setActiveDepot(depot);
-            }}
+            onSelectDepot={(depot) => setActiveDepot(depot)}
           />
         )}
 
         {activeTab === 'contact' && (
-          <ContactSection
-            onOpenCreditModal={() => setIsCreditModalOpen(true)}
-          />
-        )}
-
-        {activeTab === 'matrix' && (
-          <MatrixOrderPad
-            products={products}
-            onAddBulkToCart={handleAddBulkToCart}
-            b2bProfile={activeProfile}
-          />
-        )}
-
-        {activeTab === 'portal' && (
-          <B2BPortalSection
-            b2bProfile={activeProfile}
-            availableProfiles={availableProfiles}
-            onSwitchProfile={setActiveProfile}
-            orders={orders}
-            products={products}
-            onOpenCreditModal={() => setIsCreditModalOpen(true)}
-            onReorder={handleReorder}
-            onViewInvoice={(order) => setActiveInvoiceOrder(order)}
-            onNavigateToPricelist={() => setActiveTab('pricelist')}
-            syncStatus={syncStatus}
-            onManualSync={handleManualSync}
-          />
+          <ContactSection />
         )}
 
         {activeTab === 'pricelist' && (
-          <PriceListSection
-            products={products}
-            onQuickOrderProduct={(product) => {
-              handleAddToCart(product, 'case', 1);
-            }}
-          />
+          <PriceListSection products={products} />
         )}
-      </main>
 
-      {/* Live Catalog Sync Floating Toast Notification */}
-      {syncToast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className={`flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-2xl border text-xs font-semibold backdrop-blur-md ${
-            syncToast.type === 'success'
-              ? 'bg-[#171728]/95 text-white border-emerald-500/50'
-              : syncToast.type === 'error'
-              ? 'bg-rose-950/95 text-rose-100 border-rose-500/50'
-              : 'bg-[#171728]/95 text-white border-blue-500/50'
-          }`}>
-            {syncToast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            ) : syncToast.type === 'error' ? (
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-            ) : (
-              <RefreshCw className="w-4 h-4 text-blue-400 shrink-0" />
-            )}
-            <span>{syncToast.message}</span>
-          </div>
-        </div>
-      )}
+        {/* TODO: Admin-only pages
+        {activeTab === 'matrix' && (
+          <MatrixOrderPad products={products} onAddBulkToCart={handleAddBulkToCart} b2bProfile={activeProfile} />
+        )}
+        {activeTab === 'portal' && (
+          <B2BPortalSection ... />
+        )}
+        */}
+      </main>
 
       {/* Footer */}
       <Footer onNavigateTab={setActiveTab} />
 
-      {/* Product Detail Modal */}
+      {/* Product Detail Modal — redirects to The Bar Kenya for orders */}
       <ProductDetailModal
         product={selectedProductDetail}
         onClose={() => setSelectedProductDetail(null)}
-        onAddToCart={handleAddToCart}
       />
 
-      {/* Cart Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-        onProceedCheckout={() => {
-          setIsCartOpen(false);
-          setIsCheckoutOpen(true);
-        }}
-        poNumber={poNumber}
-        setPoNumber={setPoNumber}
-        orderNotes={orderNotes}
-        setOrderNotes={setOrderNotes}
-        onGenerateQuotation={() => {
-          setIsCartOpen(false);
-          setShowProFormaQuote(true);
-        }}
-      />
-
-      {/* Checkout Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        cartItems={cartItems}
-        b2bProfile={activeProfile}
-        activeDepot={activeDepot}
-        poNumber={poNumber}
-        orderNotes={orderNotes}
-        onOrderSuccess={handleOrderSuccess}
-      />
-
-      {/* Trade Credit Application Modal */}
-      <CreditApplicationModal
-        isOpen={isCreditModalOpen}
-        onClose={() => setIsCreditModalOpen(false)}
-        b2bProfile={activeProfile}
-        onSubmitSuccess={handleCreditApproved}
-      />
-
-      {/* Invoice & Pro-Forma Viewer Modal */}
-      <InvoiceViewerModal
-        order={activeInvoiceOrder}
-        proFormaItems={showProFormaQuote ? cartItems : undefined}
-        b2bProfile={activeProfile}
-        onClose={() => {
-          setActiveInvoiceOrder(null);
-          setShowProFormaQuote(false);
-        }}
-      />
+      {/* TODO: Admin-only modals
+      <CartDrawer ... />
+      <CheckoutModal ... />
+      <CreditApplicationModal ... />
+      <InvoiceViewerModal ... />
+      */}
     </div>
   );
 }

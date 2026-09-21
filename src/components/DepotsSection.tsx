@@ -48,7 +48,7 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
               <Truck className="w-3.5 h-3.5 text-[#F2693F]" />
               <span>10 Strategic Branches Across Kenya</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-white">
+            <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-white">
               Bessich Branch Network
             </h1>
             <p className="text-xs sm:text-sm text-[#F5F5DC]/80 max-w-2xl leading-relaxed">

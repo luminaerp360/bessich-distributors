@@ -5,7 +5,9 @@ import {
   Search, 
   ShieldCheck, 
   FileSpreadsheet, 
-  Layers 
+  Layers,
+  ExternalLink,
+  Package
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatKes } from '../utils/formatters';
@@ -13,12 +15,10 @@ import { Pagination } from './Pagination';
 
 interface PriceListSectionProps {
   products: Product[];
-  onQuickOrderProduct: (product: Product) => void;
 }
 
 export const PriceListSection: React.FC<PriceListSectionProps> = ({
   products,
-  onQuickOrderProduct,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -91,18 +91,18 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5 sm:space-y-6">
-      {/* Header bar */}
+      {/* Header */}
       <div className="bg-white dark:bg-[#171728] p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#0E01B5] dark:text-[#8c82ff] uppercase tracking-wider mb-1">
             <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             Official Certified Price Sheet
           </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-[#171728] dark:text-white font-display">
+          <h2 className="hero-heading text-xl sm:text-2xl font-extrabold text-[#171728] dark:text-white font-display">
             2026 Wholesale Liquor & Wine Price List
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xl">
-            Bessich Distributors Eldoret Central Depot • All prices listed in Kenya Shillings (KES) inclusive of 16% VAT and KRA Excise Duty.
+            Bessich Distributors Eldoret Central Depot • All prices in KES inclusive of 16% VAT and KRA Excise Duty.
           </p>
         </div>
 
@@ -115,7 +115,6 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
             <Download className="w-3.5 h-3.5" />
             Export CSV
           </button>
-
           <button
             type="button"
             onClick={handlePrint}
@@ -140,31 +139,105 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
           />
         </div>
 
-        <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto text-xs pb-1 sm:pb-0 scrollbar-none">
+        <div className="grid grid-cols-3 sm:grid-cols-5 md:flex md:items-center gap-1.5 w-full md:w-auto text-xs">
           {['all', 'whiskey', 'gin', 'vodka', 'wine', 'beer_cider', 'rum', 'brandy', 'champagne', 'liqueur'].map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap transition-colors capitalize cursor-pointer text-xs ${
+              className={`px-2 py-1.5 md:px-3 rounded-lg font-semibold whitespace-nowrap transition-colors capitalize cursor-pointer text-[11px] md:text-xs text-center ${
                 selectedCategory === cat
                   ? 'bg-[#0E01B5] text-white'
                   : 'bg-white dark:bg-[#1b1b2d] text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#25253d]'
               }`}
             >
-              {cat === 'all' ? 'All' : cat === 'beer_cider' ? 'Beers & Ciders' : cat}
+              {cat === 'all' ? 'All' : cat === 'beer_cider' ? 'Beers' : cat}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Anchor for smooth scroll */}
       <div ref={tableTopRef} className="scroll-mt-24" />
 
-      {/* Price Table */}
-      <div className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xs">
+      {/* Mobile Cards (visible below md) */}
+      <div className="md:hidden space-y-3">
+        {paginated.length > 0 ? (
+          paginated.map((product) => {
+            const maxTier = product.tiers.length > 0 
+              ? product.tiers[product.tiers.length - 1].discountPercentage 
+              : 0;
+
+            return (
+              <div key={product.id} className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 p-4 shadow-xs">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] font-bold font-mono text-[#0E01B5] dark:text-[#8c82ff] uppercase">
+                      {product.sku}
+                    </span>
+                    <h3 className="font-bold text-sm text-gray-900 dark:text-white mt-0.5 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">{product.brand}</p>
+                  </div>
+                  {product.kraStampVerified && (
+                    <span className="shrink-0 bg-emerald-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <ShieldCheck className="w-2.5 h-2.5" />
+                      KRA
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-[11px] mb-3">
+                  <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
+                    <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Origin / ABV</span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{product.originFlag} {product.abv}%</span>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
+                    <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Case Pack</span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{product.casePack} × {product.volumeMl}ml</span>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
+                    <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Bottle Price</span>
+                    <span className="font-bold text-gray-900 dark:text-white">{formatKes(product.bottlePriceKes)}</span>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
+                    <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Case Price</span>
+                    <span className="font-bold text-[#0E01B5] dark:text-[#8c82ff]">{formatKes(product.casePriceKes)}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2">
+                  {maxTier > 0 ? (
+                    <span className="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-1 rounded text-[10px] font-bold">
+                      Save up to {maxTier}% on bulk
+                    </span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 text-[10px]">Flat rate pricing</span>
+                  )}
+                  <a
+                    href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center gap-1"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    Order
+                  </a>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="py-8 text-center text-gray-500 dark:text-gray-400 text-xs">
+            No products matched your search or category filter.
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table (visible md+) */}
+      <div className="hidden md:block bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-gray-50 dark:bg-[#12121e] border-b border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider text-[11px]">
                 <th className="py-2.5 px-3 sm:px-4">SKU Code</th>
@@ -219,13 +292,14 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                         )}
                       </td>
                       <td className="py-2.5 px-3 sm:px-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => onQuickOrderProduct(product)}
-                          className="px-2.5 py-1 bg-[#0E01B5] hover:bg-[#09007A] text-white rounded text-[11px] font-bold transition-colors cursor-pointer active:scale-95"
+                        <a
+                          href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold transition-colors inline-block"
                         >
                           Order
-                        </button>
+                        </a>
                       </td>
                     </tr>
                   );
@@ -242,7 +316,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
         </div>
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       <Pagination
         currentPage={currentPage}
         totalItems={filtered.length}

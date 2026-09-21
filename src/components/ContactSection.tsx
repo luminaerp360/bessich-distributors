@@ -19,10 +19,11 @@ import { DEPOTS } from '../data/depots';
 import { BusinessType } from '../types';
 
 interface ContactSectionProps {
-  onOpenCreditModal: () => void;
+  // TODO: Admin-only — onOpenCreditModal
+  // onOpenCreditModal: () => void;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenCreditModal }) => {
+export const ContactSection: React.FC<ContactSectionProps> = () => {
   // Form state
   const [formData, setFormData] = useState({
     contactPerson: '',
@@ -84,7 +85,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenCreditModa
             <Building2 className="w-3.5 h-3.5" />
             <span>Commercial Wholesale & Hospitality Desk</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
+          <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
             Connect with Bessich Distributors
           </h1>
           <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
@@ -424,6 +425,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenCreditModa
               <p className="text-xs text-gray-300 leading-relaxed">
                 Licensed bars, restaurants, and hotels can apply online in under 3 minutes for revolving credit facilities up to KES 2M.
               </p>
+              {/* TODO: Admin-only - Credit Application
               <button
                 type="button"
                 onClick={onOpenCreditModal}
@@ -431,6 +433,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenCreditModa
               >
                 Launch Credit Application
               </button>
+              */}
+              <a
+                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 rounded-xl bg-[#FFD700] hover:bg-[#F2C200] text-[#171728] font-bold text-xs transition-all shadow-sm text-center block"
+              >
+                Order on The Bar Kenya
+              </a>
             </div>
           </div>
 

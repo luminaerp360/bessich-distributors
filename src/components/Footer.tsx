@@ -180,7 +180,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateTab }) => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2">
             <p>© {new Date().getFullYear()} Bessich Distributors Limited. All Rights Reserved. Eldoret, Kenya.</p>
             <p className="text-gray-400 text-[10px]">
-              Theme & Palette modeled directly from www.bessichdistributors.co.ke
+              Powered by <span className="font-semibold text-[#FFD700]">Lumina</span>
             </p>
           </div>
         </div>

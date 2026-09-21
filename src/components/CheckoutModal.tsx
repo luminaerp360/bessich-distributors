@@ -211,19 +211,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             {/* Confirmation actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center gap-3">
               <button
                 type="button"
                 onClick={handlePrintInvoice}
-                className="flex-1 py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#25253d] text-gray-800 dark:text-gray-200 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 w-full py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#25253d] text-gray-800 dark:text-gray-200 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
                 Print Official Tax Invoice
               </button>
+              <a
+                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md text-center"
+              >
+                <Truck className="w-4 h-4" />
+                View on The Bar Kenya
+              </a>
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-[#0E01B5] hover:bg-[#09007A] text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                className="flex-1 w-full py-2.5 px-4 rounded-xl bg-[#0E01B5] hover:bg-[#09007A] text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 Back to Portal
               </button>
