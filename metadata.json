@@ -1,0 +1,6 @@
+{
+  "name": "Bessich Distributors",
+  "description": "Premier Kenyan distributor of fine wines, spirits, and beers featuring an online catalog and secure B2B ordering portal for licensed hospitality and retail establishments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

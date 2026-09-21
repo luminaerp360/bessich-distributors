@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bessich-blue: #0E01B5;
+  --color-bessich-blue-dark: #09007A;
+  --color-bessich-cream: #F5F5DC;
+  --color-bessich-silver: #FAF9F6;
+  --color-bessich-dark: #171728;
+  --color-bessich-gold: #D4AF37;
+  --color-bessich-gold-bright: #FFD700;
+  --color-bessich-orange: #F2693F;
+  --color-bessich-slate: #686781;
+  --font-display: 'Lexend', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: #171728;
+    background-color: #FAF9F6;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body {
+    color: #FAF9F6;
+    background-color: #0c0c14;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+}
+
