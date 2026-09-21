@@ -192,11 +192,21 @@ To solve this:
 ## 📁 Project Directory Structure
 
 ```
-├── server.ts                       # Express backend: Outlet 44 sync, image proxy, Vite middleware
+├── server.ts                       # Express backend: Outlet 44 sync, image proxy, Vite middleware (local dev)
+├── vercel.json                     # Vercel deployment configuration (routing, build settings)
 ├── package.json                    # Project metadata & npm dependencies
 ├── vite.config.ts                  # Vite build configuration with Tailwind CSS plugin
 ├── tsconfig.json                   # TypeScript configuration
 ├── metadata.json                   # App capabilities & configuration
+│
+├── api/                            # Vercel serverless functions
+│   ├── _lib/
+│   │   └── outlet-sync.ts          # Shared crypto, fetch, and normalization logic
+│   ├── catalog/
+│   │   ├── sync.ts                 # GET /api/catalog/sync — live outlet catalog sync
+│   │   └── status.ts              # GET /api/catalog/status — sync status check
+│   ├── image-proxy.ts             # GET /api/image-proxy — CORS-safe image proxy
+│   └── health.ts                  # GET /api/health — health check
 │
 └── src/
     ├── App.tsx                     # Main layout, router state, and live sync coordinator
@@ -346,9 +356,9 @@ Starts the full-stack server on `http://localhost:3000` with Express backend API
 npm run lint
 ```
 
-### 4. Build for Production
+### 4. Build for Production (Self-Hosted / Node.js)
 ```bash
-npm run build
+npm run build:node
 ```
 Compiles the Vite React frontend into `dist/` and bundles `server.ts` into a high-performance CommonJS file at `dist/server.cjs`.
 
@@ -358,13 +368,43 @@ npm start
 ```
 Runs `node dist/server.cjs` serving both the API and static production assets.
 
+### 6. Deploy to Vercel
+
+The project is pre-configured for zero-config Vercel deployment with serverless API functions.
+
+**Project structure for Vercel:**
+- `api/` — Vercel serverless functions (catalog sync, image proxy, health, status)
+- `dist/` — Vite-built frontend (static assets)
+- `vercel.json` — Vercel routing and build configuration
+
+**Deploy via Vercel CLI:**
+```bash
+# Install Vercel CLI globally
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+**Deploy via GitHub integration:**
+1. Push the project to a GitHub repository.
+2. Import the repo at [vercel.com/new](https://vercel.com/new).
+3. Vercel auto-detects the Vite framework and uses `vercel.json` for configuration.
+4. No environment variables are required — all API keys are pre-configured.
+
+**How it works on Vercel:**
+- The frontend is served as static files from `dist/`.
+- API routes (`/api/catalog/sync`, `/api/image-proxy`, `/api/health`, `/api/catalog/status`) run as serverless Node.js functions.
+- SPA routing is handled via rewrites in `vercel.json`.
+
 ### Available Scripts
 
 | Script | Command | Description |
 |---|---|---|
 | `dev` | `tsx server.ts` | Start dev server with Vite HMR on port 3000 |
-| `build` | `vite build && esbuild server.ts ...` | Build frontend + bundle backend for production |
-| `start` | `node dist/server.cjs` | Run the production server |
+| `build` | `vite build` | Build frontend for Vercel deployment |
+| `build:node` | `vite build && esbuild server.ts ...` | Build frontend + bundle backend for self-hosted Node.js |
+| `start` | `node dist/server.cjs` | Run the self-hosted production server |
 | `preview` | `vite preview` | Preview the production build via Vite |
 | `lint` | `tsc --noEmit` | Type-check the project without emitting files |
 | `clean` | `rm -rf dist server.js` | Remove build artifacts |
