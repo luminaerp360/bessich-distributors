@@ -180,7 +180,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateTab }) => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2">
             <p>© {new Date().getFullYear()} Bessich Distributors Limited. All Rights Reserved. Eldoret, Kenya.</p>
             <p className="text-gray-400 text-[10px]">
-              Powered by <span className="font-semibold text-[#FFD700]">Lumina</span>
+              Powered by{' '}
+              <a
+                href="https://lumina-website-3ut9.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[#FFD700] hover:underline"
+              >
+                Lumina
+              </a>
             </p>
           </div>
         </div>
