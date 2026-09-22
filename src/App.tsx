@@ -15,6 +15,7 @@ import { CheckoutModal } from './components/CheckoutModal';
 // import { InvoiceViewerModal } from './components/InvoiceViewerModal';   // TODO: Admin-only
 import { AgeGateModal } from './components/AgeGateModal';
 import { Footer } from './components/Footer';
+import { WhatsAppButton } from './components/WhatsAppButton';
 
 import { PRODUCTS } from './data/products';
 import { DEPOTS } from './data/depots';
@@ -389,6 +390,9 @@ export default function App() {
         orderNotes={orderNotes}
         onOrderSuccess={handleOrderSuccess}
       />
+
+      {/* WhatsApp Floating Button */}
+      <WhatsAppButton />
     </div>
   );
 }

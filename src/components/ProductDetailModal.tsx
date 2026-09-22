@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   X, 
   ShieldCheck, 
@@ -24,7 +24,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onClose,
   onAddToCart,
 }) => {
+  const [orderType, setOrderType] = useState<'case' | 'bottle'>('case');
+  const [quantity, setQuantity] = useState(1);
+
   if (!product) return null;
+
+  const unitPrice = orderType === 'case' ? product.casePriceKes : Math.round(product.casePriceKes / product.casePack);
+  const lineTotal = unitPrice * quantity;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
@@ -170,14 +176,81 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
 
             {/* Order CTA — Add to Cart */}
-            <div className="pt-2 border-t border-gray-200 dark:border-gray-800">
+            <div className="pt-3 border-t border-gray-200 dark:border-gray-800 space-y-3">
+              {/* Price Display */}
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-500 dark:text-gray-400">Unit Price:</span>
+                <span className="font-bold text-gray-900 dark:text-white">{formatKes(unitPrice)}</span>
+              </div>
+
+              {/* Case / Bottle Toggle */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setOrderType('case'); setQuantity(1); }}
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                    orderType === 'case'
+                      ? 'border-[#0E01B5] dark:border-[#8c82ff] bg-[#0E01B5]/5 dark:bg-[#0E01B5]/20 ring-1 ring-[#0E01B5] dark:ring-[#8c82ff] text-[#0E01B5] dark:text-[#8c82ff]'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <Package className="w-4 h-4" />
+                  <span>Full Case</span>
+                  <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.casePack} bottles</span>
+                  <span className="font-bold text-gray-900 dark:text-white">{formatKes(product.casePriceKes)}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setOrderType('bottle'); setQuantity(1); }}
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                    orderType === 'bottle'
+                      ? 'border-[#0E01B5] dark:border-[#8c82ff] bg-[#0E01B5]/5 dark:bg-[#0E01B5]/20 ring-1 ring-[#0E01B5] dark:ring-[#8c82ff] text-[#0E01B5] dark:text-[#8c82ff]'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <Wine className="w-4 h-4" />
+                  <span>Single Bottle</span>
+                  <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.volumeMl}ml</span>
+                  <span className="font-bold text-gray-900 dark:text-white">{formatKes(Math.round(product.casePriceKes / product.casePack))}</span>
+                </button>
+              </div>
+
+              {/* Quantity Selector */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Quantity:</span>
+                <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-[#1b1b2d]">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2e2e48] text-sm font-bold cursor-pointer"
+                  >
+                    −
+                  </button>
+                  <span className="px-4 text-sm font-bold text-gray-900 dark:text-white min-w-[36px] text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2e2e48] text-sm font-bold cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {orderType === 'case' ? `${quantity * product.casePack} bottles total` : `${quantity} bottle${quantity > 1 ? 's' : ''}`}
+                </span>
+              </div>
+
+              {/* Add to Cart Button */}
               <button
                 type="button"
-                onClick={() => onAddToCart(product, 'case', 1)}
+                onClick={() => onAddToCart(product, orderType, quantity)}
                 className="w-full py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-[#0E01B5] hover:bg-[#09007A] text-white shadow-md cursor-pointer"
               >
                 <ShoppingCart className="w-4 h-4" />
-                Add to Cart
+                Add to Cart — {formatKes(lineTotal)}
               </button>
             </div>
           </div>
