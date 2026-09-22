@@ -13,9 +13,10 @@ import {
   BookOpen,
   PhoneCall,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  ShoppingCart
 } from 'lucide-react';
-import { Depot, ActivePage } from '../types';
+import { Depot, ActivePage, CartItem } from '../types';
 import { ThemeToggle } from './ThemeToggle';
 
 // PUBLIC MODE: Cart, B2B tools, profile switcher, and credit badges commented out for admin-only restoration later
@@ -30,13 +31,8 @@ interface HeaderProps {
   setSearchQuery: (query: string) => void;
   isDark: boolean;
   onToggleTheme: () => void;
-  // TODO: Admin-only props
-  // b2bProfile: B2BProfile;
-  // availableProfiles: B2BProfile[];
-  // onSwitchProfile: (profile: B2BProfile) => void;
-  // cartItems: CartItem[];
-  // onOpenCart: () => void;
-  // onOpenApplyCredit: () => void;
+  cartItems: CartItem[];
+  onOpenCart: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -49,6 +45,8 @@ export const Header: React.FC<HeaderProps> = ({
   setSearchQuery,
   isDark,
   onToggleTheme,
+  cartItems,
+  onOpenCart,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [depotDropdownOpen, setDepotDropdownOpen] = useState(false);
@@ -162,16 +160,20 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Order on The Bar Kenya */}
-            <a
-              href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors"
+            {/* Cart Button */}
+            <button
+              type="button"
+              onClick={onOpenCart}
+              className="relative hidden md:flex items-center gap-1.5 bg-[#0E01B5] hover:bg-[#09007A] text-white px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer"
             >
-              <ExternalLink className="w-3 h-3" />
-              Order Now
-            </a>
+              <ShoppingCart className="w-3 h-3" />
+              <span>Cart</span>
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#F2693F] text-white text-[9px] font-bold flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              )}
+            </button>
 
             <ThemeToggle isDark={isDark} onToggle={onToggleTheme} variant="compact" />
           </div>

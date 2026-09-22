@@ -3,6 +3,8 @@ import { ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export const AgeGateModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [yearOfBirth, setYearOfBirth] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const verified = localStorage.getItem('bessich_age_verified');
@@ -11,13 +13,39 @@ export const AgeGateModal: React.FC = () => {
     }
   }, []);
 
-  const handleConfirm = () => {
+  const handleVerify = () => {
+    setError('');
+    const year = parseInt(yearOfBirth, 10);
+    const currentYear = new Date().getFullYear();
+
+    if (!yearOfBirth || isNaN(year)) {
+      setError('Please enter your year of birth.');
+      return;
+    }
+
+    if (year > currentYear || year < 1900) {
+      setError('Please enter a valid year of birth.');
+      return;
+    }
+
+    const age = currentYear - year;
+    if (age < 18) {
+      setError('You must be 18 or older to access this site.');
+      return;
+    }
+
     localStorage.setItem('bessich_age_verified', 'true');
     setIsOpen(false);
   };
 
   const handleDecline = () => {
     window.location.href = 'https://www.google.com';
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleVerify();
+    }
   };
 
   if (!isOpen) return null;
@@ -55,17 +83,32 @@ export const AgeGateModal: React.FC = () => {
           </p>
         </div>
 
-        <p className="text-xs text-gray-400">
-          Are you of legal purchasing age (18+) and authorized to represent a licensed hospitality, retail, or commercial entity in Kenya?
-        </p>
+        <div className="space-y-2">
+          <label className="text-xs text-gray-400 block">
+            Enter your year of birth to verify your age:
+          </label>
+          <input
+            type="number"
+            value={yearOfBirth}
+            onChange={(e) => { setYearOfBirth(e.target.value); setError(''); }}
+            onKeyDown={handleKeyDown}
+            placeholder="e.g. 1990"
+            min="1900"
+            max={new Date().getFullYear()}
+            className="w-full p-3 rounded-xl bg-[#23233a] border border-white/15 text-white text-center text-lg font-bold placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0E01B5] focus:border-transparent"
+          />
+          {error && (
+            <p className="text-red-400 text-[11px] font-semibold">{error}</p>
+          )}
+        </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
           <button
             type="button"
-            onClick={handleConfirm}
+            onClick={handleVerify}
             className="w-full py-3 px-4 rounded-xl bg-[#0E01B5] hover:bg-[#09007A] text-white font-extrabold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
           >
-            I am 18+ & Enter B2B Portal
+            Verify & Enter Portal
           </button>
           <button
             type="button"

@@ -20,8 +20,7 @@ interface CatalogSectionProps {
   onOpenDetails: (product: Product) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  // TODO: Admin-only — onAddToCart for cart functionality
-  // onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
+  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const CatalogSection: React.FC<CatalogSectionProps> = ({
@@ -29,6 +28,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   onOpenDetails,
   searchQuery,
   setSearchQuery,
+  onAddToCart,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('all');
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
@@ -365,6 +365,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
                 key={product.id}
                 product={product}
                 onOpenDetails={onOpenDetails}
+                onAddToCart={onAddToCart}
               />
             ))}
           </div>

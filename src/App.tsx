@@ -9,8 +9,8 @@ import { HomeSection } from './components/HomeSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { ProductDetailModal } from './components/ProductDetailModal';
-// import { CartDrawer } from './components/CartDrawer';                    // TODO: Admin-only
-// import { CheckoutModal } from './components/CheckoutModal';              // TODO: Admin-only
+import { CartDrawer } from './components/CartDrawer';
+import { CheckoutModal } from './components/CheckoutModal';
 // import { CreditApplicationModal } from './components/CreditApplicationModal'; // TODO: Admin-only
 // import { InvoiceViewerModal } from './components/InvoiceViewerModal';   // TODO: Admin-only
 import { AgeGateModal } from './components/AgeGateModal';
@@ -21,8 +21,6 @@ import { DEPOTS } from './data/depots';
 import { Product, Depot, ActivePage, ProductCategory } from './types';
 import { fetchLiveCatalog, getStoredCatalog } from './services/catalogSync';
 
-// TODO: Admin-only — B2B profiles, orders, and cart state commented out for public access
-/*
 import { CartItem, B2BProfile, B2BOrder } from './types';
 
 const INITIAL_PROFILES: B2BProfile[] = [
@@ -124,7 +122,6 @@ const INITIAL_ORDERS: B2BOrder[] = [
     businessName: 'The Loft Lounge & Grill',
   },
 ];
-*/
 
 export default function App() {
   // Navigation & View state
@@ -168,6 +165,11 @@ export default function App() {
   // Depots state
   const [activeDepot, setActiveDepot] = useState<Depot>(DEPOTS[0]);
 
+  // Keep cart depot in sync with header depot selection
+  useEffect(() => {
+    setCartDepot(activeDepot);
+  }, [activeDepot]);
+
   const handleNavigate = (page: ActivePage, _category?: ProductCategory) => {
     setActiveTab(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -199,18 +201,14 @@ export default function App() {
     setIsDark((prev) => !prev);
   };
 
-  // TODO: Admin-only — Cart, orders, profiles, credit, checkout state and handlers commented out
-  /*
   const [availableProfiles, setAvailableProfiles] = useState<B2BProfile[]>(INITIAL_PROFILES);
   const [activeProfile, setActiveProfile] = useState<B2BProfile>(INITIAL_PROFILES[0]);
   const [orders, setOrders] = useState<B2BOrder[]>(INITIAL_ORDERS);
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    { product: PRODUCTS[0], orderType: 'case', quantity: 2 },
-    { product: PRODUCTS[2], orderType: 'case', quantity: 1 },
-  ]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [poNumber, setPoNumber] = useState('PO-LOFT-2026-089');
-  const [orderNotes, setOrderNotes] = useState('Offload at Service Entrance B, check with Brian');
+  const [cartDepot, setCartDepot] = useState<Depot>(DEPOTS[0]);
+  const [poNumber, setPoNumber] = useState('');
+  const [orderNotes, setOrderNotes] = useState('');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
   const [activeInvoiceOrder, setActiveInvoiceOrder] = useState<B2BOrder | null>(null);
@@ -231,7 +229,6 @@ export default function App() {
       }
       return [...prev, { product, orderType, quantity }];
     });
-    setIsCartOpen(true);
   };
 
   const handleAddBulkToCart = (newItems: CartItem[]) => {
@@ -249,7 +246,6 @@ export default function App() {
       }
       return updated;
     });
-    setIsCartOpen(true);
   };
 
   const handleUpdateQuantity = (index: number, quantity: number) => {
@@ -262,7 +258,6 @@ export default function App() {
 
   const handleReorder = (order: B2BOrder) => {
     handleAddBulkToCart(order.items);
-    setIsCartOpen(true);
   };
 
   const handleOrderSuccess = (newOrder: B2BOrder) => {
@@ -282,7 +277,6 @@ export default function App() {
       prev.map((p) => (p.id === updatedProfile.id ? updatedProfile : p))
     );
   };
-  */
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] dark:bg-[#0c0c14] text-gray-900 dark:text-[#FAF9F6] flex flex-col font-sans selection:bg-[#0E01B5] selection:text-white transition-colors duration-200">
@@ -300,6 +294,8 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
+        cartItems={cartItems}
+        onOpenCart={() => setIsCartOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -309,6 +305,7 @@ export default function App() {
             products={products}
             onOpenDetails={setSelectedProductDetail}
             onNavigate={handleNavigate}
+            onAddToCart={handleAddToCart}
           />
         )}
 
@@ -322,6 +319,7 @@ export default function App() {
             onOpenDetails={setSelectedProductDetail}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            onAddToCart={handleAddToCart}
           />
         )}
 
@@ -358,14 +356,39 @@ export default function App() {
       <ProductDetailModal
         product={selectedProductDetail}
         onClose={() => setSelectedProductDetail(null)}
+        onAddToCart={handleAddToCart}
       />
 
-      {/* TODO: Admin-only modals
-      <CartDrawer ... />
-      <CheckoutModal ... />
-      <CreditApplicationModal ... />
-      <InvoiceViewerModal ... />
-      */}
+      {/* Cart Drawer */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveItem}
+        onClearCart={handleClearCart}
+        onProceedCheckout={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}
+        poNumber={poNumber}
+        setPoNumber={setPoNumber}
+        orderNotes={orderNotes}
+        setOrderNotes={setOrderNotes}
+        onGenerateQuotation={() => setShowProFormaQuote(true)}
+        allDepots={DEPOTS}
+        cartDepot={cartDepot}
+        onSelectDepot={setCartDepot}
+      />
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cartItems={cartItems}
+        b2bProfile={activeProfile}
+        activeDepot={cartDepot}
+        poNumber={poNumber}
+        orderNotes={orderNotes}
+        onOrderSuccess={handleOrderSuccess}
+      />
     </div>
   );
 }

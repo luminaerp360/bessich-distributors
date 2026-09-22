@@ -34,20 +34,14 @@ interface HomeSectionProps {
   products: Product[];
   onOpenDetails: (product: Product) => void;
   onNavigate: (page: ActivePage, category?: ProductCategory) => void;
-  // TODO: Admin-only props
-  // b2bProfile: B2BProfile;
-  // onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
-  // onOpenCreditModal: () => void;
-  // onOpenMatrix: () => void;
+  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const HomeSection: React.FC<HomeSectionProps> = ({
   products,
   onNavigate,
   onOpenDetails,
-  // b2bProfile,       // TODO: Admin-only
-  // onOpenCreditModal, // TODO: Admin-only
-  // onOpenMatrix,      // TODO: Admin-only
+  onAddToCart,
 }) => {
   const categoryHighlights = [
     {

@@ -13,7 +13,8 @@ import {
   ShieldCheck, 
   Clock, 
   ArrowRight,
-  Smartphone
+  Smartphone,
+  MapPin
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CartItem, B2BProfile, Depot, B2BOrder } from '../types';
@@ -56,6 +57,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     b2bProfile.isVerified && b2bProfile.paymentTermsDays > 0 ? 'credit' : 'mpesa'
   );
   const [mpesaPhone, setMpesaPhone] = useState(b2bProfile.phoneNumber || '0754320000');
+  const [deliveryLocation, setDeliveryLocation] = useState(b2bProfile.deliveryAddress || '');
+  const [deliveryContact, setDeliveryContact] = useState(b2bProfile.phoneNumber || '');
   const [mpesaSimulating, setMpesaSimulating] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<B2BOrder | null>(null);
 
@@ -173,7 +176,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div>
                   <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Consignee (Buyer):</span>
                   <span className="font-bold text-gray-900 dark:text-white block">{confirmedOrder.businessName}</span>
-                  <span className="text-gray-500 dark:text-gray-400 block">{b2bProfile.deliveryAddress}</span>
+                  <span className="text-gray-500 dark:text-gray-400 block">{deliveryLocation || b2bProfile.deliveryAddress}</span>
                   <span className="text-gray-500 dark:text-gray-400 block font-mono">KRA PIN: {b2bProfile.kraPin}</span>
                 </div>
                 <div className="text-right">
@@ -181,6 +184,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <span className="font-bold text-gray-900 dark:text-white block">{confirmedOrder.deliveryDate}</span>
                   <span className="text-gray-500 dark:text-gray-400 block">{confirmedOrder.deliverySlot}</span>
                   <span className="text-gray-500 dark:text-gray-400 block font-mono">PO: {confirmedOrder.poNumber}</span>
+                  <span className="text-gray-500 dark:text-gray-400 block font-mono mt-1">Contact: {deliveryContact || b2bProfile.phoneNumber}</span>
                 </div>
               </div>
 
@@ -264,11 +268,56 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
             </div>
 
-            {/* Step 2: Logistics Schedule */}
+            {/* Step 2: Delivery Location & Contact */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-[#F2693F]" />
+                2. Delivery Location & Contact
+              </h4>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="font-medium text-gray-700 dark:text-gray-300 block mb-1">
+                    Delivery Location / Address:
+                  </label>
+                  <input
+                    type="text"
+                    value={deliveryLocation}
+                    onChange={(e) => setDeliveryLocation(e.target.value)}
+                    placeholder="e.g. Rupa Mall, 3rd Floor, Malaba Rd, Eldoret"
+                    className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#1b1b2d] text-gray-900 dark:text-white"
+                  />
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+                    Specify the exact delivery point for the driver.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="font-medium text-gray-700 dark:text-gray-300 block mb-1">
+                    Contact Phone Number:
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                    <input
+                      type="tel"
+                      value={deliveryContact}
+                      onChange={(e) => setDeliveryContact(e.target.value)}
+                      placeholder="e.g. 0712 345 678"
+                      className="w-full p-2 pl-8 border border-gray-300 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#1b1b2d] text-gray-900 dark:text-white font-mono"
+                    />
+                  </div>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+                    The delivery team will use this number to reach you upon arrival.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3: Logistics Schedule */}
             <div className="space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <Truck className="w-4 h-4 text-[#F2693F]" />
-                2. Fulfillment Fleet & Scheduling
+                3. Fulfillment Fleet & Scheduling
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -311,11 +360,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </label>
             </div>
 
-            {/* Step 3: Payment Settlement Selection */}
+            {/* Step 4: Payment Settlement Selection */}
             <div className="space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <CreditCard className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                3. B2B Commercial Payment Terms
+                4. B2B Commercial Payment Terms
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">

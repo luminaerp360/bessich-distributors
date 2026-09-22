@@ -7,22 +7,22 @@ import {
   Globe, 
   Percent, 
   Warehouse,
-  ExternalLink
+  ShoppingCart
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatKes } from '../utils/formatters';
 import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
 
-// PUBLIC MODE: Cart/ordering functionality removed. Orders redirect to The Bar Kenya.
-
 interface ProductDetailModalProps {
   product: Product | null;
   onClose: () => void;
+  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product,
   onClose,
+  onAddToCart,
 }) => {
   if (!product) return null;
 
@@ -169,17 +169,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <span className="font-bold text-emerald-700 dark:text-emerald-400">{product.stockCases} Cases Available</span>
             </div>
 
-            {/* Order CTA — redirects to The Bar Kenya */}
+            {/* Order CTA — Add to Cart */}
             <div className="pt-2 border-t border-gray-200 dark:border-gray-800">
-              <a
-                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md"
+              <button
+                type="button"
+                onClick={() => onAddToCart(product, 'case', 1)}
+                className="w-full py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-[#0E01B5] hover:bg-[#09007A] text-white shadow-md cursor-pointer"
               >
-                <ExternalLink className="w-4 h-4" />
-                Order on The Bar Kenya
-              </a>
+                <ShoppingCart className="w-4 h-4" />
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>

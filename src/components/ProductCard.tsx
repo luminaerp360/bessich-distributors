@@ -4,24 +4,22 @@ import {
   Info, 
   Sparkles,
   Package,
-  ExternalLink
+  ShoppingCart
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatKes } from '../utils/formatters';
 import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
 
-// PUBLIC MODE: Cart/ordering functionality commented out. Orders redirect to The Bar Kenya.
-
 interface ProductCardProps {
   product: Product;
   onOpenDetails: (product: Product) => void;
-  // TODO: Admin-only — onAddToCart for cart functionality
-  // onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
+  onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onOpenDetails,
+  onAddToCart,
 }) => {
   return (
     <div 
@@ -129,17 +127,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* Order Action — redirects to The Bar Kenya */}
+      {/* Order Action — Add to Cart */}
       <div className="px-3.5 sm:px-4 pb-3.5 sm:pb-4">
-        <a
-          href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+        <button
+          type="button"
+          onClick={() => onAddToCart(product, 'case', 1)}
+          className="w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs bg-[#0E01B5] hover:bg-[#09007A] text-white cursor-pointer"
         >
-          <ExternalLink className="w-3.5 h-3.5" />
-          <span>Order on The Bar Kenya</span>
-        </a>
+          <ShoppingCart className="w-3.5 h-3.5" />
+          <span>Add to Cart</span>
+        </button>
       </div>
     </div>
   );

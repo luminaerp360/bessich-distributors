@@ -9,9 +9,11 @@ import {
   ShieldCheck, 
   Truck, 
   FileText,
-  Percent
+  Percent,
+  MapPin,
+  ChevronDown
 } from 'lucide-react';
-import { CartItem } from '../types';
+import { CartItem, Depot } from '../types';
 import { formatKes, calculateItemPricing, calculateOrderTotals } from '../utils/formatters';
 import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
 
@@ -28,6 +30,9 @@ interface CartDrawerProps {
   orderNotes: string;
   setOrderNotes: (notes: string) => void;
   onGenerateQuotation: () => void;
+  allDepots: Depot[];
+  cartDepot: Depot;
+  onSelectDepot: (depot: Depot) => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -43,7 +48,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   orderNotes,
   setOrderNotes,
   onGenerateQuotation,
+  allDepots,
+  cartDepot,
+  onSelectDepot,
 }) => {
+  const [depotDropdownOpen, setDepotDropdownOpen] = React.useState(false);
   if (!isOpen) return null;
 
   const totals = calculateOrderTotals(cartItems);
@@ -107,6 +116,52 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 className="bg-emerald-600 h-full rounded-full transition-all duration-300"
                 style={{ width: `${progressToFreeShipping}%` }}
               />
+            </div>
+          </div>
+
+          {/* Fulfillment Branch Selector */}
+          <div className="bg-[#FAF9F6] dark:bg-[#12121e] px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+            <label className="text-[11px] font-bold text-gray-700 dark:text-gray-300 block mb-1.5">
+              Fulfillment Branch:
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setDepotDropdownOpen(!depotDropdownOpen)}
+                className="w-full flex items-center justify-between gap-2 bg-white dark:bg-[#1b1b2d] border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-900 dark:text-white cursor-pointer hover:border-[#0E01B5] dark:hover:border-[#8c82ff] transition-colors"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <MapPin className="w-3.5 h-3.5 text-[#F2693F] shrink-0" />
+                  <span className="truncate font-semibold">{cartDepot.name}</span>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-gray-400 shrink-0 transition-transform ${depotDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {depotDropdownOpen && (
+                <div className="absolute left-0 right-0 mt-1 bg-white dark:bg-[#1b1b2d] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-50 max-h-48 overflow-y-auto">
+                  {allDepots.map((depot) => (
+                    <button
+                      key={depot.id}
+                      type="button"
+                      onClick={() => {
+                        onSelectDepot(depot);
+                        setDepotDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs flex flex-col hover:bg-[#F5F5DC]/50 dark:hover:bg-white/5 transition-colors cursor-pointer ${
+                        depot.id === cartDepot.id ? 'bg-[#0E01B5]/10 dark:bg-[#0E01B5]/25 border-l-3 border-[#0E01B5]' : ''
+                      }`}
+                    >
+                      <span className="font-semibold text-gray-900 dark:text-white flex items-center justify-between">
+                        {depot.name}
+                        {depot.isCentralHub && (
+                          <span className="bg-[#0E01B5] text-white text-[9px] font-bold px-1.5 py-0.5 rounded">HQ</span>
+                        )}
+                      </span>
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{depot.region}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
