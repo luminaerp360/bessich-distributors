@@ -220,8 +220,13 @@ export function normalizeApiProduct(
       : 40;
 
   const primaryVariant = raw.variants?.[0];
-  const bottlePrice =
-    raw.price ?? primaryVariant?.price ?? 0;
+  const variantPrice =
+    typeof primaryVariant?.price === 'number' ? (primaryVariant.price as number) : undefined;
+  const topPrice = typeof raw.price === 'number' ? raw.price : undefined;
+  // The e-commerce `price` field is the authoritative/final price (managed in the
+  // e-commerce admin portal). Use it as-is; only fall back to the variant price
+  // when the product has no top-level price set.
+  const bottlePrice = topPrice && topPrice > 0 ? topPrice : variantPrice ?? 0;
 
   const stockQuantity =
     typeof primaryVariant?.stockQuantity === 'number'

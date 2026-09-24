@@ -70,9 +70,9 @@ export function calculateOrderTotals(items: CartItem[]) {
   // VAT element = netSubtotal * 16 / 116
   const vatAmount = Math.round((netSubtotal * 16) / 116);
 
-  // Delivery fee: KES 1,500 standard logistics, or FREE for wholesale orders >= KES 30,000
-  const deliveryFee = items.length === 0 ? 0 : netSubtotal >= 30000 ? 0 : 1500;
-  const grandTotal = netSubtotal + deliveryFee;
+  // No separate delivery charges — transport is included in the price.
+  const deliveryFee = 0;
+  const grandTotal = netSubtotal;
 
   return {
     grossSubtotal,

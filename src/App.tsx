@@ -8,9 +8,9 @@ import { PriceListSection } from './components/PriceListSection';
 import { HomeSection } from './components/HomeSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
-import { ProductsAdmin } from './components/ProductsAdmin';
+// import { ProductsAdmin } from './components/ProductsAdmin';
 import { MyOrdersSection } from './components/MyOrdersSection';
-import { UsersAdmin } from './components/UsersAdmin';
+// import { UsersAdmin } from './components/UsersAdmin';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -85,6 +85,52 @@ const INITIAL_PROFILES: B2BProfile[] = [
 
 const EMPTY_INITIAL_ORDERS: B2BOrder[] = [];
 
+const PAGE_ROUTES: Record<ActivePage, string> = {
+  home: '/',
+  about: '/about',
+  catalog: '/catalog',
+  branches: '/branches',
+  depots: '/depots',
+  contact: '/contact',
+  pricelist: '/price-list',
+  orders: '/my-orders',
+  matrix: '/matrix',
+  portal: '/portal',
+  admin: '/admin',
+  users: '/users',
+};
+
+function pageFromPath(pathname: string): ActivePage {
+  const path = pathname.split('?')[0].replace(/\/+$/, '') || '/';
+  const entry = Object.entries(PAGE_ROUTES).find(([, p]) => p === path);
+  return entry ? (entry[0] as ActivePage) : 'home';
+}
+
+function navigateTo(page: ActivePage): void {
+  window.history.pushState({}, '', PAGE_ROUTES[page]);
+}
+
+const CART_STORAGE_KEY = 'bessich_cart_v1';
+
+function getStoredCart(): CartItem[] {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as CartItem[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredCart(items: CartItem[]): void {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Storage unavailable — cart will not persist.
+  }
+}
+
 // Builds illustrative sample orders from the live backend catalog (used only
 // when the account has no real orders yet, for demo continuity).
 function buildSampleOrders(products: Product[]): B2BOrder[] {
@@ -155,7 +201,14 @@ export default function App() {
   };
 
   // Navigation & View state
-  const [activeTab, setActiveTab] = useState<ActivePage>('home');
+  const [activeTab, setActiveTab] = useState<ActivePage>(() => pageFromPath(window.location.pathname));
+
+  // Keep the active page in sync with browser back/forward navigation.
+  useEffect(() => {
+    const onPopState = () => setActiveTab(pageFromPath(window.location.pathname));
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
   
   // Real-time catalog sync state — auto-synced silently in background
   const [products, setProducts] = useState<Product[]>(() => {
@@ -228,7 +281,14 @@ export default function App() {
 
   const handleNavigate = (page: ActivePage, _category?: ProductCategory) => {
     setActiveTab(page);
+    navigateTo(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Wrapper for header/footer nav clicks so the URL stays in sync.
+  const handleSetTab = (page: ActivePage) => {
+    setActiveTab(page);
+    navigateTo(page);
   };
 
   // Product detail modal
@@ -260,7 +320,12 @@ export default function App() {
   const [availableProfiles, setAvailableProfiles] = useState<B2BProfile[]>(INITIAL_PROFILES);
   const [activeProfile, setActiveProfile] = useState<B2BProfile>(INITIAL_PROFILES[0]);
   const [orders, setOrders] = useState<B2BOrder[]>(EMPTY_INITIAL_ORDERS);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => getStoredCart());
+
+  // Persist the cart across page refreshes / sessions.
+  useEffect(() => {
+    saveStoredCart(cartItems);
+  }, [cartItems]);
 
   // Re-price cart items when the customer signs in/out or the catalog refreshes.
   useEffect(() => {
@@ -322,6 +387,13 @@ export default function App() {
   };
 
   const handleRemoveItem = (index: number) => { setCartItems((prev) => prev.filter((_, i) => i !== index)); };
+  const handleUpdateOrderType = (index: number, orderType: 'case' | 'bottle') => {
+    setCartItems((prev) => {
+      const updated = [...prev];
+      if (updated[index]) updated[index] = { ...updated[index], orderType };
+      return updated;
+    });
+  };
   const handleClearCart = () => { setCartItems([]); };
 
   const handleReorder = (order: B2BOrder) => {
@@ -361,7 +433,7 @@ export default function App() {
       {/* Header */}
       <Header
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleSetTab}
         activeDepot={activeDepot}
         allDepots={DEPOTS}
         onSelectDepot={setActiveDepot}
@@ -419,28 +491,6 @@ export default function App() {
           <PriceListSection products={displayProducts} onAddToCart={handleAddToCart} />
         )}
 
-        {activeTab === 'admin' && (
-          authUser ? (
-            <ProductsAdmin onCatalogChanged={refreshCatalog} />
-          ) : (
-            <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
-              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white font-display">
-                Administrator Access Required
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Please sign in to manage the product catalog.
-              </p>
-              <button
-                type="button"
-                onClick={() => handleOpenAuth('login')}
-                className="bg-[#0E01B5] hover:bg-[#09007A] text-white px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-colors"
-              >
-                Sign In
-              </button>
-            </div>
-          )
-        )}
-
         {activeTab === 'orders' && (
           authUser ? (
             <MyOrdersSection
@@ -468,6 +518,29 @@ export default function App() {
           )
         )}
 
+        {/* TODO: Admin-only — product catalog is managed via the e-commerce admin portal
+        {activeTab === 'admin' && (
+          authUser ? (
+            <ProductsAdmin onCatalogChanged={refreshCatalog} />
+          ) : (
+            <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
+              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white font-display">
+                Administrator Access Required
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Please sign in to manage the product catalog.
+              </p>
+              <button
+                type="button"
+                onClick={() => handleOpenAuth('login')}
+                className="bg-[#0E01B5] hover:bg-[#09007A] text-white px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
+          )
+        )}
+
         {activeTab === 'users' && (
           authUser ? (
             <UsersAdmin />
@@ -489,6 +562,7 @@ export default function App() {
             </div>
           )
         )}
+        */}
 
         {/* TODO: Admin-only pages
         {activeTab === 'matrix' && (
@@ -501,7 +575,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer onNavigateTab={setActiveTab} />
+      <Footer onNavigateTab={handleSetTab} />
 
       {/* Product Detail Modal — adds to cart for in-app checkout */}
       <ProductDetailModal
@@ -517,6 +591,7 @@ export default function App() {
         cartItems={cartItems}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
+        onUpdateOrderType={handleUpdateOrderType}
         onClearCart={handleClearCart}
         onProceedCheckout={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}
         poNumber={poNumber}

@@ -10,9 +10,122 @@ import {
   Check,
   Search,
   Calendar,
-  ChevronRight
+  ChevronRight,
+  Route,
+  Store,
+  Landmark,
+  Headphones
 } from 'lucide-react';
 import { Depot } from '../types';
+
+interface RouteScheduleRow {
+  day: string;
+  flax: string;
+  kapsabet: string;
+  kapsowar: string;
+}
+
+interface RouteLine {
+  name: string;
+  phone: string;
+  till: string;
+  sites: string[];
+}
+
+const ROUTE_SCHEDULE: RouteScheduleRow[] = [
+  { day: 'Monday', flax: 'Kapkoi / Iten', kapsabet: 'Sellia', kapsowar: 'Kapsowar Route' },
+  { day: 'Tuesday', flax: 'Flax Route', kapsabet: 'Kapsabet Route', kapsowar: 'Misembe' },
+  { day: 'Wednesday', flax: 'Burnt Forest Route', kapsabet: 'Lessos / Himaki / Kipsigak / Kaptumo', kapsowar: 'Matunda / Moisbridge' },
+  { day: 'Thursday', flax: 'Chemaluk / Koshin / Ilula / Kesses / Moi', kapsabet: 'Kapsabet / Nandi Hills', kapsowar: 'Kapcherop / Moiben' },
+  { day: 'Friday', flax: 'Burnt Route', kapsabet: 'Sellia', kapsowar: 'Kapsowar Route' },
+  { day: 'Saturday', flax: 'Flax Route', kapsabet: 'Kapsabet Route', kapsowar: 'Misembe' },
+  { day: 'Sunday', flax: 'Annex / Kesses / Moi', kapsabet: 'Lessos / Himaki / Kipsigak / Kaptumo', kapsowar: 'Matunda / Moisbridge' },
+];
+
+const ROUTE_LINES: RouteLine[] = [
+  { name: 'Eldoret CBD', phone: '0181674419', till: '3283447', sites: ['Eldoret CBD', 'Annex', 'Elgon View', 'Kapsoya', 'Ilula', 'Kipkorgot'] },
+  { name: 'Annex / Roady Route', phone: '0795426770', till: '9391895', sites: ['Eldoret Main Stage', 'Eastleigh', 'Kokwas', 'West Indies', 'West Market', 'Mwanzo', 'Hurum', 'Roady', 'Maili Nne', 'Baharini'] },
+  { name: 'Kimumu Route', phone: '0746560473', till: '5170669', sites: ['Eldoret Iten Stage', 'Wagon', 'Railway', 'Talex', 'Subaru', 'Jerusalem', 'Hawaii', 'Munyaka', 'Kimumu', 'Sogomo', 'Kuinet', 'Chepkanga'] },
+  { name: 'Langas Route', phone: '0795363253', till: '5600201', sites: ['Pioneer', 'Rivertex', 'Teleview', 'Kona / Kisumu Ndogo', 'Chinese', 'Kapseret'] },
+  { name: 'Flax Route', phone: '0702426770', till: '5170673', sites: ['Kapkoi', 'Iten', 'Flax', 'Burnt Forest', 'Chemaluk', 'Koshin', 'Ilula', 'Kesses', 'Moi'] },
+  { name: 'Kapsabet Route', phone: '0782302586', till: '5600195', sites: ['Selia', 'Kapsabet', 'Lessos', 'Himaki', 'Kipsigak', 'Kaptumo', 'Nandi Hills'] },
+  { name: 'Kapsowar Route', phone: '0746426770', till: '8469578', sites: ['Kapsowar', 'Misembe', 'Matunda', 'Moisbridge', 'Kapcherop', 'Moiben'] },
+  { name: 'Webuye Route', phone: '0118829893', till: '8469574', sites: ['Misikhu', 'Kamukuywa', 'Mukuiyoni', 'Nabingenge', 'Naitiri', 'Tongaren', 'Bregedia', 'Mayanja', 'Sikusi', 'Chwele', 'Kugwa', 'Kamiti', 'Maliki', 'Sikhindu', 'Lugulu', 'Webuye', 'Namwela', 'Sisrisia', 'Tulienge', 'Cheptais', 'Lwendanyi', 'Luakhakha', 'Changara', 'Malikisi'] },
+  { name: 'Bungoma Van', phone: '0118829889', till: '3299367', sites: ['Kanduyi', 'Kimaeti', 'Kocholia', 'Malaba', 'Machugusi', 'Bumula', 'Meteka', 'Bokoli', 'Bukembe', 'Harambee', 'Mayoni', 'Ogalo', 'Murumba', 'Siandu', 'Marachi', 'Bao-Bel', 'Bumala', 'Matuyo', 'CBD', 'Sikendu', 'Kuywa', 'Kimilili', 'Matili', 'Misikhu', 'Webuye'] },
+  { name: 'Bungoma Route', phone: '0118829880', till: '8718068', sites: ['Bukembe', 'Webuye', 'Chimoi', 'Lwandeti', 'Muturi', 'Matete', 'Malava', 'Butali', 'Kambiya Mwanza', 'West Kenya', 'Kanduyi', 'Mayanja', 'Kibuke', 'Kimwanga', 'Kimaeti', 'Myianga', 'Lunao', 'Mabusi', 'Munyore', 'Muyofu', 'Mungore', 'Kabula', 'Harambe', 'Mayoni', 'Mumias', 'Sienda', 'Ekero', 'Malaach', 'Musemba', 'Sangalo', 'Musigoma', 'Bogoli', 'Kuywa', 'Kimilili', 'Matili', 'Misikhu', 'Webuye'] },
+];
+
+const SHOP_LINES: RouteLine[] = [
+  { name: 'General Shop', phone: '0707333999', till: '5170671', sites: ['Eldoret Iten Stage'] },
+  { name: 'Main Shop', phone: '0790986580', till: '8469580', sites: ['Eldoret Trocadero / Opp Ola'] },
+  { name: 'Trocadero Shop', phone: '0737646305', till: '5600197', sites: ['Eldoret Next to Bata Trocadero'] },
+  { name: 'Highlands Shop', phone: '0753320000', till: '8748716', sites: ['Eldoret Highlands Mall'] },
+  { name: 'Iten Shop', phone: '0712326099', till: '5170667', sites: ['Iten Town'] },
+  { name: 'Bungoma Shop', phone: '0784147253', till: '8469576', sites: ['Bungoma Jogoo Round About'] },
+  { name: 'Online Shop', phone: '0754320000', till: '9393697', sites: ['Eldoret Iten Stage'] },
+];
+
+const CARE_LINES: RouteLine[] = [
+  { name: 'Customer Care', phone: '0118829894', till: '', sites: ['For delivery and customer care'] },
+];
+
+const MAX_SITES_PER_CARD = 15;
+
+const RouteCard: React.FC<{ line: RouteLine }> = ({ line }) => (
+  <div className="bg-gray-50 dark:bg-[#25253d] rounded-xl border border-gray-200 dark:border-white/10 p-4 flex flex-col gap-3 hover:border-[#0E01B5]/40 dark:hover:border-[#8c82ff]/40 hover:shadow-md transition-all">
+    <div>
+      <h3 className="font-extrabold text-[15px] text-gray-900 dark:text-white leading-tight tracking-tight">{line.name}</h3>
+    </div>
+    <div className="space-y-1.5">
+      <a
+        href={`tel:${line.phone}`}
+        className="inline-flex items-center gap-1.5 font-bold text-sm text-[#0E01B5] dark:text-[#8c82ff] hover:underline"
+      >
+        <Phone className="w-3.5 h-3.5" />
+        {line.phone}
+      </a>
+      {line.till && (
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 dark:text-gray-300">
+          <Landmark className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          Till No: {line.till}
+        </div>
+      )}
+    </div>
+    <div className="pt-2 mt-auto border-t border-gray-200 dark:border-white/10 flex flex-wrap gap-1">
+      {line.sites.map((site, idx) => (
+        <span
+          key={idx}
+          className="bg-gray-100 dark:bg-[#171728] text-gray-900 dark:text-white text-[10px] px-2 py-0.5 rounded-md font-bold"
+        >
+          {site}
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+const RouteCards: React.FC<{ line: RouteLine }> = ({ line }) => {
+  const parts = splitRouteLine(line);
+  if (parts.length === 1) {
+    return <RouteCard line={parts[0]} />;
+  }
+  return (
+    <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+      {parts.map((part, idx) => (
+        <RouteCard key={idx} line={part} />
+      ))}
+    </div>
+  );
+};
+
+const splitRouteLine = (line: RouteLine): RouteLine[] => {
+  if (line.sites.length <= MAX_SITES_PER_CARD) return [line];
+  const mid = Math.ceil(line.sites.length / 2);
+  return [
+    { ...line, sites: line.sites.slice(0, mid) },
+    { ...line, sites: line.sites.slice(mid) },
+  ];
+};
 
 interface DepotsSectionProps {
   depots: Depot[];
@@ -97,6 +210,7 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
       </div>
 
       {/* Depots Cards Grid */}
+      {/* Commented out for now
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {filteredDepots.map((depot) => {
           const isSelected = depot.id === activeDepot.id;
@@ -161,7 +275,6 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
                   </div>
                 </div>
 
-                {/* Coverage tags */}
                 <div className="pt-1">
                   <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 block mb-1">
                     Assigned Coverage Towns:
@@ -179,7 +292,6 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
                 </div>
               </div>
 
-              {/* Action Button */}
               <div className="pt-3 mt-3 border-t border-gray-100 dark:border-gray-800">
                 <button
                   type="button"
@@ -204,13 +316,71 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
           );
         })}
       </div>
+      */}
 
-      {/* Regional Delivery Schedule Table */}
+      {/* Retail Shops & Stores */}
       <div className="bg-white dark:bg-[#171728] rounded-xl sm:rounded-2xl p-5 sm:p-7 border border-gray-200 dark:border-white/10 shadow-xs space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
+          <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
           <h2 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white">
-            Weekly Wholesale Dispatch Schedule
+            Retail Shops & Stores
+          </h2>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Walk-in Bessich retail shops across Eldoret, Iten and Bungoma. Pay via the listed M-Pesa till number.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pt-2">
+          {SHOP_LINES.map((line) => (
+            <RouteCard key={line.name} line={line} />
+          ))}
+        </div>
+      </div>
+
+      {/* Delivery Routes & Coverage */}
+      <div className="bg-white dark:bg-[#171728] rounded-xl sm:rounded-2xl p-5 sm:p-7 border border-gray-200 dark:border-white/10 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2">
+          <Route className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
+          <h2 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white">
+            Delivery Routes & Coverage
+          </h2>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Scheduled delivery routes with dedicated phone lines and M-Pesa till numbers. Tap a number to call.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pt-2">
+          {ROUTE_LINES.map((line) => (
+            <RouteCards key={line.name} line={line} />
+          ))}
+        </div>
+      </div>
+
+      {/* Customer Care */}
+      <div className="bg-white dark:bg-[#171728] rounded-xl sm:rounded-2xl p-5 sm:p-7 border border-gray-200 dark:border-white/10 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2">
+          <Headphones className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
+          <h2 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white">
+            Customer Care
+          </h2>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          For delivery and customer care enquiries.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pt-2">
+          {CARE_LINES.map((line) => (
+            <RouteCard key={line.name} line={line} />
+          ))}
+        </div>
+      </div>
+
+      {/* Weekly Route Schedule Table */}
+      <div className="bg-white dark:bg-[#171728] rounded-xl sm:rounded-2xl p-5 sm:p-7 border border-gray-200 dark:border-white/10 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2">
+          <Route className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
+          <h2 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white">
+            Weekly Route Delivery Schedule
           </h2>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -218,52 +388,24 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
         </p>
 
         <div className="overflow-x-auto pt-2 -mx-5 px-5 sm:mx-0 sm:px-0">
-          <table className="w-full min-w-[620px] text-left text-xs border-collapse">
+          <table className="w-full min-w-[640px] text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 text-[11px] uppercase font-bold">
-                <th className="py-2.5 px-3">Route Zone</th>
-                <th className="py-2.5 px-3">Dispatched From</th>
-                <th className="py-2.5 px-3">Scheduled Days</th>
-                <th className="py-2.5 px-3">Standard Lead Time</th>
-                <th className="py-2.5 px-3">Emergency Support</th>
+                <th className="py-2.5 px-3">Day</th>
+                <th className="py-2.5 px-3">Flax Route</th>
+                <th className="py-2.5 px-3">Kapsabet Route</th>
+                <th className="py-2.5 px-3">Kapsowar Route</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5 text-gray-700 dark:text-gray-200">
-              <tr>
-                <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">Eldoret CBD, Pioneer & Rupa Mall</td>
-                <td className="py-3 px-3">Jumbo House HQ</td>
-                <td className="py-3 px-3 text-emerald-600 dark:text-emerald-400 font-semibold">Daily (Mon - Sat)</td>
-                <td className="py-3 px-3">&lt; 3 Hours (Same Day)</td>
-                <td className="py-3 px-3">Yes (Sunday included)</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">Kimumu, Chepkoilel & Iten Road</td>
-                <td className="py-3 px-3">Kimumu Depot</td>
-                <td className="py-3 px-3">Daily (Mon - Sat)</td>
-                <td className="py-3 px-3">&lt; 4 Hours</td>
-                <td className="py-3 px-3">Available</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">Kapsowar, Iten & Elgeyo Marakwet</td>
-                <td className="py-3 px-3">Kapsowar Depot</td>
-                <td className="py-3 px-3">Mon, Wed, Fri & Sat</td>
-                <td className="py-3 px-3">24 Hours</td>
-                <td className="py-3 px-3">On-call dispatch</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">Nandi Hills, Kapsabet & Lessos</td>
-                <td className="py-3 px-3">Nandi Hills Depot</td>
-                <td className="py-3 px-3">Tue, Thu & Sat</td>
-                <td className="py-3 px-3">24 Hours</td>
-                <td className="py-3 px-3">Available</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">Turbo, Lugari & Western Gateway</td>
-                <td className="py-3 px-3">Turbo Hub</td>
-                <td className="py-3 px-3">Mon, Wed & Fri</td>
-                <td className="py-3 px-3">24 Hours</td>
-                <td className="py-3 px-3">Available</td>
-              </tr>
+              {ROUTE_SCHEDULE.map((row) => (
+                <tr key={row.day}>
+                  <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">{row.day}</td>
+                  <td className="py-3 px-3">{row.flax}</td>
+                  <td className="py-3 px-3">{row.kapsabet}</td>
+                  <td className="py-3 px-3">{row.kapsowar}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

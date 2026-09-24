@@ -86,11 +86,39 @@ export async function findMpesaTransaction(
 export async function pollMpesaPayment(
   phoneNumber: string,
   amount: number,
-  options: { attempts?: number; intervalMs?: number; token?: string | null; onAttempt?: (attempt: number) => void } = {}
+  options: {
+    attempts?: number;
+    intervalMs?: number;
+    token?: string | null;
+    checkoutId?: string;
+    onAttempt?: (attempt: number) => void;
+  } = {}
 ): Promise<boolean> {
-  const { attempts = 20, intervalMs = 3000, token, onAttempt } = options;
+  const { attempts = 30, intervalMs = 2500, token, checkoutId, onAttempt } = options;
   for (let i = 0; i < attempts; i += 1) {
     if (onAttempt) onAttempt(i + 1);
+
+    // Primary: query the STK status directly via the checkout request id — this
+    // confirms the payment the moment it lands (no need to wait for the timeout).
+    if (checkoutId) {
+      try {
+        const check = await checkMpesaTransaction(checkoutId, token);
+        const code = String(check.ResponseCode ?? check.ResultCode ?? check.resultCode ?? '');
+        const desc = String(
+          check.ResponseDescription ?? check.ResultDesc ?? check.resultDesc ?? ''
+        );
+        if (code === '0' || code === '0000' || /success|completed/i.test(desc)) {
+          return true;
+        }
+        if (/cancel|fail|timeout|declined|reject/i.test(desc)) {
+          return false;
+        }
+      } catch {
+        // transient error — keep polling
+      }
+    }
+
+    // Backup: find by phone + amount.
     try {
       const result = await findMpesaTransaction(phoneNumber, amount, token);
       if (result.success && result.transaction) {
@@ -99,6 +127,7 @@ export async function pollMpesaPayment(
     } catch {
       // transient error — keep polling
     }
+
     if (i < attempts - 1) {
       await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }

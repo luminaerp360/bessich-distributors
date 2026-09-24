@@ -7,7 +7,6 @@ import {
   ShoppingCart, 
   ArrowRight, 
   ShieldCheck, 
-  Truck, 
   FileText,
   Percent,
   MapPin,
@@ -23,6 +22,7 @@ interface CartDrawerProps {
   cartItems: CartItem[];
   onUpdateQuantity: (index: number, quantity: number) => void;
   onRemoveItem: (index: number) => void;
+  onUpdateOrderType: (index: number, orderType: 'case' | 'bottle') => void;
   onClearCart: () => void;
   onProceedCheckout: () => void;
   poNumber: string;
@@ -41,6 +41,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   cartItems,
   onUpdateQuantity,
   onRemoveItem,
+  onUpdateOrderType,
   onClearCart,
   onProceedCheckout,
   poNumber,
@@ -56,9 +57,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   if (!isOpen) return null;
 
   const totals = calculateOrderTotals(cartItems);
-  const freeShippingThreshold = 30000;
-  const progressToFreeShipping = Math.min(100, (totals.netSubtotal / freeShippingThreshold) * 100);
-  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - totals.netSubtotal);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -94,29 +92,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             >
               <X className="w-5 h-5" />
             </button>
-          </div>
-
-          {/* Free delivery progress banner */}
-          <div className="bg-[#FAF9F6] dark:bg-[#12121e] px-4 py-2.5 border-b border-gray-200 dark:border-gray-800 text-xs">
-            <div className="flex items-center justify-between font-medium mb-1">
-              <span className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                <Truck className="w-3.5 h-3.5 text-[#F2693F]" />
-                {totals.netSubtotal >= freeShippingThreshold ? (
-                  <span className="text-emerald-700 dark:text-emerald-400 font-bold">Free Regional Fleet Transport Unlocked!</span>
-                ) : (
-                  <span>Add {formatKes(remainingForFreeShipping)} more for Free Pallet Transport</span>
-                )}
-              </span>
-              <span className="font-mono text-gray-500 dark:text-gray-400 font-bold">
-                {Math.round(progressToFreeShipping)}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
-              <div 
-                className="bg-emerald-600 h-full rounded-full transition-all duration-300"
-                style={{ width: `${progressToFreeShipping}%` }}
-              />
-            </div>
           </div>
 
           {/* Fulfillment Branch Selector */}
@@ -211,9 +186,30 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-100 dark:bg-[#25253d] text-gray-700 dark:text-gray-300">
-                            {item.orderType === 'case' ? `Case of ${item.product.casePack}` : 'Bottle'}
-                          </span>
+                          <div className="flex rounded-md border border-gray-300 dark:border-gray-700 overflow-hidden bg-white dark:bg-[#1b1b2d] text-[9px] font-bold">
+                            <button
+                              type="button"
+                              onClick={() => onUpdateOrderType(index, 'bottle')}
+                              className={`px-1.5 py-0.5 cursor-pointer transition-colors ${
+                                item.orderType === 'bottle'
+                                  ? 'bg-[#0E01B5] text-white'
+                                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#25253d]'
+                              }`}
+                            >
+                              Bottle
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onUpdateOrderType(index, 'case')}
+                              className={`px-1.5 py-0.5 cursor-pointer transition-colors ${
+                                item.orderType === 'case'
+                                  ? 'bg-[#0E01B5] text-white'
+                                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#25253d]'
+                              }`}
+                            >
+                              Case ({item.product.casePack})
+                            </button>
+                          </div>
 
                           <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-[#1b1b2d]">
                             <button
@@ -304,17 +300,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <div className="flex justify-between text-gray-500 dark:text-gray-400 text-[11px]">
                   <span>Inclusive 16% VAT Element (Kenya)</span>
                   <span className="font-mono">{formatKes(totals.vatAmount)}</span>
-                </div>
-
-                <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                  <span>Regional Logistics Transport</span>
-                  <span className="font-medium">
-                    {totals.deliveryFee === 0 ? (
-                      <span className="text-emerald-700 dark:text-emerald-400 font-bold">FREE</span>
-                    ) : (
-                      formatKes(totals.deliveryFee)
-                    )}
-                  </span>
                 </div>
 
                 <div className="flex justify-between text-sm sm:text-base font-extrabold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-gray-800">

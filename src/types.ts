@@ -122,7 +122,7 @@ export interface B2BOrder {
   deliveryFeeKes: number;
   totalKes: number;
   status: 'Pending Verification' | 'Order Confirmed' | 'Pallet Assembled' | 'Dispatched' | 'Delivered';
-  paymentMethod: 'mpesa' | 'credit' | 'bank_transfer' | 'cod';
+  paymentMethod: 'mpesa' | 'cash' | 'credit' | 'bank_transfer' | 'cod';
   paymentStatus: 'Paid' | 'Authorized on Credit' | 'Pending Payment';
   deliveryDate: string;
   deliverySlot: string;
