@@ -361,15 +361,14 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
                 */}
-                <a
-                  href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] py-2.5 px-4 rounded-xl font-bold text-xs transition-all shadow-md text-center flex items-center justify-center gap-2"
+                <button
+                  type="button"
+                  onClick={() => onNavigate('catalog')}
+                  className="w-full bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] py-2.5 px-4 rounded-xl font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer text-center flex items-center justify-center gap-2"
                 >
-                  Place Orders on The Bar Kenya
+                  Order from Our Catalog
                   <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -543,14 +542,13 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             </button>
             */}
 
-            <a
-              href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2"
+            <button
+              type="button"
+              onClick={() => onNavigate('catalog')}
+              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              Order on The Bar Kenya
-            </a>
+              Order Now
+            </button>
 
             <button
               type="button"

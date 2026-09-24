@@ -12,7 +12,7 @@ export type ProductCategory =
   | 'liqueur' 
   | 'mixers';
 
-export type ActivePage = 'home' | 'about' | 'catalog' | 'branches' | 'depots' | 'contact' | 'matrix' | 'portal' | 'pricelist';
+export type ActivePage = 'home' | 'about' | 'catalog' | 'branches' | 'depots' | 'contact' | 'matrix' | 'portal' | 'pricelist' | 'admin' | 'orders' | 'users';
 
 export interface VolumeTier {
   minCases: number;
@@ -58,6 +58,10 @@ export interface Product {
   featured?: boolean;
   outletId?: number;
   outletName?: string;
+  apiCategoryIds?: string[];
+  priceTier?: 'wholesale' | 'retail';
+  wholesaleBottlePriceKes?: number;
+  wholesaleCasePriceKes?: number;
 }
 
 export interface CartItem {

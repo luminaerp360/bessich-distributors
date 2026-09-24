@@ -323,14 +323,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               Apply for B2B Trade Credit
             </button>
             */}
-            <a
-              href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#F2C200] text-[#171728] px-5 py-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all shadow-md text-center"
+            <button
+              type="button"
+              onClick={() => onNavigate('catalog')}
+              className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#F2C200] text-[#171728] px-5 py-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all shadow-md active:scale-95 cursor-pointer text-center"
             >
-              Order on The Bar Kenya
-            </a>
+              Order from Our Catalog
+            </button>
             <button
               type="button"
               onClick={() => onNavigate('contact')}

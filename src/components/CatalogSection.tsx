@@ -21,6 +21,8 @@ interface CatalogSectionProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
+  isWholesale?: boolean;
+  onOpenAuth?: (mode?: 'login' | 'signup') => void;
 }
 
 export const CatalogSection: React.FC<CatalogSectionProps> = ({
@@ -29,6 +31,8 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   searchQuery,
   setSearchQuery,
   onAddToCart,
+  isWholesale = false,
+  onOpenAuth,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('all');
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
@@ -177,6 +181,28 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Pricing Tier Banner */}
+      {!isWholesale && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 rounded-xl bg-[#F5F5DC]/40 dark:bg-[#23233a] border border-[#F5F5DC] dark:border-gray-700 text-xs">
+          <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+            <Sparkles className="w-4 h-4 text-[#FFD700] shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              You are viewing <b>normal retail pricing</b>. Registered wholesale customers automatically receive{' '}
+              <b>lower wholesale trade prices</b> — create an account or sign in to unlock them.
+            </p>
+          </div>
+          {onOpenAuth && (
+            <button
+              type="button"
+              onClick={() => onOpenAuth('signup')}
+              className="shrink-0 bg-[#0E01B5] hover:bg-[#09007A] text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors"
+            >
+              Unlock Wholesale Prices
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Category Pills Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">

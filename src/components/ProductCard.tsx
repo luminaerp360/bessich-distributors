@@ -10,6 +10,7 @@ import {
 import { Product } from '../types';
 import { formatKes } from '../utils/formatters';
 import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
+import { wholesaleSavingPct } from '../utils/pricing';
 
 interface ProductCardProps {
   product: Product;
@@ -47,6 +48,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="absolute top-2 left-2 bg-emerald-600/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-2xs backdrop-blur-xs">
               <ShieldCheck className="w-3 h-3" />
               KRA Stamp
+            </div>
+          )}
+
+          {product.priceTier === 'wholesale' && (
+            <div className="absolute top-9 left-2 bg-[#0E01B5]/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-2xs backdrop-blur-xs">
+              <Sparkles className="w-3 h-3 text-[#FFD700]" />
+              Wholesale
             </div>
           )}
 
@@ -103,7 +111,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="flex items-baseline justify-between">
               <div>
                 <span className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase block">
-                  Wholesale Case Price
+                  {product.priceTier === 'wholesale' ? 'Wholesale Case Price' : 'Normal Case Price'}
                 </span>
                 <span className="text-sm sm:text-base font-bold text-[#171728] dark:text-white">
                   {formatKes(product.casePriceKes)}
@@ -119,7 +127,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             </div>
 
-            {product.tiers.length > 0 && (
+            {product.priceTier === 'retail' && (
+              <div className="mt-1 pt-1 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-[9px] sm:text-[10px]">
+                <span className="text-[#0E01B5] dark:text-[#8c82ff] font-semibold truncate">
+                  Save {wholesaleSavingPct(product)}% with a wholesale account
+                </span>
+              </div>
+            )}
+
+            {product.priceTier === 'wholesale' && product.tiers.length > 0 && (
               <div className="mt-1 pt-1 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-[9px] sm:text-[10px]">
                 <span className="text-emerald-700 dark:text-emerald-400 font-medium truncate">
                   Up to {product.tiers[product.tiers.length - 1].discountPercentage}% Bulk Discount

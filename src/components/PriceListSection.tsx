@@ -6,7 +6,7 @@ import {
   ShieldCheck, 
   FileSpreadsheet, 
   Layers,
-  ExternalLink,
+  ShoppingCart,
   Package
 } from 'lucide-react';
 import { Product } from '../types';
@@ -15,10 +15,12 @@ import { Pagination } from './Pagination';
 
 interface PriceListSectionProps {
   products: Product[];
+  onAddToCart?: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
 }
 
 export const PriceListSection: React.FC<PriceListSectionProps> = ({
   products,
+  onAddToCart,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -214,15 +216,16 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                   ) : (
                     <span className="text-gray-400 dark:text-gray-500 text-[10px]">Flat rate pricing</span>
                   )}
-                  <a
-                    href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center gap-1"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    Order
-                  </a>
+                  {onAddToCart ? (
+                    <button
+                      type="button"
+                      onClick={() => onAddToCart(product, 'case', 1)}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <ShoppingCart className="w-3 h-3" />
+                      Order
+                    </button>
+                  ) : null}
                 </div>
               </div>
             );
@@ -292,14 +295,16 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                         )}
                       </td>
                       <td className="py-2.5 px-3 sm:px-4 text-right">
-                        <a
-                          href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold transition-colors inline-block"
-                        >
-                          Order
-                        </a>
+                        {onAddToCart ? (
+                          <button
+                            type="button"
+                            onClick={() => onAddToCart(product, 'case', 1)}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold transition-colors inline-flex items-center gap-1 cursor-pointer"
+                          >
+                            <ShoppingCart className="w-3 h-3" />
+                            Order
+                          </button>
+                        ) : null}
                       </td>
                     </tr>
                   );

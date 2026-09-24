@@ -408,3 +408,20 @@ vercel
 | `preview` | `vite preview` | Preview the production build via Vite |
 | `lint` | `tsc --noEmit` | Type-check the project without emitting files |
 | `clean` | `rm -rf dist server.js` | Remove build artifacts |
+| `cache:refresh` | `tsx scripts/refresh-cache.ts` | Re-fetch the outlet-44 catalog into `data/catalog-cache.json` |
+| `seed:bessich` | `tsx scripts/seed-bessich.ts` | Register users, categories and the 228-product catalog into the Lumina e-commerce API under the `bessich-dist` tenant |
+
+### E-Commerce Tenant (`bessich-dist`)
+
+The site integrates with the Lumina e-commerce API (`https://ecommerse.lumina360.tech`) under the **`bessich-dist`** tenant:
+
+- **Tenant header:** all API calls send `x-tenant-id: bessich-dist` (see `src/config.ts`).
+- **Accounts:** `admin@bessichdistributors.co.ke` (admin, wholesale) and `walkin@bessichdistributors.co.ke` (customer) — passwords are in `scripts/seed-bessich.ts`.
+- **Catalog:** 228 products seeded from The Bar Kenya outlet-44 cache (`data/catalog-cache.json`) with authentic bottle imagery, category mapping, variants/SKUs and full specifications.
+- **Categories:** Whiskey, Gin, Vodka, Rum, Brandy & Cognac, Liqueur, Spirits, Beer & Cider, Wine, Champagne.
+
+Re-run the seed anytime (idempotent — skips products that already exist):
+
+```bash
+npm run seed:bessich
+```

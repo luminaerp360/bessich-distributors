@@ -21,9 +21,10 @@ import { BusinessType } from '../types';
 interface ContactSectionProps {
   // TODO: Admin-only — onOpenCreditModal
   // onOpenCreditModal: () => void;
+  onNavigate?: (page: import('../types').ActivePage) => void;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = () => {
+export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigate }) => {
   // Form state
   const [formData, setFormData] = useState({
     contactPerson: '',
@@ -434,14 +435,15 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
                 Launch Credit Application
               </button>
               */}
-              <a
-                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 rounded-xl bg-[#FFD700] hover:bg-[#F2C200] text-[#171728] font-bold text-xs transition-all shadow-sm text-center block"
-              >
-                Order on The Bar Kenya
-              </a>
+              {onNavigate && (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('catalog')}
+                  className="w-full py-2.5 rounded-xl bg-[#FFD700] hover:bg-[#F2C200] text-[#171728] font-bold text-xs transition-all shadow-sm text-center block cursor-pointer active:scale-95"
+                >
+                  Order from Our Catalog
+                </button>
+              )}
             </div>
           </div>
 

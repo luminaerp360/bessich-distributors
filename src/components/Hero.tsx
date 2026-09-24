@@ -76,15 +76,14 @@ export const Hero: React.FC<HeroProps> = ({
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <a
-                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md text-center"
+              <button
+                type="button"
+                onClick={onExploreCatalog}
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
               >
-                Place Orders on The Bar Kenya
+                Start Your Order
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </button>
 
               {/* TODO: Admin-only - Matrix Order Pad & Credit Application
               <button
@@ -114,25 +113,18 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="bg-[#1f1f35]/90 border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl relative backdrop-blur-xs">
               <div className="border-b border-white/10 pb-3 mb-3">
                 <span className="text-[10px] font-bold tracking-wider uppercase text-[#D4AF37]">
-                  Official Distribution Partner
+                  Bessich Wholesale Supply
                 </span>
                 <h3 className="font-bold text-base sm:text-lg text-white mt-1">
-                  Cyden General Enterprises
+                  Direct from Bessich Distributors
                 </h3>
-                <p className="text-[11px] text-gray-400 mt-0.5">Rupa Mall, Eldoret — Outlet #44</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">Eldoret, Rift Valley &amp; Nationwide</p>
               </div>
 
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between py-0.5 border-b border-white/5">
                   <span className="text-gray-400">Catalog Source:</span>
-                  <a 
-                    href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="font-semibold text-[#FFD700] hover:underline"
-                  >
-                    thebar.com
-                  </a>
+                  <span className="font-semibold text-[#FFD700]">Live E-Commerce Inventory</span>
                 </div>
                 <div className="flex justify-between py-0.5 border-b border-white/5">
                   <span className="text-gray-400">Product Range:</span>

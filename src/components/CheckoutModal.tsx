@@ -14,10 +14,17 @@ import {
   Clock, 
   ArrowRight,
   Smartphone,
-  MapPin
+  MapPin,
+  AlertTriangle,
+  UserCircle2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CartItem, B2BProfile, Depot, B2BOrder } from '../types';
+import { AuthUser } from '../services/authService';
+import { createOrder, CreateOrderPayload } from '../services/ordersService';
+import { initiateStkPush, pollMpesaPayment } from '../services/mpesaService';
+import { saveOrder } from '../services/orderStore';
+import { useAuth } from '../context/AuthContext';
 import { formatKes, calculateOrderTotals } from '../utils/formatters';
 
 interface CheckoutModalProps {
@@ -28,6 +35,8 @@ interface CheckoutModalProps {
   activeDepot: Depot;
   poNumber: string;
   orderNotes: string;
+  authUser?: AuthUser | null;
+  onOpenAuth?: (mode?: 'login' | 'signup') => void;
   onOrderSuccess: (order: B2BOrder) => void;
 }
 
@@ -39,9 +48,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   activeDepot,
   poNumber,
   orderNotes,
+  authUser,
+  onOpenAuth,
   onOrderSuccess,
 }) => {
-  if (!isOpen) return null;
+  const { getToken, user: sessionUser } = useAuth();
 
   const totals = calculateOrderTotals(cartItems);
 
@@ -56,28 +67,86 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'credit' | 'bank_transfer' | 'cod'>(
     b2bProfile.isVerified && b2bProfile.paymentTermsDays > 0 ? 'credit' : 'mpesa'
   );
-  const [mpesaPhone, setMpesaPhone] = useState(b2bProfile.phoneNumber || '0754320000');
+  const [mpesaPhone, setMpesaPhone] = useState(
+    authUser?.phoneNumber || b2bProfile.phoneNumber || '0754320000'
+  );
   const [deliveryLocation, setDeliveryLocation] = useState(b2bProfile.deliveryAddress || '');
-  const [deliveryContact, setDeliveryContact] = useState(b2bProfile.phoneNumber || '');
+  const [deliveryContact, setDeliveryContact] = useState(
+    authUser?.phoneNumber || b2bProfile.phoneNumber || ''
+  );
   const [mpesaSimulating, setMpesaSimulating] = useState(false);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [orderError, setOrderError] = useState('');
+  const [serverOrderId, setServerOrderId] = useState<string | null>(null);
+  const [mpesaCheckoutId, setMpesaCheckoutId] = useState<string | null>(null);
+  const [mpesaConfirmed, setMpesaConfirmed] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<B2BOrder | null>(null);
 
-  const handlePlaceOrder = () => {
-    if (paymentMethod === 'mpesa') {
-      setMpesaSimulating(true);
-      setTimeout(() => {
+  if (!isOpen) return null;
+
+  const buildOrderPayload = (): CreateOrderPayload => ({
+    items: cartItems.map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+      price: item.orderType === 'case' ? item.product.casePriceKes : item.product.bottlePriceKes,
+      notes: orderNotes || 'Bessich B2B wholesale order',
+    })),
+    shippingAddress: deliveryLocation || b2bProfile.deliveryAddress || undefined,
+    paymentMethod: paymentMethod === 'bank_transfer' ? 'card' : paymentMethod === 'credit' ? 'cash' : paymentMethod === 'cod' ? 'cash' : 'mpesa',
+  });
+
+  const handlePlaceOrder = async () => {
+    setOrderError('');
+    setIsPlacingOrder(true);
+
+    try {
+      // 1. Create the order on the e-commerce API (records the commercial consignment).
+      const token = getToken();
+      const serverOrder = await createOrder(buildOrderPayload(), token);
+      setServerOrderId(serverOrder.id);
+
+      // 2. For M-PESA, send a real STK push prompt and wait for confirmation.
+      if (paymentMethod === 'mpesa') {
+        setMpesaSimulating(true);
+        const stk = await initiateStkPush(
+          {
+            phoneNumber: mpesaPhone,
+            amount: Math.round(totals.grandTotal),
+            accountReference: serverOrder.trackingNumber || serverOrder.id,
+            transactionDesc: `Payment for order ${serverOrder.trackingNumber || serverOrder.id}`,
+          },
+          token
+        );
+        setMpesaCheckoutId(stk.CheckoutRequestID || null);
+
+        const paid = await pollMpesaPayment(mpesaPhone, Math.round(totals.grandTotal), {
+          attempts: 15,
+          intervalMs: 3000,
+          token,
+        });
         setMpesaSimulating(false);
-        finalizeOrder('Paid');
-      }, 2000);
-    } else if (paymentMethod === 'credit') {
-      finalizeOrder('Authorized on Credit');
-    } else {
-      finalizeOrder('Pending Payment');
+        setMpesaConfirmed(paid);
+
+        if (paid) {
+          finalizeOrder('Paid');
+        } else {
+          finalizeOrder('Pending Payment');
+        }
+      } else if (paymentMethod === 'credit') {
+        finalizeOrder('Authorized on Credit');
+      } else {
+        finalizeOrder('Pending Payment');
+      }
+    } catch (err) {
+      setMpesaSimulating(false);
+      setOrderError(err instanceof Error ? err.message : 'Failed to place order. Please try again.');
+    } finally {
+      setIsPlacingOrder(false);
     }
   };
 
   const finalizeOrder = (paymentStatus: 'Paid' | 'Authorized on Credit' | 'Pending Payment') => {
-    const orderId = `BD-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const orderId = serverOrderId || `BD-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
     const newOrder: B2BOrder = {
       id: orderId,
       orderDate: new Date().toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -99,6 +168,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
     setConfirmedOrder(newOrder);
     onOrderSuccess(newOrder);
+
+    // Persist the order to this customer's history (account holders get tracked history).
+    const userId = sessionUser?._id || sessionUser?.id || null;
+    saveOrder(userId, newOrder);
 
     // Trigger celebratory confetti
     confetti({
@@ -167,8 +240,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="text-[11px] text-gray-500 dark:text-gray-400">Jumbo House, Iten Rd, Eldoret • KRA PIN: P051992014B</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono font-bold text-sm text-gray-900 dark:text-white">{confirmedOrder.id}</div>
-                  <div className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold">{confirmedOrder.paymentStatus}</div>
+<div className="font-mono font-bold text-sm text-gray-900 dark:text-white">{confirmedOrder.id}</div>
+              <div className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold">{confirmedOrder.paymentStatus}</div>
+              {mpesaCheckoutId && (
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-mono mt-1">M-Pesa Checkout: {mpesaCheckoutId}</div>
+              )}
                 </div>
               </div>
 
@@ -224,15 +300,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <Printer className="w-4 h-4" />
                 Print Official Tax Invoice
               </button>
-              <a
-                href="https://ke.thebar.com/outlets/Cyden-General-Enterprises-Rupa-Mall/44"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md text-center"
+              {!authUser && onOpenAuth && (
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth('signup')}
+                  className="flex-1 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                >
+                  <UserCircle2 className="w-4 h-4" />
+                  Create Account to Track This Order
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 <Truck className="w-4 h-4" />
-                View on The Bar Kenya
-              </a>
+                Continue Shopping
+              </button>
               <button
                 type="button"
                 onClick={onClose}
@@ -245,6 +330,64 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         ) : (
           /* Checkout Inputs Form */
           <div className="p-6 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+            {/* Account / Guest flow banner */}
+            {authUser ? (
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <div>
+                  <span className="font-bold text-emerald-900 dark:text-emerald-200">
+                    Signed in as {[authUser.firstName, authUser.lastName].filter(Boolean).join(' ') || authUser.email}
+                  </span>
+                  <span className="text-emerald-800 dark:text-emerald-300 block text-[10px]">
+                    {authUser.email} — this order is added to your order history for tracking.
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-xl bg-[#F5F5DC]/40 dark:bg-[#23233a] border border-[#F5F5DC] dark:border-gray-700 text-xs space-y-2.5">
+                <div className="font-bold text-gray-800 dark:text-gray-100 flex items-center gap-1.5">
+                  <UserCircle2 className="w-4 h-4 text-[#0E01B5] dark:text-[#8c82ff]" />
+                  Checkout Options
+                </div>
+                <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <b className="text-gray-800 dark:text-gray-200">One-time buyer?</b> Continue as a guest — no
+                  account needed. <b className="text-gray-800 dark:text-gray-200">Buying for resale?</b> Create an
+                  account or sign in to track your orders and history.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  {onOpenAuth && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => onOpenAuth('login')}
+                        className="flex-1 py-2 px-3 rounded-lg bg-[#0E01B5] hover:bg-[#09007A] text-white text-[11px] font-bold cursor-pointer transition-colors"
+                      >
+                        Sign In to Track Orders
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onOpenAuth('signup')}
+                        className="flex-1 py-2 px-3 rounded-lg border border-[#0E01B5] dark:border-[#8c82ff] text-[#0E01B5] dark:text-[#8c82ff] text-[11px] font-bold cursor-pointer transition-colors hover:bg-[#0E01B5]/5"
+                      >
+                        Create Account
+                      </button>
+                    </>
+                  )}
+                  <span className="flex-1 py-2 px-3 rounded-lg bg-[#171728] text-[#FFD700] text-[11px] font-bold text-center">
+                    Continue as Guest
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Order error banner */}
+            {orderError && (
+              <div className="p-3 rounded-xl bg-red-950/60 border border-red-500/30 text-red-300 text-xs flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{orderError}</span>
+              </div>
+            )}
+
             {/* Step 1: Receiving Venue & Address */}
             <div className="space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
@@ -528,13 +671,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <button
                 type="button"
                 onClick={handlePlaceOrder}
-                disabled={mpesaSimulating}
+                disabled={mpesaSimulating || isPlacingOrder}
                 className="w-full py-3.5 px-6 rounded-xl bg-[#0E01B5] hover:bg-[#09007A] text-white font-extrabold text-sm transition-all flex items-center justify-center gap-2 shadow-lg active:scale-98 cursor-pointer disabled:opacity-75"
               >
-                {mpesaSimulating ? (
+                {mpesaSimulating || isPlacingOrder ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Sending M-PESA STK Push Prompt...
+                    {mpesaSimulating ? 'M-PESA STK Push Sent — Awaiting Payment Confirmation...' : 'Placing Order...'}
                   </>
                 ) : (
                   <>
@@ -543,6 +686,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </>
                 )}
               </button>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 text-center mt-2">
+                Orders are recorded in real time and M-PESA payments are verified via STK push confirmation.
+              </p>
             </div>
           </div>
         )}

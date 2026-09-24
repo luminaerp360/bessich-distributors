@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { CatalogSection } from './components/CatalogSection';
 // import { MatrixOrderPad } from './components/MatrixOrderPad';          // TODO: Admin-only
@@ -8,19 +8,24 @@ import { PriceListSection } from './components/PriceListSection';
 import { HomeSection } from './components/HomeSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
+import { ProductsAdmin } from './components/ProductsAdmin';
+import { MyOrdersSection } from './components/MyOrdersSection';
+import { UsersAdmin } from './components/UsersAdmin';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 // import { CreditApplicationModal } from './components/CreditApplicationModal'; // TODO: Admin-only
 // import { InvoiceViewerModal } from './components/InvoiceViewerModal';   // TODO: Admin-only
 import { AgeGateModal } from './components/AgeGateModal';
+import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
+import { useAuth } from './context/AuthContext';
 
-import { PRODUCTS } from './data/products';
 import { DEPOTS } from './data/depots';
 import { Product, Depot, ActivePage, ProductCategory } from './types';
 import { fetchLiveCatalog, getStoredCatalog } from './services/catalogSync';
+import { applyPricingTierToProducts, PricingTier } from './utils/pricing';
 
 import { CartItem, B2BProfile, B2BOrder } from './types';
 
@@ -78,61 +83,96 @@ const INITIAL_PROFILES: B2BProfile[] = [
   },
 ];
 
-const INITIAL_ORDERS: B2BOrder[] = [
-  {
-    id: 'BD-2026-98124',
-    orderDate: '14 Sep 2026',
-    poNumber: 'PO-LOFT-2026-081',
-    items: [
-      { product: PRODUCTS[0], orderType: 'case', quantity: 5 },
-      { product: PRODUCTS[2], orderType: 'case', quantity: 3 },
-      { product: PRODUCTS[8], orderType: 'case', quantity: 4 },
-    ],
-    subtotalKes: 242000,
-    bulkDiscountKes: 12100,
-    vatKes: 33400,
-    deliveryFeeKes: 0,
-    totalKes: 229900,
-    status: 'Delivered',
-    paymentMethod: 'credit',
-    paymentStatus: 'Authorized on Credit',
-    deliveryDate: '15 Sep 2026',
-    deliverySlot: 'Morning (08:00 - 12:00)',
-    depotName: 'Eldoret Central Jumbo House (HQ)',
-    businessName: 'The Loft Lounge & Grill',
-  },
-  {
-    id: 'BD-2026-97410',
-    orderDate: '02 Sep 2026',
-    poNumber: 'PO-LOFT-2026-077',
-    items: [
-      { product: PRODUCTS[1], orderType: 'case', quantity: 4 },
-      { product: PRODUCTS[5], orderType: 'case', quantity: 2 },
-    ],
-    subtotalKes: 147000,
-    bulkDiscountKes: 7350,
-    vatKes: 20400,
-    deliveryFeeKes: 0,
-    totalKes: 139650,
-    status: 'Delivered',
-    paymentMethod: 'mpesa',
-    paymentStatus: 'Paid',
-    deliveryDate: '03 Sep 2026',
-    deliverySlot: 'Afternoon (13:00 - 17:00)',
-    depotName: 'Eldoret Central Jumbo House (HQ)',
-    businessName: 'The Loft Lounge & Grill',
-  },
-];
+const EMPTY_INITIAL_ORDERS: B2BOrder[] = [];
+
+// Builds illustrative sample orders from the live backend catalog (used only
+// when the account has no real orders yet, for demo continuity).
+function buildSampleOrders(products: Product[]): B2BOrder[] {
+  if (products.length < 6) return [];
+  const [p0, p1, p2, p3, p4, p5] = products;
+  return [
+    {
+      id: 'BD-2026-98124',
+      orderDate: '14 Sep 2026',
+      poNumber: 'PO-LOFT-2026-081',
+      items: [
+        { product: p0, orderType: 'case', quantity: 5 },
+        { product: p2, orderType: 'case', quantity: 3 },
+        { product: p4, orderType: 'case', quantity: 4 },
+      ],
+      subtotalKes: 242000,
+      bulkDiscountKes: 12100,
+      vatKes: 33400,
+      deliveryFeeKes: 0,
+      totalKes: 229900,
+      status: 'Delivered',
+      paymentMethod: 'credit',
+      paymentStatus: 'Authorized on Credit',
+      deliveryDate: '15 Sep 2026',
+      deliverySlot: 'Morning (08:00 - 12:00)',
+      depotName: 'Eldoret Central Jumbo House (HQ)',
+      businessName: 'The Loft Lounge & Grill',
+    },
+    {
+      id: 'BD-2026-97410',
+      orderDate: '02 Sep 2026',
+      poNumber: 'PO-LOFT-2026-077',
+      items: [
+        { product: p1, orderType: 'case', quantity: 4 },
+        { product: p3, orderType: 'case', quantity: 2 },
+      ],
+      subtotalKes: 147000,
+      bulkDiscountKes: 7350,
+      vatKes: 20400,
+      deliveryFeeKes: 0,
+      totalKes: 139650,
+      status: 'Delivered',
+      paymentMethod: 'mpesa',
+      paymentStatus: 'Paid',
+      deliveryDate: '03 Sep 2026',
+      deliverySlot: 'Afternoon (13:00 - 17:00)',
+      depotName: 'Eldoret Central Jumbo House (HQ)',
+      businessName: 'The Loft Lounge & Grill',
+    },
+  ];
+}
 
 export default function App() {
+  const { user: authUser, logout: handleLogout } = useAuth();
+
+  // Pricing tier: registered customers get wholesale pricing by default;
+  // guests (one-time buyers) see normal retail pricing.
+  const pricingTier: PricingTier = authUser ? 'wholesale' : 'retail';
+  const isWholesale = pricingTier === 'wholesale';
+
+  // Auth modal state
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'signup'>('login');
+
+  const handleOpenAuth = (mode: 'login' | 'signup' = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
   // Navigation & View state
   const [activeTab, setActiveTab] = useState<ActivePage>('home');
   
   // Real-time catalog sync state — auto-synced silently in background
   const [products, setProducts] = useState<Product[]>(() => {
+    // Source of truth: the Lumina e-commerce API catalog (managed in the admin portal).
     const cached = getStoredCatalog();
-    return cached.products.length > 0 ? cached.products : PRODUCTS;
+    return cached.products;
   });
+
+  // Products displayed to the customer, priced for their tier.
+  const displayProducts = React.useMemo(
+    () => applyPricingTierToProducts(products, pricingTier),
+    [products, pricingTier]
+  );
+
+  // Re-price cart items when the customer signs in/out or the catalog refreshes.
+  const pricedProductsRef = React.useRef<Product[]>(displayProducts);
+  pricedProductsRef.current = displayProducts;
 
   // Background live catalog sync on mount and auto-refresh every 3 minutes
   useEffect(() => {
@@ -145,9 +185,12 @@ export default function App() {
 
         if (result.products.length > 0) {
           setProducts(result.products);
+          // Seed illustrative sample orders from the live catalog once, only if
+          // the account has no real orders yet.
+          setOrders((prev) => (prev.length === 0 ? buildSampleOrders(result.products) : prev));
         }
       } catch {
-        // Silent — fallback to baseline products
+        // Silent — catalog is backend-managed; empty state is handled by sections
       }
     };
 
@@ -158,6 +201,18 @@ export default function App() {
       isMounted = false;
       clearInterval(interval);
     };
+  }, []);
+
+  // Manual refresh triggered after admin catalog edits
+  const refreshCatalog = useCallback(async () => {
+    try {
+      const result = await fetchLiveCatalog(true);
+      if (result.products.length > 0) {
+        setProducts(result.products);
+      }
+    } catch {
+      // Silent
+    }
   }, []);
   
   // Catalog search state
@@ -204,8 +259,20 @@ export default function App() {
 
   const [availableProfiles, setAvailableProfiles] = useState<B2BProfile[]>(INITIAL_PROFILES);
   const [activeProfile, setActiveProfile] = useState<B2BProfile>(INITIAL_PROFILES[0]);
-  const [orders, setOrders] = useState<B2BOrder[]>(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<B2BOrder[]>(EMPTY_INITIAL_ORDERS);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // Re-price cart items when the customer signs in/out or the catalog refreshes.
+  useEffect(() => {
+    setCartItems((prev) =>
+      prev.map((item) => {
+        const base = pricedProductsRef.current.find((p) => p.id === item.product.id);
+        return base ? { ...item, product: base } : item;
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pricingTier, products]);
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartDepot, setCartDepot] = useState<Depot>(DEPOTS[0]);
   const [poNumber, setPoNumber] = useState('');
@@ -284,6 +351,13 @@ export default function App() {
       {/* Kenyan Legal Drinking Age Verification Modal */}
       <AgeGateModal />
 
+      {/* B2B Account Login / Registration Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authModalMode}
+      />
+
       {/* Header */}
       <Header
         activeTab={activeTab}
@@ -297,13 +371,16 @@ export default function App() {
         onToggleTheme={handleToggleTheme}
         cartItems={cartItems}
         onOpenCart={() => setIsCartOpen(true)}
+        authUser={authUser}
+        onOpenAuth={handleOpenAuth}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
       <main className="flex-1">
         {activeTab === 'home' && (
           <HomeSection
-            products={products}
+            products={displayProducts}
             onOpenDetails={setSelectedProductDetail}
             onNavigate={handleNavigate}
             onAddToCart={handleAddToCart}
@@ -316,11 +393,13 @@ export default function App() {
 
         {activeTab === 'catalog' && (
           <CatalogSection
-            products={products}
+            products={displayProducts}
             onOpenDetails={setSelectedProductDetail}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             onAddToCart={handleAddToCart}
+            isWholesale={isWholesale}
+            onOpenAuth={handleOpenAuth}
           />
         )}
 
@@ -333,11 +412,82 @@ export default function App() {
         )}
 
         {activeTab === 'contact' && (
-          <ContactSection />
+          <ContactSection onNavigate={handleNavigate} />
         )}
 
         {activeTab === 'pricelist' && (
-          <PriceListSection products={products} />
+          <PriceListSection products={displayProducts} onAddToCart={handleAddToCart} />
+        )}
+
+        {activeTab === 'admin' && (
+          authUser ? (
+            <ProductsAdmin onCatalogChanged={refreshCatalog} />
+          ) : (
+            <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
+              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white font-display">
+                Administrator Access Required
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Please sign in to manage the product catalog.
+              </p>
+              <button
+                type="button"
+                onClick={() => handleOpenAuth('login')}
+                className="bg-[#0E01B5] hover:bg-[#09007A] text-white px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
+          )
+        )}
+
+        {activeTab === 'orders' && (
+          authUser ? (
+            <MyOrdersSection
+              userId={String(authUser._id ?? authUser.id ?? '')}
+              userName={[authUser.firstName, authUser.lastName].filter(Boolean).join(' ') || authUser.email}
+              onReorder={handleReorder}
+              onNavigateCatalog={() => handleNavigate('catalog')}
+            />
+          ) : (
+            <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
+              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white font-display">
+                Sign In to View Your Orders
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Account holders can track their resale orders, history, and purchasing statistics.
+              </p>
+              <button
+                type="button"
+                onClick={() => handleOpenAuth('login')}
+                className="bg-[#0E01B5] hover:bg-[#09007A] text-white px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+              >
+                Sign In / Create Account
+              </button>
+            </div>
+          )
+        )}
+
+        {activeTab === 'users' && (
+          authUser ? (
+            <UsersAdmin />
+          ) : (
+            <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
+              <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white font-display">
+                Sign In to Track Users
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Only signed-in administrators can view registered users and their purchasing activity.
+              </p>
+              <button
+                type="button"
+                onClick={() => handleOpenAuth('login')}
+                className="bg-[#0E01B5] hover:bg-[#09007A] text-white px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
+          )
         )}
 
         {/* TODO: Admin-only pages
@@ -353,7 +503,7 @@ export default function App() {
       {/* Footer */}
       <Footer onNavigateTab={setActiveTab} />
 
-      {/* Product Detail Modal — redirects to The Bar Kenya for orders */}
+      {/* Product Detail Modal — adds to cart for in-app checkout */}
       <ProductDetailModal
         product={selectedProductDetail}
         onClose={() => setSelectedProductDetail(null)}
@@ -388,6 +538,8 @@ export default function App() {
         activeDepot={cartDepot}
         poNumber={poNumber}
         orderNotes={orderNotes}
+        authUser={authUser}
+        onOpenAuth={handleOpenAuth}
         onOrderSuccess={handleOrderSuccess}
       />
 
