@@ -16,7 +16,6 @@ import {
   MapPin,
   ChevronRight,
   PhoneCall,
-  Award,
   BarChart3,
   Layers,
   FileText,
@@ -97,12 +96,14 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   ];
 
   const brandPartners = [
-    { name: 'Diageo / EABL', role: 'Official Distribution Partner', region: 'East Africa' },
-    { name: 'Pernod Ricard', role: 'Authorized Prestige Importer', region: 'Global Imports' },
-    { name: 'KWAL', role: 'Wines & Spirits Partner', region: 'National' },
-    { name: 'Moët Hennessy', role: 'Luxury Champagne Allocation', region: 'France / Global' },
-    { name: 'Distell Group', role: 'South African Cellars', region: 'Cape Town' },
-    { name: 'Heineken International', role: 'Premium Lager Network', region: 'Amsterdam / Kenya' },
+    { name: 'Heineken Beverages', role: 'Beer & Cider Network', region: 'Kenya' },
+    { name: 'Pernod Ricard Kenya', role: 'Authorized Prestige Importer', region: 'Kenya' },
+    { name: 'EABL', role: 'Official Distribution Partner', region: 'East Africa' },
+    { name: 'London Distillers', role: 'Spirits & Liqueurs Partner', region: 'Kenya' },
+    { name: 'Delmonte Kenya', role: 'Juices & Beverages', region: 'Kenya' },
+    { name: 'Redbull Kenya', role: 'Energy Drinks Partner', region: 'Kenya' },
+    { name: 'BAT Kenya', role: 'Tobacco Products Partner', region: 'Kenya' },
+    { name: 'Other', role: 'Additional Suppliers', region: 'Various' },
   ];
 
   const operationalStats = [
@@ -236,16 +237,6 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Transparent Wholesale Margins</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 Published tiered pricing with built-in volume incentives that safeguard profitability for bar owners and retail merchants.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-[#F2693F]/10 text-[#F2693F] flex items-center justify-center font-bold">
-                <Award className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Sommelier & Staff Training</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                Free wine list curation, glassware pairing guidance, and banquet service workshops for hospitality client partners.
               </p>
             </div>
           </div>
@@ -425,7 +416,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             </h3>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {brandPartners.map((bp, idx) => (
               <div 
                 key={idx}

@@ -160,7 +160,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateTab }) => {
               </div>
               <div className="flex items-center gap-2 text-emerald-400">
                 <Clock className="w-3.5 h-3.5 shrink-0" />
-                <span className="text-[11px]">Mon-Sat: 7:30 AM - 6:30 PM</span>
+                <span className="text-[11px]">Mon-Sat: 10:00 AM - 8:30 PM | Online: 10:00 AM - 12:00 AM</span>
               </div>
             </div>
           </div>

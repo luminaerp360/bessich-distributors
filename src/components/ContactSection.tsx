@@ -154,8 +154,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigate }) =>
               <p className="text-[11px] text-gray-500 dark:text-gray-400">Order cutoff: 16:30 Daily</p>
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-300 space-y-0.5">
-              <p>Mon - Sat: 07:30 - 18:30</p>
-              <p className="text-emerald-600 dark:text-emerald-400 font-semibold">Sun: 09:00 - 15:00 (Emergency)</p>
+              <p>Mon - Sat: 10:00 - 20:30</p>
+              <p className="text-emerald-600 dark:text-emerald-400 font-semibold">Online Shop: 10:00 - 00:00</p>
             </div>
           </div>
         </div>
@@ -324,7 +324,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigate }) =>
                     <option value="Trade Credit Application">Net-14 / Net-30 Trade Credit Application</option>
                     <option value="Product Availability & Quotation">Specific Vintage or Spirit Quotation</option>
                     <option value="Logistics & Route Inquiry">Delivery Schedule & Vehicle Dispatch Inquiry</option>
-                    <option value="Sommelier & Staff Training">Beverage Program & Sommelier Training</option>
                   </select>
                 </div>
 

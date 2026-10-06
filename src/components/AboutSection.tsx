@@ -7,7 +7,6 @@ import {
   Users, 
   CheckCircle2, 
   Clock, 
-  Wine, 
   TrendingUp, 
   FileCheck, 
   MapPin, 
@@ -200,7 +199,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
             <div className="bg-[#23233a] p-4 sm:p-5 rounded-xl border border-white/10 space-y-2">
               <div className="w-9 h-9 rounded-lg bg-[#0E01B5] text-white flex items-center justify-center">
                 <Truck className="w-4 h-4" />
@@ -212,91 +211,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             </div>
 
             <div className="bg-[#23233a] p-4 sm:p-5 rounded-xl border border-white/10 space-y-2">
-              <div className="w-9 h-9 rounded-lg bg-[#D4AF37] text-white flex items-center justify-center">
-                <Wine className="w-4 h-4" />
-              </div>
-              <h4 className="font-bold text-sm sm:text-base text-white">Sommelier & Staff Training</h4>
-              <p className="text-[11px] sm:text-xs text-gray-300 leading-relaxed">
-                We don't just ship boxes; our in-house beverage specialists provide tasting notes, food pairing consultation, cocktail menu engineering, and waitstaff training.
-              </p>
-            </div>
-
-            <div className="bg-[#23233a] p-4 sm:p-5 rounded-xl border border-white/10 space-y-2">
               <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
                 <FileCheck className="w-4 h-4" />
               </div>
               <h4 className="font-bold text-sm sm:text-base text-white">Automated B2B Portals</h4>
               <p className="text-[11px] sm:text-xs text-gray-300 leading-relaxed">
                 Our digital ordering platform enables real-time pallet assembly, live pro-forma invoicing, official KRA tax invoices, and instant M-PESA Till / B2B Paybill reconciliation.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Executive Leadership & Operational Commitment */}
-        <div className="space-y-4 sm:space-y-5">
-          <div>
-            <span className="text-[11px] sm:text-xs uppercase font-bold tracking-widest text-[#0E01B5] dark:text-[#8c82ff] block mb-0.5">
-              Leadership & Governance
-            </span>
-            <h3 className="text-xl sm:text-2xl font-bold font-display text-gray-900 dark:text-white">
-              Guided by Beverage Industry Veterans
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Our executive and warehousing teams combine over 40 years of combined supply chain, hospitality management, and regulatory compliance experience.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-            <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center space-y-2.5">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[#0E01B5]/10 dark:bg-[#0E01B5]/30 flex items-center justify-center text-[#0E01B5] dark:text-[#8c82ff] font-bold text-lg font-display">
-                KK
-              </div>
-              <div>
-                <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Kennedy Kiprono</h4>
-                <span className="text-xs text-[#0E01B5] dark:text-[#8c82ff] font-semibold">Managing Director</span>
-              </div>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                Oversees strategic supply partnerships with global brand houses and regional expansion.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center space-y-2.5">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[#FFD700]/15 flex items-center justify-center text-[#D4AF37] dark:text-[#FFD700] font-bold text-lg font-display">
-                MC
-              </div>
-              <div>
-                <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Mercy Cherono</h4>
-                <span className="text-xs text-[#D4AF37] dark:text-[#FFD700] font-semibold">Head of Supply Chain</span>
-              </div>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                Directs cold-chain transit, fleet maintenance, and inventory flow across all 10 branches.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center space-y-2.5">
-              <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg font-display">
-                SK
-              </div>
-              <div>
-                <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Silas Korir</h4>
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Chief Sommelier & Training</span>
-              </div>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                Curates our fine wine portfolio, oversees vintage storage, and conducts sommelier masterclasses.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center space-y-2.5">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[#F2693F]/10 flex items-center justify-center text-[#F2693F] font-bold text-lg font-display">
-                BR
-              </div>
-              <div>
-                <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Beatrice Rotich</h4>
-                <span className="text-xs text-[#F2693F] font-semibold">Credit & Compliance Desk</span>
-              </div>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                Manages KRA excise stamping compliance, commercial vetting, and Net-30 credit lines.
               </p>
             </div>
           </div>

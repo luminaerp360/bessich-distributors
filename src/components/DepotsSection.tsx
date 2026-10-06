@@ -69,6 +69,26 @@ const CARE_LINES: RouteLine[] = [
   { name: 'Customer Care', phone: '0118829894', till: '', sites: ['For delivery and customer care'] },
 ];
 
+interface RegionalDepot {
+  name: string;
+  routes: RouteLine[];
+}
+
+const REGIONAL_DEPOTS: RegionalDepot[] = [
+  {
+    name: 'ELDORET',
+    routes: [ROUTE_LINES[0]],
+  },
+  {
+    name: 'ITEN',
+    routes: [],
+  },
+  {
+    name: 'BUNGOMA',
+    routes: [],
+  },
+];
+
 const MAX_SITES_PER_CARD = 15;
 
 const RouteCard: React.FC<{ line: RouteLine }> = ({ line }) => (
@@ -177,8 +197,8 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
           </div>
         </div>
 
-        {/* Search & Region Filter Bar */}
-        <div className="pt-3 border-t border-white/10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        {/* Search Bar */}
+        <div className="pt-3 border-t border-white/10">
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -188,23 +208,6 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
               placeholder="Search branch, town or area..."
               className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/10 border border-white/15 text-xs text-white placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-[#FFD700]"
             />
-          </div>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto text-xs pb-1 md:pb-0 scrollbar-none">
-            {['all', 'Eldoret', 'Uasin Gishu', 'Elgeyo Marakwet', 'Nandi', 'Western'].map((reg) => (
-              <button
-                key={reg}
-                type="button"
-                onClick={() => setSelectedRegion(reg)}
-                className={`px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition-colors cursor-pointer text-xs ${
-                  selectedRegion === reg
-                    ? 'bg-[#0E01B5] text-white shadow-xs'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                }`}
-              >
-                {reg === 'all' ? 'All 10 Branches' : reg}
-              </button>
-            ))}
           </div>
         </div>
       </div>
@@ -337,12 +340,73 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
         </div>
       </div>
 
+      {/* Regional Depots */}
+      <div className="bg-white dark:bg-[#171728] rounded-xl sm:rounded-2xl p-5 sm:p-7 border border-gray-200 dark:border-white/10 shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2">
+          <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
+          <h2 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white">
+            Regional Depots
+          </h2>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Regional distribution depots serving Eldoret, Iten and Bungoma.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pt-2">
+          {REGIONAL_DEPOTS.map((depot) => (
+            <div
+              key={depot.name}
+              className="bg-gray-50 dark:bg-[#25253d] rounded-xl border border-gray-200 dark:border-white/10 p-4 flex flex-col gap-3 hover:border-[#0E01B5]/40 dark:hover:border-[#8c82ff]/40 hover:shadow-md transition-all"
+            >
+              <h3 className="font-extrabold text-[15px] text-gray-900 dark:text-white leading-tight tracking-tight">
+                {depot.name}
+              </h3>
+              <div className="space-y-3">
+                {depot.routes.length === 0 ? (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-sm font-bold text-gray-500 dark:text-gray-400">
+                      <Phone className="w-3.5 h-3.5" />
+                      To be provided
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                      <Landmark className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      Till No: To be provided
+                    </div>
+                  </div>
+                ) : (
+                  depot.routes.map((route) => (
+                  <div key={route.name} className="space-y-1.5">
+                    <span className="block text-xs font-bold text-gray-800 dark:text-gray-200">
+                      {route.name}
+                    </span>
+                    <a
+                      href={`tel:${route.phone}`}
+                      className="inline-flex items-center gap-1.5 font-bold text-sm text-[#0E01B5] dark:text-[#8c82ff] hover:underline"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      {route.phone}
+                    </a>
+                    {route.till && (
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        <Landmark className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        Till No: {route.till}
+                      </div>
+                    )}
+                  </div>
+                  ))
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Delivery Routes & Coverage */}
       <div className="bg-white dark:bg-[#171728] rounded-xl sm:rounded-2xl p-5 sm:p-7 border border-gray-200 dark:border-white/10 shadow-xs space-y-3 sm:space-y-4">
         <div className="flex items-center gap-2">
           <Route className="w-4 h-4 sm:w-5 sm:h-5 text-[#0E01B5] dark:text-[#8c82ff]" />
           <h2 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white">
-            Delivery Routes & Coverage
+            Delivery Routes and Shops
           </h2>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">

@@ -10,7 +10,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 708 727 848',
     manager: 'Kennedy Kiprono (Operations Director)',
     coverageAreas: ['Eldoret CBD', 'Pioneer', 'Elgon View', 'Maili Nne', 'Racecourse'],
-    hours: 'Mon - Sat: 07:30 - 18:30 | Sun: 09:00 - 15:00',
+    hours: 'Mon - Sat: 10:00 - 20:30',
     isCentralHub: true,
   },
   {
@@ -22,7 +22,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 101',
     manager: 'Mercy Cherono',
     coverageAreas: ['Langas', 'Kipkaren', 'Kapseret', 'Pioneer Industrial'],
-    hours: 'Mon - Sat: 08:00 - 18:00',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'kimumu',
@@ -33,7 +33,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 102',
     manager: 'Silas Korir',
     coverageAreas: ['Kimumu', 'University of Eldoret Area', 'Hawai', 'Muniyaka'],
-    hours: 'Mon - Sat: 08:00 - 18:00',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'kapsowar',
@@ -44,7 +44,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 103',
     manager: 'Geoffrey Kimutai',
     coverageAreas: ['Kapsowar', 'Iten', 'Chebiemit', 'Tot', 'Tambach'],
-    hours: 'Mon - Sat: 08:00 - 17:30',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'nandi-hills',
@@ -55,7 +55,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 104',
     manager: 'Beatrice Rotich',
     coverageAreas: ['Nandi Hills', 'Kapsabet', 'Lessos', 'Chemase', 'Cheptarit'],
-    hours: 'Mon - Sat: 08:00 - 18:00',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'burnt-forest',
@@ -66,7 +66,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 105',
     manager: 'David Kemboi',
     coverageAreas: ['Burnt Forest', 'Ainabkoi', 'Timboroa', 'Chagaiya'],
-    hours: 'Mon - Sat: 08:00 - 17:30',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'kesses-lessos',
@@ -77,7 +77,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 106',
     manager: 'Victor Koech',
     coverageAreas: ['Kesses', 'Cheptiret', 'Moi University Hostels & Lounges', 'Chagaiya'],
-    hours: 'Mon - Sat: 08:00 - 18:30',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'moiben',
@@ -88,7 +88,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 107',
     manager: 'Gladys Chebet',
     coverageAreas: ['Moiben', 'Ziwa', 'Chebororwa', 'Karuna'],
-    hours: 'Mon - Sat: 08:00 - 17:30',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'sergoit-kaiboi',
@@ -99,7 +99,7 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 108',
     manager: 'Evans Kiprop',
     coverageAreas: ['Sergoit', 'Kaiboi', 'Kabenes', 'Moiben South'],
-    hours: 'Mon - Sat: 08:00 - 17:30',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
   {
     id: 'turbo-western',
@@ -110,6 +110,6 @@ export const DEPOTS: Depot[] = [
     phone: '+254 754 320 109',
     manager: 'Philemon Barasa',
     coverageAreas: ['Turbo', 'Lugari', 'Kipkarren River', 'Matunda', 'Webuye Border'],
-    hours: 'Mon - Sat: 08:00 - 18:30',
+    hours: 'Mon - Sat: 10:00 - 20:30',
   },
 ];
