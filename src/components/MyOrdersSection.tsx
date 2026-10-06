@@ -89,33 +89,33 @@ export const MyOrdersSection: React.FC<MyOrdersSectionProps> = ({
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-            <Package className="w-3.5 h-3.5 text-[#0E01B5] dark:text-[#8c82ff]" />
+        <div className="rounded-xl p-4 text-white shadow-md bg-linear-to-br from-[#0E01B5] to-[#4f46e5]">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/80 mb-2">
+            <Package className="w-3.5 h-3.5" />
             Total Orders
           </div>
-          <div className="text-2xl font-extrabold text-gray-900 dark:text-white">{stats.totalOrders}</div>
+          <div className="text-2xl font-extrabold">{stats.totalOrders}</div>
         </div>
-        <div className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-            <Wallet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+        <div className="rounded-xl p-4 text-white shadow-md bg-linear-to-br from-emerald-500 to-teal-400">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/80 mb-2">
+            <Wallet className="w-3.5 h-3.5" />
             Total Spent
           </div>
-          <div className="text-2xl font-extrabold text-gray-900 dark:text-white">{formatKes(stats.totalSpentKes)}</div>
+          <div className="text-2xl font-extrabold">{formatKes(stats.totalSpentKes)}</div>
         </div>
-        <div className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-            <Boxes className="w-3.5 h-3.5 text-[#F2693F]" />
+        <div className="rounded-xl p-4 text-white shadow-md bg-linear-to-br from-[#F2693F] to-amber-400">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/80 mb-2">
+            <Boxes className="w-3.5 h-3.5" />
             Cases Ordered
           </div>
-          <div className="text-2xl font-extrabold text-gray-900 dark:text-white">{stats.totalCases}</div>
+          <div className="text-2xl font-extrabold">{stats.totalCases}</div>
         </div>
-        <div className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#0E01B5] dark:text-[#8c82ff]" />
+        <div className="rounded-xl p-4 text-white shadow-md bg-linear-to-br from-fuchsia-500 to-pink-500">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white/80 mb-2">
+            <CheckCircle2 className="w-3.5 h-3.5" />
             Delivered
           </div>
-          <div className="text-2xl font-extrabold text-gray-900 dark:text-white">{stats.deliveredCount}</div>
+          <div className="text-2xl font-extrabold">{stats.deliveredCount}</div>
         </div>
       </div>
 

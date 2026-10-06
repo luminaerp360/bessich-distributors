@@ -111,6 +111,19 @@ export interface Depot {
   isCentralHub?: boolean;
 }
 
+export type PromotionKind = 'innovation' | 'promotion' | 'discount';
+
+export interface Promotion {
+  id: string;
+  kind: PromotionKind;
+  title: string;
+  description: string;
+  badge?: string;
+  code?: string;
+  value?: string;
+  validUntil?: string;
+}
+
 export interface B2BOrder {
   id: string;
   orderDate: string;

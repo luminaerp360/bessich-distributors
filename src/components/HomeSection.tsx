@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Wine, 
   Beer, 
@@ -24,10 +24,23 @@ import {
   ArrowUpRight,
   Boxes,
   Compass,
-  Warehouse
+  Warehouse,
+  Rocket,
+  Gift,
+  BadgePercent
 } from 'lucide-react';
 import { Hero } from './Hero';
-import { Product, ProductCategory, ActivePage } from '../types';
+import { Product, ProductCategory, ActivePage, Promotion } from '../types';
+import { fetchPromotions, getMockPromotions } from '../services/promotionsService';
+import { PromotionsPopout } from './PromotionsPopout';
+
+const PROMO_POPOUT_SEEN_KEY = 'bessich_promo_popout_seen';
+
+const PROMO_KIND_ICON: Record<Promotion['kind'], React.ElementType> = {
+  innovation: Rocket,
+  promotion: Gift,
+  discount: BadgePercent,
+};
 
 interface HomeSectionProps {
   products: Product[];
@@ -42,6 +55,46 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   onOpenDetails,
   onAddToCart,
 }) => {
+  const [promotions, setPromotions] = useState<Promotion[]>(() => getMockPromotions());
+  const [isPromoOpen, setIsPromoOpen] = useState(false);
+
+  // Load promotions from the e-commerce service (falls back to mock data).
+  useEffect(() => {
+    let mounted = true;
+    fetchPromotions()
+      .then((items) => {
+        if (mounted) setPromotions(items);
+      })
+      .catch(() => undefined);
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Auto pop-out promotions on first landing-page visit.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      if (!localStorage.getItem(PROMO_POPOUT_SEEN_KEY)) {
+        timer = setTimeout(() => setIsPromoOpen(true), 900);
+      }
+    } catch {
+      // Storage unavailable — skip auto pop-out.
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
+
+  const closePromo = () => {
+    setIsPromoOpen(false);
+    try {
+      localStorage.setItem(PROMO_POPOUT_SEEN_KEY, 'true');
+    } catch {
+      // ignore
+    }
+  };
+
   const categoryHighlights = [
     {
       id: 'wine' as ProductCategory,
@@ -143,6 +196,69 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
       <Hero
         onExploreCatalog={() => onNavigate('catalog')}
       />
+
+      {/* 1b. Promotions & Innovation Highlights */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-linear-to-r from-[#0E01B5] via-[#7c3aed] to-[#F2693F] text-white p-5 sm:p-7 shadow-xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-2 max-w-xl">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 bg-white/20 border border-white/30 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider">
+                  <Sparkles className="w-3 h-3 text-[#FFD700]" />
+                  Innovation · Promotions · Discounts
+                </span>
+                <span className="bg-[#FFD700] text-[#171728] text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wide animate-pulse">
+                  Live
+                </span>
+              </div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold font-display">
+                Offers &amp; Updates from Our Online Store
+              </h2>
+              <p className="text-xs sm:text-sm text-white/85">
+                Seasonal case bonuses, volume discounts and new e-commerce features — synced live from the Bessich platform.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsPromoOpen(true)}
+              className="self-start md:self-auto inline-flex items-center gap-1.5 bg-white text-[#0E01B5] hover:bg-[#F5F5DC] px-4 py-2.5 rounded-xl text-xs font-extrabold transition-colors cursor-pointer active:scale-95 shrink-0"
+            >
+              View All Offers
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            {promotions.slice(0, 3).map((promo) => {
+              const Icon = PROMO_KIND_ICON[promo.kind];
+              return (
+                <button
+                  key={promo.id}
+                  type="button"
+                  onClick={() => setIsPromoOpen(true)}
+                  className="text-left bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl p-3.5 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-[#FFD700]" />
+                    </span>
+                    <span className="font-bold text-xs leading-tight">{promo.title}</span>
+                  </div>
+                  <p className="text-[11px] text-white/80 leading-relaxed mt-2 line-clamp-2">
+                    {promo.description}
+                  </p>
+                  {promo.value && (
+                    <span className="inline-block mt-2 text-[11px] font-extrabold text-[#FFD700]">
+                      {promo.value}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       {/* 2. Operational Metrics Ribbon */}
       <section className="border-y border-gray-200 dark:border-white/10 bg-white dark:bg-[#151524]">
@@ -553,6 +669,8 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         </div>
       </section>
 
+      {/* Innovation, Promotions & Discounts pop-out */}
+      <PromotionsPopout isOpen={isPromoOpen} onClose={closePromo} promotions={promotions} />
     </div>
   );
 };
