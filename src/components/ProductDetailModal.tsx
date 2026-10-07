@@ -208,10 +208,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   {product.isPromoActive ? 'Special Offer Price:' : 'Unit Price:'}
                 </span>
                 <div className="flex items-baseline gap-2">
-                  {product.isPromoActive && product.compareAtPriceKes && (
-                    <span className="text-xs text-gray-400 line-through font-semibold">
-                      {formatKes(orderType === 'case' ? product.compareAtPriceKes : Math.round(product.compareAtPriceKes / product.casePack))}
-                    </span>
+                  {product.isPromoActive && (
+                    (() => {
+                      const compareVal = orderType === 'case'
+                        ? (product.compareAtPriceKes || Math.round(unitPrice / (1 - (product.savingsPercentage || 15) / 100)))
+                        : (product.compareAtBottlePriceKes || Math.round((product.compareAtPriceKes || 0) / product.casePack) || Math.round(unitPrice / (1 - (product.savingsPercentage || 15) / 100)));
+                      return compareVal > unitPrice ? (
+                        <span className="text-xs text-gray-400 line-through font-semibold">
+                          {formatKes(compareVal)}
+                        </span>
+                      ) : null;
+                    })()
                   )}
                   <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400 text-sm' : 'text-gray-900 dark:text-white'}`}>
                     {formatKes(unitPrice)}
@@ -234,7 +241,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <span>Full Case</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.casePack} bottles</span>
                   <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
-                    {product.isPromoActive && product.compareAtPriceKes && (
+                    {product.isPromoActive && product.compareAtPriceKes && product.compareAtPriceKes > product.casePriceKes && (
                       <span className="text-[10px] text-gray-400 line-through font-semibold">
                         {formatKes(product.compareAtPriceKes)}
                       </span>
@@ -258,10 +265,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <span>Single Bottle</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.volumeMl}ml</span>
                   <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
-                    {product.isPromoActive && (product.compareAtBottlePriceKes || product.compareAtPriceKes) && (
-                      <span className="text-[10px] text-gray-400 line-through font-semibold">
-                        {formatKes(product.compareAtBottlePriceKes || Math.round((product.compareAtPriceKes || 0) / product.casePack))}
-                      </span>
+                    {product.isPromoActive && (
+                      (() => {
+                        const cmp = product.compareAtBottlePriceKes || (product.compareAtPriceKes ? Math.round(product.compareAtPriceKes / product.casePack) : 0);
+                        return cmp > product.bottlePriceKes ? (
+                          <span className="text-[10px] text-gray-400 line-through font-semibold">
+                            {formatKes(cmp)}
+                          </span>
+                        ) : null;
+                      })()
                     )}
                     <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-white'}`}>
                       {formatKes(product.bottlePriceKes)}

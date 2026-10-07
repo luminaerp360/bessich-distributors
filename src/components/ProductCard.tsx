@@ -47,16 +47,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   // Single bottle price calculations
   const bottlePrice = product.bottlePriceKes;
-  const compareAtBottle =
+  const rawCompareAtBottle =
     product.compareAtBottlePriceKes ||
     (product.compareAtPriceKes ? Math.round(product.compareAtPriceKes / product.casePack) : undefined);
+
+  // Strikethrough compare-at price must always be strictly greater than the promotional price
+  const compareAtBottle =
+    rawCompareAtBottle && rawCompareAtBottle > bottlePrice
+      ? rawCompareAtBottle
+      : product.isPromoActive
+      ? Math.round(bottlePrice / (1 - (product.savingsPercentage || 15) / 100))
+      : undefined;
+
   const bottleSavings =
-    product.savingsAmountBottleKes ||
-    (compareAtBottle && compareAtBottle > bottlePrice
+    product.savingsAmountBottleKes && product.savingsAmountBottleKes > 0
+      ? product.savingsAmountBottleKes
+      : compareAtBottle && compareAtBottle > bottlePrice
       ? compareAtBottle - bottlePrice
-      : product.savingsAmountKes
-      ? Math.round(product.savingsAmountKes / product.casePack)
-      : 0);
+      : 0;
+
+  const hasValidCompareAt = Boolean(compareAtBottle && compareAtBottle > bottlePrice);
 
   return (
     <motion.div
@@ -219,23 +229,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   <span className="text-base sm:text-lg font-black text-rose-600 dark:text-rose-400 tracking-tight whitespace-nowrap">
                     {formatKes(bottlePrice)}
                   </span>
-                  {(compareAtBottle || bottleSavings > 0) && (
+                  {hasValidCompareAt && (
                     <span className="text-xs sm:text-sm text-neutral-400 line-through font-semibold whitespace-nowrap">
-                      {formatKes(compareAtBottle || bottlePrice + bottleSavings)}
+                      {formatKes(compareAtBottle!)}
                     </span>
                   )}
                 </div>
                 {/* Savings Pill */}
-                <div className="flex items-center gap-1">
-                  <span className="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-[10px] font-extrabold px-1.5 py-0.5 rounded border border-rose-200/80 dark:border-rose-900/60 inline-flex items-center gap-1">
-                    <span>
-                      Save {formatKes(bottleSavings)}
+                {bottleSavings > 0 && (
+                  <div className="flex items-center gap-1">
+                    <span className="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-[10px] font-extrabold px-1.5 py-0.5 rounded border border-rose-200/80 dark:border-rose-900/60 inline-flex items-center gap-1">
+                      <span>
+                        Save {formatKes(bottleSavings)}
+                      </span>
+                      {product.savingsPercentage && (
+                        <span>({product.savingsPercentage}% OFF)</span>
+                      )}
                     </span>
-                    {product.savingsPercentage && (
-                      <span>({product.savingsPercentage}% OFF)</span>
-                    )}
-                  </span>
-                </div>
+                  </div>
+                )}
                 <span className="text-[10px] text-neutral-400 block -mt-0.5">
                   {formatKes(product.casePriceKes)}/case ({product.casePack} btls)
                 </span>

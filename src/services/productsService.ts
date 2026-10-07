@@ -295,6 +295,8 @@ export function normalizeApiProduct(
     casePack,
     bottlePriceKes: finalBottlePrice,
     casePriceKes: finalCasePrice,
+    wholesaleBottlePriceKes: finalBottlePrice,
+    wholesaleCasePriceKes: finalCasePrice,
     compareAtPriceKes: finalCompareAtCasePrice,
     compareAtBottlePriceKes: finalCompareAtBottlePrice,
     isPromoActive,
