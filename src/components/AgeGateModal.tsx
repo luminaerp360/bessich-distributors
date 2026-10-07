@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, AlertTriangle } from 'lucide-react';
 
-export const AgeGateModal: React.FC = () => {
+interface AgeGateModalProps {
+  onVerified?: () => void;
+}
+
+export const AgeGateModal: React.FC<AgeGateModalProps> = ({ onVerified }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [yearOfBirth, setYearOfBirth] = useState('');
   const [error, setError] = useState('');
@@ -34,7 +38,13 @@ export const AgeGateModal: React.FC = () => {
       return;
     }
 
-    localStorage.setItem('bessich_age_verified', 'true');
+    try {
+      localStorage.setItem('bessich_age_verified', 'true');
+    } catch {
+      // storage unavailable
+    }
+    window.dispatchEvent(new CustomEvent('bessich_age_verified'));
+    if (onVerified) onVerified();
     setIsOpen(false);
   };
 
@@ -51,7 +61,7 @@ export const AgeGateModal: React.FC = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
       <div 
         id="age-gate-modal"
         className="bg-[#171728] text-white rounded-2xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 border border-white/15 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
