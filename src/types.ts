@@ -62,6 +62,14 @@ export interface Product {
   priceTier?: 'wholesale' | 'retail';
   wholesaleBottlePriceKes?: number;
   wholesaleCasePriceKes?: number;
+  compareAtPriceKes?: number;
+  isPromoActive?: boolean;
+  promoPriceKes?: number;
+  promoStartDate?: string;
+  promoEndDate?: string;
+  promoBadgeText?: string;
+  savingsAmountKes?: number;
+  savingsPercentage?: number;
 }
 
 export interface CartItem {

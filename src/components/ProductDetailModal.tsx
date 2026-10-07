@@ -86,6 +86,35 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </p>
             </div>
 
+            {/* Active Promotional Offer Banner */}
+            {product.isPromoActive && (
+              <div className="bg-gradient-to-r from-rose-500/15 via-amber-500/15 to-orange-500/15 border border-rose-300 dark:border-rose-800/70 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 to-amber-500 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+                    🔥
+                  </span>
+                  <div>
+                    <span className="text-xs font-extrabold text-rose-700 dark:text-rose-400 uppercase tracking-wide flex items-center gap-1.5">
+                      {product.promoBadgeText || 'SPECIAL OFFER'}
+                      {product.savingsPercentage && (
+                        <span className="bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                          {product.savingsPercentage}% OFF
+                        </span>
+                      )}
+                    </span>
+                    <p className="text-[11px] text-gray-700 dark:text-gray-200 font-semibold">
+                      {product.savingsAmountKes ? `Save KES ${formatKes(product.savingsAmountKes)} per case` : 'Promotional price active'}
+                    </p>
+                  </div>
+                </div>
+                {product.promoEndDate && (
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-[#1f1f33] px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700">
+                    Offer ends: {new Date(product.promoEndDate).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Quick Specs */}
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
               <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg border border-gray-100 dark:border-gray-800">
@@ -179,8 +208,19 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             <div className="pt-3 border-t border-gray-200 dark:border-gray-800 space-y-3">
               {/* Price Display */}
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500 dark:text-gray-400">Unit Price:</span>
-                <span className="font-bold text-gray-900 dark:text-white">{formatKes(unitPrice)}</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  {product.isPromoActive ? 'Special Offer Price:' : 'Unit Price:'}
+                </span>
+                <div className="flex items-baseline gap-2">
+                  {product.isPromoActive && product.compareAtPriceKes && (
+                    <span className="text-xs text-gray-400 line-through font-semibold">
+                      {formatKes(orderType === 'case' ? product.compareAtPriceKes : Math.round(product.compareAtPriceKes / product.casePack))}
+                    </span>
+                  )}
+                  <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400 text-sm' : 'text-gray-900 dark:text-white'}`}>
+                    {formatKes(unitPrice)}
+                  </span>
+                </div>
               </div>
 
               {/* Case / Bottle Toggle */}
@@ -197,7 +237,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <Package className="w-4 h-4" />
                   <span>Full Case</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.casePack} bottles</span>
-                  <span className="font-bold text-gray-900 dark:text-white">{formatKes(product.casePriceKes)}</span>
+                  <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
+                    {product.isPromoActive && product.compareAtPriceKes && (
+                      <span className="text-[10px] text-gray-400 line-through font-semibold">
+                        {formatKes(product.compareAtPriceKes)}
+                      </span>
+                    )}
+                    <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-white'}`}>
+                      {formatKes(product.casePriceKes)}
+                    </span>
+                  </div>
                 </button>
 
                 <button
@@ -212,7 +261,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <Wine className="w-4 h-4" />
                   <span>Single Bottle</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.volumeMl}ml</span>
-                  <span className="font-bold text-gray-900 dark:text-white">{formatKes(Math.round(product.casePriceKes / product.casePack))}</span>
+                  <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
+                    {product.isPromoActive && product.compareAtPriceKes && (
+                      <span className="text-[10px] text-gray-400 line-through font-semibold">
+                        {formatKes(Math.round(product.compareAtPriceKes / product.casePack))}
+                      </span>
+                    )}
+                    <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-white'}`}>
+                      {formatKes(Math.round(product.casePriceKes / product.casePack))}
+                    </span>
+                  </div>
                 </button>
               </div>
 

@@ -241,6 +241,43 @@ export function normalizeApiProduct(
     primaryVariant?.sku ||
     `ECO-${String(id).replace(/\s+/g, '-').slice(0, 12).toUpperCase()}`;
 
+  // Promotional & Special Offers logic
+  const rawData = raw as Record<string, any>;
+  const rawCompareAt = typeof rawData.compareAtPrice === 'number' && rawData.compareAtPrice > 0 ? rawData.compareAtPrice : undefined;
+  const rawPromoPrice = typeof rawData.promoPrice === 'number' && rawData.promoPrice > 0 ? rawData.promoPrice : undefined;
+  const rawStartDate = rawData.promoStartDate ? String(rawData.promoStartDate) : undefined;
+  const rawEndDate = rawData.promoEndDate ? String(rawData.promoEndDate) : undefined;
+  const rawBadge = rawData.promoBadgeText ? String(rawData.promoBadgeText) : undefined;
+
+  const now = new Date();
+  const isWithinSchedule =
+    (!rawStartDate || new Date(rawStartDate) <= now) &&
+    (!rawEndDate || new Date(rawEndDate) >= now);
+
+  const isPromoActive = Boolean(rawData.isPromoActive && isWithinSchedule && (rawPromoPrice || rawCompareAt));
+
+  let finalBottlePrice = bottlePrice;
+  let finalCompareAtBottlePrice = rawCompareAt;
+
+  if (isPromoActive) {
+    if (rawPromoPrice && rawPromoPrice < bottlePrice) {
+      finalBottlePrice = rawPromoPrice;
+      finalCompareAtBottlePrice = bottlePrice;
+    } else if (rawCompareAt && rawCompareAt > bottlePrice) {
+      finalBottlePrice = bottlePrice;
+      finalCompareAtBottlePrice = rawCompareAt;
+    }
+  }
+
+  const finalCasePrice = finalBottlePrice * casePack;
+  const finalCompareAtCasePrice = finalCompareAtBottlePrice ? finalCompareAtBottlePrice * casePack : undefined;
+  const savingsAmountKes = finalCompareAtCasePrice && finalCompareAtCasePrice > finalCasePrice
+    ? finalCompareAtCasePrice - finalCasePrice
+    : undefined;
+  const savingsPercentage = finalCompareAtCasePrice && finalCompareAtCasePrice > finalCasePrice
+    ? Math.round(((finalCompareAtCasePrice - finalCasePrice) / finalCompareAtCasePrice) * 100)
+    : undefined;
+
   return {
     id: String(id),
     sku,
@@ -253,8 +290,16 @@ export function normalizeApiProduct(
     abv,
     volumeMl,
     casePack,
-    bottlePriceKes: bottlePrice,
-    casePriceKes: bottlePrice * casePack,
+    bottlePriceKes: finalBottlePrice,
+    casePriceKes: finalCasePrice,
+    compareAtPriceKes: finalCompareAtCasePrice,
+    isPromoActive,
+    promoPriceKes: isPromoActive ? finalCasePrice : undefined,
+    promoStartDate: rawStartDate,
+    promoEndDate: rawEndDate,
+    promoBadgeText: rawBadge || (savingsPercentage ? `-${savingsPercentage}% OFF` : 'SPECIAL OFFER'),
+    savingsAmountKes,
+    savingsPercentage,
     tiers: [
       { minCases: 5, discountPercentage: 3 },
       { minCases: 15, discountPercentage: 6 },

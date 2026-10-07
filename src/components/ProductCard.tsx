@@ -50,7 +50,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             )}
 
-            {product.priceTier === 'wholesale' && (
+            {product.isPromoActive && (
+              <div className="bg-gradient-to-r from-rose-600 to-amber-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-md backdrop-blur-sm animate-pulse">
+                <span>🔥</span>
+                <span>{product.promoBadgeText || (product.savingsPercentage ? `-${product.savingsPercentage}% OFF` : 'OFFER')}</span>
+              </div>
+            )}
+
+            {product.priceTier === 'wholesale' && !product.isPromoActive && (
               <div className="bg-[#0E01B5]/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm backdrop-blur-sm">
                 <Sparkles className="w-3 h-3 text-[#FFD700]" />
                 Wholesale
@@ -107,15 +114,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Pricing */}
-          <div className="bg-[#FAF9F6] dark:bg-[#12121e] p-2.5 sm:p-3 rounded-xl border border-gray-100 dark:border-gray-800">
+          <div className={`p-2.5 sm:p-3 rounded-xl border ${product.isPromoActive ? 'bg-rose-50/40 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60' : 'bg-[#FAF9F6] dark:bg-[#12121e] border-gray-100 dark:border-gray-800'}`}>
             <div className="flex items-baseline justify-between">
               <div>
                 <span className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide block">
-                  {product.priceTier === 'wholesale' ? 'Wholesale Case Price' : 'Normal Case Price'}
+                  {product.isPromoActive ? 'Special Offer Price' : product.priceTier === 'wholesale' ? 'Wholesale Case Price' : 'Normal Case Price'}
                 </span>
-                <span className="text-base sm:text-lg font-extrabold text-[#171728] dark:text-white tracking-tight">
-                  {formatKes(product.casePriceKes)}
-                </span>
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <span className={`text-base sm:text-lg font-extrabold tracking-tight ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-[#171728] dark:text-white'}`}>
+                    {formatKes(product.casePriceKes)}
+                  </span>
+                  {product.isPromoActive && product.compareAtPriceKes && (
+                    <span className="text-xs sm:text-sm text-gray-400 line-through font-semibold">
+                      {formatKes(product.compareAtPriceKes)}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="text-right">
                 <span className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide block">
@@ -127,7 +141,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             </div>
 
-            {product.priceTier === 'retail' && (
+            {/* Savings Pill for Promo */}
+            {product.isPromoActive && product.savingsAmountKes && (
+              <div className="mt-1.5 pt-1.5 border-t border-rose-200/60 dark:border-rose-900/40 flex items-center justify-between text-[10px]">
+                <span className="bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-extrabold px-1.5 py-0.5 rounded flex items-center gap-1">
+                  <span>Save {formatKes(product.savingsAmountKes)}</span>
+                  {product.savingsPercentage && <span>({product.savingsPercentage}% OFF)</span>}
+                </span>
+                {product.promoEndDate && (
+                  <span className="text-[9px] text-gray-400 font-medium">
+                    Limited Time Offer
+                  </span>
+                )}
+              </div>
+            )}
+
+            {!product.isPromoActive && product.priceTier === 'retail' && (
               <div className="mt-1.5 pt-1.5 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-[9px] sm:text-[10px]">
                 <span className="text-[#0E01B5] dark:text-[#8c82ff] font-bold truncate">
                   Save {wholesaleSavingPct(product)}% with a wholesale account
@@ -135,7 +164,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             )}
 
-            {product.priceTier === 'wholesale' && product.tiers.length > 0 && (
+            {!product.isPromoActive && product.priceTier === 'wholesale' && product.tiers.length > 0 && (
               <div className="mt-1.5 pt-1.5 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-[9px] sm:text-[10px]">
                 <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1 truncate">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block shrink-0" />
