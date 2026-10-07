@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="hidden sm:flex items-center gap-1.5 text-[#F5F5DC] hover:text-white transition-colors font-semibold"
             >
               <Phone className="w-3 h-3 text-[#F2693F]" />
-              For Wholesale / Shop Desk: +254 754 320 000
+              Hotline: +254 754 320 000
             </a>
             <span className="hidden lg:inline-block text-white/30">|</span>
             <span className="hidden lg:inline-block text-white/70">
