@@ -45,6 +45,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     setJustAddedAnim(Date.now());
   };
 
+  // Single bottle price calculations
+  const bottlePrice = product.bottlePriceKes;
+  const compareAtBottle =
+    product.compareAtBottlePriceKes ||
+    (product.compareAtPriceKes ? Math.round(product.compareAtPriceKes / product.casePack) : undefined);
+  const bottleSavings =
+    product.savingsAmountBottleKes ||
+    (compareAtBottle && compareAtBottle > bottlePrice
+      ? compareAtBottle - bottlePrice
+      : product.savingsAmountKes
+      ? Math.round(product.savingsAmountKes / product.casePack)
+      : 0);
+
   return (
     <motion.div
       id={`product-card-${product.id}`}
@@ -61,7 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       }`}
       role="button"
       tabIndex={0}
-      aria-label={`${product.name} - ${formatKes(product.casePriceKes)}. Click to view details.`}
+      aria-label={`${product.name} - ${formatKes(bottlePrice)} per bottle. Click to view details.`}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
@@ -198,20 +211,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Pricing & Add to Cart Action */}
         <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800/80 flex items-end justify-between gap-2 mt-auto">
-          {/* PRICING WITH SPECIAL OFFER HIGHLIGHT */}
+          {/* PRICING WITH SPECIAL OFFER HIGHLIGHT (SINGLE BOTTLE PRIMARY) */}
           <div className="min-w-0">
             {product.isPromoActive ? (
               <div className="space-y-0.5">
                 <div className="flex items-baseline gap-1.5 flex-wrap">
                   <span className="text-base sm:text-lg font-black text-rose-600 dark:text-rose-400 tracking-tight whitespace-nowrap">
-                    {formatKes(product.casePriceKes)}
+                    {formatKes(bottlePrice)}
                   </span>
-                  {(product.compareAtPriceKes || product.savingsAmountKes) && (
+                  {(compareAtBottle || bottleSavings > 0) && (
                     <span className="text-xs sm:text-sm text-neutral-400 line-through font-semibold whitespace-nowrap">
-                      {formatKes(
-                        product.compareAtPriceKes ||
-                          product.casePriceKes + (product.savingsAmountKes || 0)
-                      )}
+                      {formatKes(compareAtBottle || bottlePrice + bottleSavings)}
                     </span>
                   )}
                 </div>
@@ -219,26 +229,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="flex items-center gap-1">
                   <span className="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-[10px] font-extrabold px-1.5 py-0.5 rounded border border-rose-200/80 dark:border-rose-900/60 inline-flex items-center gap-1">
                     <span>
-                      Save {formatKes(
-                        product.savingsAmountKes ||
-                          (product.compareAtPriceKes
-                            ? product.compareAtPriceKes - product.casePriceKes
-                            : 0)
-                      )}
+                      Save {formatKes(bottleSavings)}
                     </span>
                     {product.savingsPercentage && (
                       <span>({product.savingsPercentage}% OFF)</span>
                     )}
                   </span>
                 </div>
+                <span className="text-[10px] text-neutral-400 block -mt-0.5">
+                  {formatKes(product.casePriceKes)}/case ({product.casePack} btls)
+                </span>
               </div>
             ) : (
               <div>
-                <span className="text-base sm:text-lg font-black text-neutral-900 dark:text-white tracking-tight whitespace-nowrap">
-                  {formatKes(product.casePriceKes)}
-                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-base sm:text-lg font-black text-neutral-900 dark:text-white tracking-tight whitespace-nowrap">
+                    {formatKes(bottlePrice)}
+                  </span>
+                  <span className="text-[10px] text-neutral-400 font-medium">/btl</span>
+                </div>
                 <span className="text-[10px] text-neutral-400 block -mt-0.5">
-                  {formatKes(Math.round(product.casePriceKes / product.casePack))}/btl equiv
+                  {formatKes(product.casePriceKes)}/case ({product.casePack} btls)
                 </span>
               </div>
             )}

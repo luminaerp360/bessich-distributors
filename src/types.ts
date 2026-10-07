@@ -63,12 +63,14 @@ export interface Product {
   wholesaleBottlePriceKes?: number;
   wholesaleCasePriceKes?: number;
   compareAtPriceKes?: number;
+  compareAtBottlePriceKes?: number;
   isPromoActive?: boolean;
   promoPriceKes?: number;
   promoStartDate?: string;
   promoEndDate?: string;
   promoBadgeText?: string;
   savingsAmountKes?: number;
+  savingsAmountBottleKes?: number;
   savingsPercentage?: number;
 }
 

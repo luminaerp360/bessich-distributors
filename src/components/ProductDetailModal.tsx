@@ -102,7 +102,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       )}
                     </span>
                     <p className="text-[11px] text-gray-700 dark:text-gray-200 font-semibold">
-                      {product.savingsAmountKes ? `Save KES ${formatKes(product.savingsAmountKes)} per case` : 'Promotional price active'}
+                      {product.savingsAmountBottleKes
+                        ? `Save KES ${formatKes(product.savingsAmountBottleKes)}/btl (KES ${formatKes(product.savingsAmountKes || product.savingsAmountBottleKes * product.casePack)}/case)`
+                        : product.savingsAmountKes
+                        ? `Save KES ${formatKes(product.savingsAmountKes)} per case`
+                        : 'Promotional price active'}
                     </p>
                   </div>
                 </div>
@@ -254,13 +258,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <span>Single Bottle</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.volumeMl}ml</span>
                   <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
-                    {product.isPromoActive && product.compareAtPriceKes && (
+                    {product.isPromoActive && (product.compareAtBottlePriceKes || product.compareAtPriceKes) && (
                       <span className="text-[10px] text-gray-400 line-through font-semibold">
-                        {formatKes(Math.round(product.compareAtPriceKes / product.casePack))}
+                        {formatKes(product.compareAtBottlePriceKes || Math.round((product.compareAtPriceKes || 0) / product.casePack))}
                       </span>
                     )}
                     <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-white'}`}>
-                      {formatKes(Math.round(product.casePriceKes / product.casePack))}
+                      {formatKes(product.bottlePriceKes)}
                     </span>
                   </div>
                 </button>

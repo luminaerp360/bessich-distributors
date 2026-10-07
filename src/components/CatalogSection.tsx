@@ -152,8 +152,8 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'price-asc') return a.casePriceKes - b.casePriceKes;
-        if (sortBy === 'price-desc') return b.casePriceKes - a.casePriceKes;
+        if (sortBy === 'price-asc') return a.bottlePriceKes - b.bottlePriceKes;
+        if (sortBy === 'price-desc') return b.bottlePriceKes - a.bottlePriceKes;
         if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
         if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
         // Default: featured first, then active promos first

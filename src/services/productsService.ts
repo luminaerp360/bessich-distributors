@@ -274,6 +274,9 @@ export function normalizeApiProduct(
   const savingsAmountKes = finalCompareAtCasePrice && finalCompareAtCasePrice > finalCasePrice
     ? finalCompareAtCasePrice - finalCasePrice
     : undefined;
+  const savingsAmountBottleKes = finalCompareAtBottlePrice && finalCompareAtBottlePrice > finalBottlePrice
+    ? finalCompareAtBottlePrice - finalBottlePrice
+    : undefined;
   const savingsPercentage = finalCompareAtCasePrice && finalCompareAtCasePrice > finalCasePrice
     ? Math.round(((finalCompareAtCasePrice - finalCasePrice) / finalCompareAtCasePrice) * 100)
     : undefined;
@@ -293,12 +296,14 @@ export function normalizeApiProduct(
     bottlePriceKes: finalBottlePrice,
     casePriceKes: finalCasePrice,
     compareAtPriceKes: finalCompareAtCasePrice,
+    compareAtBottlePriceKes: finalCompareAtBottlePrice,
     isPromoActive,
-    promoPriceKes: isPromoActive ? finalCasePrice : undefined,
+    promoPriceKes: isPromoActive ? finalBottlePrice : undefined,
     promoStartDate: rawStartDate,
     promoEndDate: rawEndDate,
     promoBadgeText: rawBadge || (savingsPercentage ? `-${savingsPercentage}% OFF` : 'SPECIAL OFFER'),
     savingsAmountKes,
+    savingsAmountBottleKes,
     savingsPercentage,
     tiers: [
       { minCases: 5, discountPercentage: 3 },
