@@ -8,7 +8,8 @@ import {
   Sparkles,
   Flame,
   ChevronRight,
-  Layers
+  Layers,
+  PhoneCall
 } from 'lucide-react';
 import { Product, CartItem } from '../types';
 import { ProductCard } from './ProductCard';
@@ -22,6 +23,7 @@ interface CatalogSectionProps {
   onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
   isWholesale?: boolean;
   onOpenAuth?: (mode?: 'login' | 'signup') => void;
+  onNavigate?: (page: 'contact' | 'catalog') => void;
   cartItems?: CartItem[];
   onUpdateCartQuantity?: (index: number, quantity: number) => void;
 }
@@ -50,6 +52,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   onAddToCart,
   isWholesale = false,
   onOpenAuth,
+  onNavigate,
   cartItems = [],
   onUpdateCartQuantity,
 }) => {
@@ -334,25 +337,26 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
       {/* Anchor Ref for smooth scroll */}
       <div ref={resultsGridRef} className="scroll-mt-28" />
 
-      {/* Wholesale Account Prompt Banner */}
-      {!isWholesale && onOpenAuth && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-[#F5F5DC]/40 dark:bg-[#1b1b2d] border border-[#F5F5DC] dark:border-neutral-700 text-xs">
-          <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-            <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">
-              Viewing <b>normal retail & case prices</b>. Registered hospitality & retail venues unlock{' '}
-              <b>trade tier discounts</b>.
-            </p>
+      {/* Wholesale Contact Notice Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 to-indigo-50/70 dark:from-[#1b1b2d] dark:to-[#171728] border border-blue-200/70 dark:border-neutral-700 text-xs shadow-2xs">
+        <div className="flex items-center gap-2.5 text-gray-800 dark:text-gray-200">
+          <div className="w-8 h-8 rounded-xl bg-[#0E01B5]/10 dark:bg-[#0E01B5]/30 text-[#0E01B5] dark:text-[#8c82ff] flex items-center justify-center shrink-0">
+            <PhoneCall className="w-4 h-4" />
           </div>
+          <p className="leading-snug">
+            Need <b>bulk or wholesale orders</b>? For commercial wholesale rates and pallet consignments, please <b>contact the shop directly</b>.
+          </p>
+        </div>
+        {onNavigate && (
           <button
             type="button"
-            onClick={() => onOpenAuth('signup')}
-            className="shrink-0 bg-[#1B3E6F] hover:bg-[#142e53] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-xs"
+            onClick={() => onNavigate('contact')}
+            className="shrink-0 bg-[#0E01B5] hover:bg-[#09007A] text-white px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-xs"
           >
-            Unlock Trade Rates
+            Contact Shop
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* 2. RESULTS COUNTER & SUMMARY ROW */}
       <section>

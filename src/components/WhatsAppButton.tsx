@@ -45,7 +45,7 @@ export const WhatsAppButton: React.FC = () => {
             <div className="bg-white dark:bg-[#25253d] rounded-lg rounded-tl-none p-3 text-xs text-gray-800 dark:text-gray-200 shadow-sm">
               <p>Welcome! How can we help you today?</p>
               <p className="mt-1">Click below to chat with us on WhatsApp for quick assistance on orders, pricing, or product availability.</p>
-              <p className="text-[10px] text-gray-400 mt-2 text-right">Bessich Wholesale Team</p>
+              <p className="text-[10px] text-gray-400 mt-2 text-right">Bessich Team</p>
             </div>
           </div>
 

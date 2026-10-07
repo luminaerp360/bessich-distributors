@@ -81,7 +81,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Bessich_Distributors_Wholesale_Pricelist_2026.csv`);
+    link.setAttribute('download', `Bessich_Distributors_Pricelist_2026.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -101,7 +101,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
             Official Certified Price Sheet
           </div>
           <h2 className="hero-heading text-xl sm:text-2xl font-extrabold text-[#171728] dark:text-white font-display">
-            2026 Wholesale Liquor & Wine Price List
+            2026 Liquor & Wine Price List
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xl">
             Bessich Distributors Eldoret Central Depot • All prices in KES inclusive of 16% VAT and KRA Excise Duty.
@@ -267,7 +267,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                 <th className="py-2.5 px-3">Origin / ABV</th>
                 <th className="py-2.5 px-3">Case Pack</th>
                 <th className="py-2.5 px-3">Bottle Price (KES)</th>
-                <th className="py-2.5 px-3">Case Wholesale (KES)</th>
+                <th className="py-2.5 px-3">Case Price (KES)</th>
                 <th className="py-2.5 px-3">Bulk Tier Savings</th>
                 <th className="py-2.5 px-3 sm:px-4 text-right">Action</th>
               </tr>

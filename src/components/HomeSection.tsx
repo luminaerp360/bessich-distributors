@@ -178,18 +178,18 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   const operationalSteps = [
     {
       step: '01',
-      title: 'Commercial Onboarding & KRA Verification',
-      description: 'Submit your registered entity details, KRA PIN, and County Alcoholic Drinks License. Verified within 24 hours for institutional wholesale status.',
+      title: 'Commercial Inquiries & Account Onboarding',
+      description: 'Submit your registered entity details or license. For commercial venues and events, contact our shop desk directly to set up custom arrangements.',
     },
     {
       step: '02',
-      title: 'Access Direct Tiered Case Pricing',
-      description: 'Unlock direct wholesale rates with volume-based bulk discounts: 3% off on 5+ cases and 5% off on 10+ cases, combined with Net 14 or Net 30 payment terms.',
+      title: 'For Wholesale, Contact Our Shop',
+      description: 'Inquire directly with our team for commercial wholesale rates, bulk pallet consignments, and institutional supply contracts.',
     },
     {
       step: '03',
-      title: 'Submit Orders via Matrix or Digital Catalog',
-      description: 'Use our high-speed Quick Order Pad or interactive online catalog. Place multi-case orders in seconds with zero phone friction or confusion.',
+      title: 'Order Seamlessly via Digital Catalog',
+      description: 'Use our interactive online catalog to browse authentic beverages and place single or case orders directly with transparent pricing.',
     },
     {
       step: '04',
@@ -375,9 +375,9 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] dark:text-[#FFD700] flex items-center justify-center font-bold">
                 <Percent className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Transparent Wholesale Margins</h3>
+              <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Bespoke Bulk & Commercial Supply</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                Published tiered pricing with built-in volume incentives that safeguard profitability for bar owners and retail merchants.
+                Contact our shop directly for volume incentives and bespoke supply contracts tailored for commercial operators.
               </p>
             </div>
           </div>
@@ -650,7 +650,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </h2>
           
           <p className="text-xs sm:text-sm text-gray-200 max-w-xl mx-auto leading-relaxed">
-            Browse our full 150+ beverage portfolio or register your licensed venue today to access wholesale credit facilities and direct depot fulfillment.
+            Browse our full 150+ beverage portfolio or contact our shop directly for bulk wholesale supply and depot fulfillment.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -659,7 +659,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               onClick={() => onNavigate('catalog')}
               className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] px-6 py-3.5 rounded-xl font-bold text-xs transition-all shadow-lg active:scale-95 cursor-pointer flex items-center justify-center gap-2"
             >
-              Explore Wholesale Catalog
+              Explore Catalog
               <ArrowRight className="w-4 h-4" />
             </button>
 

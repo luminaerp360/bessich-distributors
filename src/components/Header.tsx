@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-4 flex-wrap">
             <span className="flex items-center gap-1.5 font-medium text-[#FFD700]">
               <ShieldCheck className="w-3.5 h-3.5 text-[#FFD700]" />
-              Official Kenya Licensed Liquor & Wine Wholesale Distributor
+              Official Kenya Licensed Liquor & Wine Distributor
             </span>
             <span className="hidden md:inline-block text-white/30">|</span>
             <a 
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="hidden sm:flex items-center gap-1.5 text-[#F5F5DC] hover:text-white transition-colors font-semibold"
             >
               <Phone className="w-3 h-3 text-[#F2693F]" />
-              Wholesale Hotline: +254 754 320 000
+              For Wholesale / Shop Desk: +254 754 320 000
             </a>
             <span className="hidden lg:inline-block text-white/30">|</span>
             <span className="hidden lg:inline-block text-white/70">

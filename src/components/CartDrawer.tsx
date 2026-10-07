@@ -77,7 +77,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               </div>
               <div>
                 <h3 className="font-extrabold text-sm sm:text-base font-display">
-                  B2B Wholesale Order
+                  Your Shopping Cart
                 </h3>
                 <span className="text-[11px] text-[#F5F5DC]/70">
                   {cartItems.length} SKU line{cartItems.length !== 1 ? 's' : ''} • {totals.totalCases} cases ({totals.totalBottlesEquivalent} btls total)

@@ -127,11 +127,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <Sparkles className="w-2.5 h-2.5 text-amber-400" />
             Popular
           </span>
-        ) : product.priceTier === 'wholesale' ? (
-          <span className="inline-flex items-center gap-1 bg-[#0E01B5]/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
-            <Sparkles className="w-2.5 h-2.5 text-[#FFD700]" />
-            Wholesale
-          </span>
         ) : (
           <span />
         )}
