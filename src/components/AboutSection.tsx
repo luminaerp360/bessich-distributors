@@ -229,7 +229,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               Ready to Upgrade Your Establishment's Beverage Supply?
             </h3>
             <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
-              Open a verified commercial trade account today. Benefit from guaranteed KRA stamps, tiered case discounts, and flexible payment terms delivered straight to your cellar.
+              Open a verified commercial trade account today. Benefit from guaranteed KRA stamps, dependable branch fulfillment, and commercial delivery straight to your cellar.
             </p>
           </div>
 

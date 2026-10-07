@@ -81,7 +81,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Bessich_Distributors_Wholesale_Pricelist_2026.csv`);
+    link.setAttribute('download', `Bessich_Distributors_Pricelist_2026.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -101,7 +101,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
             Official Certified Price Sheet
           </div>
           <h2 className="hero-heading text-xl sm:text-2xl font-extrabold text-[#171728] dark:text-white font-display">
-            2026 Wholesale Liquor & Wine Price List
+            2026 Liquor & Wine Price List
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xl">
             Bessich Distributors Eldoret Central Depot • All prices in KES inclusive of 16% VAT and KRA Excise Duty.
@@ -173,9 +173,16 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
               <div key={product.id} className="bg-white dark:bg-[#171728] rounded-xl border border-gray-200 dark:border-gray-800 p-4 shadow-xs">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-bold font-mono text-[#0E01B5] dark:text-[#8c82ff] uppercase">
-                      {product.sku}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-bold font-mono text-[#0E01B5] dark:text-[#8c82ff] uppercase">
+                        {product.sku}
+                      </span>
+                      {product.isPromoActive && (
+                        <span className="bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded shadow-xs">
+                          🔥 {product.promoBadgeText || (product.savingsPercentage ? `-${product.savingsPercentage}%` : 'OFFER')}
+                        </span>
+                      )}
+                    </div>
                     <h3 className="font-bold text-sm text-gray-900 dark:text-white mt-0.5 line-clamp-2">
                       {product.name}
                     </h3>
@@ -202,9 +209,20 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                     <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Bottle Price</span>
                     <span className="font-bold text-gray-900 dark:text-white">{formatKes(product.bottlePriceKes)}</span>
                   </div>
-                  <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
-                    <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">Case Price</span>
-                    <span className="font-bold text-[#0E01B5] dark:text-[#8c82ff]">{formatKes(product.casePriceKes)}</span>
+                  <div className={`p-2 rounded-lg ${product.isPromoActive ? 'bg-rose-50 dark:bg-rose-950/30' : 'bg-gray-50 dark:bg-[#12121e]'}`}>
+                    <span className="text-gray-400 dark:text-gray-500 block text-[10px] uppercase font-bold">
+                      {product.isPromoActive ? 'Offer Case Price' : 'Case Price'}
+                    </span>
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-[#0E01B5] dark:text-[#8c82ff]'}`}>
+                        {formatKes(product.casePriceKes)}
+                      </span>
+                      {product.isPromoActive && product.compareAtPriceKes && (
+                        <span className="text-[10px] text-gray-400 line-through">
+                          {formatKes(product.compareAtPriceKes)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -249,7 +267,7 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                 <th className="py-2.5 px-3">Origin / ABV</th>
                 <th className="py-2.5 px-3">Case Pack</th>
                 <th className="py-2.5 px-3">Bottle Price (KES)</th>
-                <th className="py-2.5 px-3">Case Wholesale (KES)</th>
+                <th className="py-2.5 px-3">Case Price (KES)</th>
                 <th className="py-2.5 px-3">Bulk Tier Savings</th>
                 <th className="py-2.5 px-3 sm:px-4 text-right">Action</th>
               </tr>
@@ -264,7 +282,14 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                   return (
                     <tr key={product.id} className="hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-colors">
                       <td className="py-2.5 px-3 sm:px-4 font-mono font-bold text-[#0E01B5] dark:text-[#8c82ff]">
-                        {product.sku}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span>{product.sku}</span>
+                          {product.isPromoActive && (
+                            <span className="bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded shadow-xs">
+                              🔥 {product.promoBadgeText || (product.savingsPercentage ? `-${product.savingsPercentage}%` : 'OFFER')}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="py-2.5 px-3 sm:px-4">
                         <div className="font-bold text-gray-900 dark:text-white line-clamp-1">{product.name}</div>
@@ -283,10 +308,23 @@ export const PriceListSection: React.FC<PriceListSectionProps> = ({
                         {formatKes(product.bottlePriceKes)}
                       </td>
                       <td className="py-2.5 px-3 font-bold text-gray-900 dark:text-white">
-                        {formatKes(product.casePriceKes)}
+                        <div className="flex items-baseline gap-1.5 flex-wrap">
+                          <span className={product.isPromoActive ? 'text-rose-600 dark:text-rose-400 font-extrabold' : ''}>
+                            {formatKes(product.casePriceKes)}
+                          </span>
+                          {product.isPromoActive && product.compareAtPriceKes && (
+                            <span className="text-[10px] text-gray-400 line-through">
+                              {formatKes(product.compareAtPriceKes)}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="py-2.5 px-3">
-                        {maxTier > 0 ? (
+                        {product.isPromoActive && product.savingsAmountKes ? (
+                          <span className="bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded text-[10px] font-extrabold">
+                            Save KES {formatKes(product.savingsAmountKes)}
+                          </span>
+                        ) : maxTier > 0 ? (
                           <span className="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">
                             Up to -{maxTier}%
                           </span>

@@ -34,7 +34,7 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="lg:col-span-7 space-y-4 sm:space-y-5">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#0E01B5]/40 border border-[#0E01B5] text-[11px] sm:text-xs font-semibold text-[#FFD700]">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Official Wholesale Catalog • 2026 Pricing
+              Official Beverage Catalog • 2026 Collection
             </div>
 
             <h1 className="hero-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
@@ -60,7 +60,7 @@ export const Hero: React.FC<HeroProps> = ({
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-[#FAF9F6] bg-white/5 border border-white/10 rounded-lg p-2.5">
                 <Percent className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Tiered Case Wholesale Rates</span>
+                <span>For Wholesale: Contact Shop</span>
               </div>
             </div>
 

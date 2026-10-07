@@ -24,26 +24,74 @@ export function getRetailBottlePrice(product: Product): number {
 export function applyPricingTier(product: Product, tier: PricingTier): Product {
   const wholesaleBottle = product.wholesaleBottlePriceKes ?? product.bottlePriceKes;
   const wholesaleCase = product.wholesaleCasePriceKes ?? product.casePriceKes;
+  const wholesaleCompareAtBottle = product.compareAtBottlePriceKes;
+  const wholesaleCompareAtCase = product.compareAtPriceKes;
 
   if (tier === 'wholesale') {
+    const savingsBottle =
+      wholesaleCompareAtBottle && wholesaleCompareAtBottle > wholesaleBottle
+        ? wholesaleCompareAtBottle - wholesaleBottle
+        : undefined;
+    const savingsCase =
+      wholesaleCompareAtCase && wholesaleCompareAtCase > wholesaleCase
+        ? wholesaleCompareAtCase - wholesaleCase
+        : undefined;
+
     return {
       ...product,
       priceTier: 'wholesale',
       bottlePriceKes: wholesaleBottle,
       casePriceKes: wholesaleCase,
+      compareAtBottlePriceKes: wholesaleCompareAtBottle,
+      compareAtPriceKes: wholesaleCompareAtCase,
       wholesaleBottlePriceKes: wholesaleBottle,
       wholesaleCasePriceKes: wholesaleCase,
+      savingsAmountBottleKes: savingsBottle,
+      savingsAmountKes: savingsCase,
     };
   }
 
+  // Retail Tier (marked up by RETAIL_MARKUP or RRP)
   const retailBottle = getRetailBottlePrice(product);
+  const retailCase = retailBottle * product.casePack;
+
+  // Scale compare-at price to retail as well so promotion strikethrough is consistent
+  let retailCompareAtBottle = wholesaleCompareAtBottle
+    ? Math.round(wholesaleCompareAtBottle * RETAIL_MARKUP)
+    : undefined;
+  let retailCompareAtCase = retailCompareAtBottle
+    ? retailCompareAtBottle * product.casePack
+    : undefined;
+
+  // If promo is active, ensure the compare-at price is always strictly greater than retailBottle
+  if (product.isPromoActive) {
+    if (!retailCompareAtBottle || retailCompareAtBottle <= retailBottle) {
+      const pct = product.savingsPercentage && product.savingsPercentage > 0 ? product.savingsPercentage : 15;
+      retailCompareAtBottle = Math.round(retailBottle / (1 - pct / 100));
+      retailCompareAtCase = retailCompareAtBottle * product.casePack;
+    }
+  }
+
+  const retailSavingsBottle =
+    retailCompareAtBottle && retailCompareAtBottle > retailBottle
+      ? retailCompareAtBottle - retailBottle
+      : undefined;
+  const retailSavingsCase =
+    retailCompareAtCase && retailCompareAtCase > retailCase
+      ? retailCompareAtCase - retailCase
+      : undefined;
+
   return {
     ...product,
     priceTier: 'retail',
     bottlePriceKes: retailBottle,
-    casePriceKes: retailBottle * product.casePack,
+    casePriceKes: retailCase,
+    compareAtBottlePriceKes: retailCompareAtBottle,
+    compareAtPriceKes: retailCompareAtCase,
     wholesaleBottlePriceKes: wholesaleBottle,
     wholesaleCasePriceKes: wholesaleCase,
+    savingsAmountBottleKes: retailSavingsBottle,
+    savingsAmountKes: retailSavingsCase,
   };
 }
 

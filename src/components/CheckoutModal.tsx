@@ -134,7 +134,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       productId: item.product.id,
       quantity: item.quantity,
       price: item.orderType === 'case' ? item.product.casePriceKes : item.product.bottlePriceKes,
-      notes: orderNotes || 'Bessich B2B wholesale order',
+      notes: orderNotes || 'Bessich store order',
     })),
     shippingAddress: deliveryLocation || b2bProfile.deliveryAddress || undefined,
     paymentMethod: paymentMethod === 'cash' ? 'cash' : 'mpesa',

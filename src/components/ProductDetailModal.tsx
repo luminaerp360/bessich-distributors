@@ -6,8 +6,8 @@ import {
   Package, 
   Globe, 
   Percent, 
-  Warehouse,
-  ShoppingCart
+  ShoppingCart,
+  PhoneCall
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatKes } from '../utils/formatters';
@@ -17,12 +17,14 @@ interface ProductDetailModalProps {
   product: Product | null;
   onClose: () => void;
   onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
+  onNavigate?: (page: 'contact' | 'catalog') => void;
 }
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product,
   onClose,
   onAddToCart,
+  onNavigate,
 }) => {
   const [orderType, setOrderType] = useState<'case' | 'bottle'>('case');
   const [quantity, setQuantity] = useState(1);
@@ -86,6 +88,39 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </p>
             </div>
 
+            {/* Active Promotional Offer Banner */}
+            {product.isPromoActive && (
+              <div className="bg-gradient-to-r from-rose-500/15 via-amber-500/15 to-orange-500/15 border border-rose-300 dark:border-rose-800/70 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 to-amber-500 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+                    🔥
+                  </span>
+                  <div>
+                    <span className="text-xs font-extrabold text-rose-700 dark:text-rose-400 uppercase tracking-wide flex items-center gap-1.5">
+                      {product.promoBadgeText || 'SPECIAL OFFER'}
+                      {product.savingsPercentage && (
+                        <span className="bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                          {product.savingsPercentage}% OFF
+                        </span>
+                      )}
+                    </span>
+                    <p className="text-[11px] text-gray-700 dark:text-gray-200 font-semibold">
+                      {product.savingsAmountBottleKes
+                        ? `Save KES ${formatKes(product.savingsAmountBottleKes)}/btl (KES ${formatKes(product.savingsAmountKes || product.savingsAmountBottleKes * product.casePack)}/case)`
+                        : product.savingsAmountKes
+                        ? `Save KES ${formatKes(product.savingsAmountKes)} per case`
+                        : 'Promotional price active'}
+                    </p>
+                  </div>
+                </div>
+                {product.promoEndDate && (
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-[#1f1f33] px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700">
+                    Offer ends: {new Date(product.promoEndDate).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Quick Specs */}
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
               <div className="bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg border border-gray-100 dark:border-gray-800">
@@ -131,56 +166,53 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             )}
 
-            {/* Volume Tier Table */}
-            {product.tiers.length > 0 && (
-              <div>
-                <span className="text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider block mb-1.5">
-                  Wholesale Tier Discounts (Cases)
+            {/* Wholesale Inquiries Notice */}
+            <div className="rounded-2xl border border-blue-200/80 dark:border-blue-900/50 bg-blue-50/70 dark:bg-[#18182e] p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+              <div className="space-y-0.5">
+                <span className="font-bold text-blue-950 dark:text-blue-300 block text-xs flex items-center gap-1.5">
+                  <PhoneCall className="w-3.5 h-3.5 text-[#0E01B5] dark:text-[#8c82ff]" />
+                  Looking for Wholesale or Bulk Commercial Supply?
                 </span>
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-xs">
-                  <table className="w-full text-left">
-                    <thead className="bg-gray-50 dark:bg-[#12121e] text-[11px] font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                      <tr>
-                        <th className="px-3 py-1.5">Volume</th>
-                        <th className="px-3 py-1.5">Discount</th>
-                        <th className="px-3 py-1.5">Price / Case</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      <tr>
-                        <td className="px-3 py-1.5 text-gray-600 dark:text-gray-300">Standard (1 - {product.tiers[0].minCases - 1} cases)</td>
-                        <td className="px-3 py-1.5 text-gray-500 dark:text-gray-400 font-mono">0%</td>
-                        <td className="px-3 py-1.5 font-semibold text-gray-900 dark:text-white">{formatKes(product.casePriceKes)}</td>
-                      </tr>
-                      {product.tiers.map((tier, index) => {
-                        const tierPrice = Math.round(product.casePriceKes * (1 - tier.discountPercentage / 100));
-                        return (
-                          <tr key={index} className="bg-emerald-50/40 dark:bg-emerald-950/30">
-                            <td className="px-3 py-1.5 font-medium text-emerald-950 dark:text-emerald-200">{tier.minCases}+ cases</td>
-                            <td className="px-3 py-1.5 font-bold text-emerald-700 dark:text-emerald-400 font-mono">-{tier.discountPercentage}%</td>
-                            <td className="px-3 py-1.5 font-bold text-emerald-800 dark:text-emerald-300">{formatKes(tierPrice)}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                <span className="text-[11px] text-blue-800/80 dark:text-blue-400 block leading-tight">
+                  For wholesale pallet orders &amp; commercial supply contracts, please contact our shop directly.
+                </span>
               </div>
-            )}
-
-            {/* Stock */}
-            <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
-              <Warehouse className="w-4 h-4 text-[#0E01B5] dark:text-[#8c82ff]" />
-              <span>Central Depot Inventory: </span>
-              <span className="font-bold text-emerald-700 dark:text-emerald-400">{product.stockCases} Cases Available</span>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  if (onNavigate) onNavigate('contact');
+                }}
+                className="shrink-0 bg-[#0E01B5] hover:bg-[#09007A] text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition-colors cursor-pointer shadow-xs self-start sm:self-auto"
+              >
+                Contact Shop
+              </button>
             </div>
 
             {/* Order CTA — Add to Cart */}
             <div className="pt-3 border-t border-gray-200 dark:border-gray-800 space-y-3">
               {/* Price Display */}
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500 dark:text-gray-400">Unit Price:</span>
-                <span className="font-bold text-gray-900 dark:text-white">{formatKes(unitPrice)}</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  {product.isPromoActive ? 'Special Offer Price:' : 'Unit Price:'}
+                </span>
+                <div className="flex items-baseline gap-2">
+                  {product.isPromoActive && (
+                    (() => {
+                      const compareVal = orderType === 'case'
+                        ? (product.compareAtPriceKes || Math.round(unitPrice / (1 - (product.savingsPercentage || 15) / 100)))
+                        : (product.compareAtBottlePriceKes || Math.round((product.compareAtPriceKes || 0) / product.casePack) || Math.round(unitPrice / (1 - (product.savingsPercentage || 15) / 100)));
+                      return compareVal > unitPrice ? (
+                        <span className="text-xs text-gray-400 line-through font-semibold">
+                          {formatKes(compareVal)}
+                        </span>
+                      ) : null;
+                    })()
+                  )}
+                  <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400 text-sm' : 'text-gray-900 dark:text-white'}`}>
+                    {formatKes(unitPrice)}
+                  </span>
+                </div>
               </div>
 
               {/* Case / Bottle Toggle */}
@@ -197,7 +229,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <Package className="w-4 h-4" />
                   <span>Full Case</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.casePack} bottles</span>
-                  <span className="font-bold text-gray-900 dark:text-white">{formatKes(product.casePriceKes)}</span>
+                  <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
+                    {product.isPromoActive && product.compareAtPriceKes && product.compareAtPriceKes > product.casePriceKes && (
+                      <span className="text-[10px] text-gray-400 line-through font-semibold">
+                        {formatKes(product.compareAtPriceKes)}
+                      </span>
+                    )}
+                    <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-white'}`}>
+                      {formatKes(product.casePriceKes)}
+                    </span>
+                  </div>
                 </button>
 
                 <button
@@ -212,7 +253,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <Wine className="w-4 h-4" />
                   <span>Single Bottle</span>
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{product.volumeMl}ml</span>
-                  <span className="font-bold text-gray-900 dark:text-white">{formatKes(Math.round(product.casePriceKes / product.casePack))}</span>
+                  <div className="flex items-baseline gap-1.5 flex-wrap justify-center">
+                    {product.isPromoActive && (
+                      (() => {
+                        const cmp = product.compareAtBottlePriceKes || (product.compareAtPriceKes ? Math.round(product.compareAtPriceKes / product.casePack) : 0);
+                        return cmp > product.bottlePriceKes ? (
+                          <span className="text-[10px] text-gray-400 line-through font-semibold">
+                            {formatKes(cmp)}
+                          </span>
+                        ) : null;
+                      })()
+                    )}
+                    <span className={`font-bold ${product.isPromoActive ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-white'}`}>
+                      {formatKes(product.bottlePriceKes)}
+                    </span>
+                  </div>
                 </button>
               </div>
 

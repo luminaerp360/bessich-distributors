@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { 
   Wine, 
   Beer, 
@@ -33,6 +33,8 @@ import { Hero } from './Hero';
 import { Product, ProductCategory, ActivePage, Promotion } from '../types';
 import { fetchPromotions, getMockPromotions } from '../services/promotionsService';
 import { PromotionsPopout } from './PromotionsPopout';
+import { formatKes } from '../utils/formatters';
+import { getProductImageUrl, handleImageError } from '../utils/imageHelper';
 
 const PROMO_POPOUT_SEEN_KEY = 'bessich_promo_popout_seen';
 
@@ -57,6 +59,13 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 }) => {
   const [promotions, setPromotions] = useState<Promotion[]>(() => getMockPromotions());
   const [isPromoOpen, setIsPromoOpen] = useState(false);
+
+  // Filter products currently on active promotion
+  const promoProducts = useMemo(() => {
+    const active = products.filter((p) => p.isPromoActive);
+    if (active.length > 0) return active;
+    return products.filter((p) => Boolean(p.compareAtPriceKes && p.compareAtPriceKes > p.casePriceKes));
+  }, [products]);
 
   // Load promotions from the e-commerce service (falls back to mock data).
   useEffect(() => {
@@ -169,18 +178,18 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   const operationalSteps = [
     {
       step: '01',
-      title: 'Commercial Onboarding & KRA Verification',
-      description: 'Submit your registered entity details, KRA PIN, and County Alcoholic Drinks License. Verified within 24 hours for institutional wholesale status.',
+      title: 'Commercial Inquiries & Account Onboarding',
+      description: 'Submit your registered entity details or license. For commercial venues and events, contact our shop desk directly to set up custom arrangements.',
     },
     {
       step: '02',
-      title: 'Access Direct Tiered Case Pricing',
-      description: 'Unlock direct wholesale rates with volume-based bulk discounts: 3% off on 5+ cases and 5% off on 10+ cases, combined with Net 14 or Net 30 payment terms.',
+      title: 'For Wholesale, Contact Our Shop',
+      description: 'Inquire directly with our team for commercial wholesale rates, bulk pallet consignments, and institutional supply contracts.',
     },
     {
       step: '03',
-      title: 'Submit Orders via Matrix or Digital Catalog',
-      description: 'Use our high-speed Quick Order Pad or interactive online catalog. Place multi-case orders in seconds with zero phone friction or confusion.',
+      title: 'Order Seamlessly via Digital Catalog',
+      description: 'Use our interactive online catalog to browse authentic beverages and place single or case orders directly with transparent pricing.',
     },
     {
       step: '04',
@@ -204,18 +213,18 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             <div className="space-y-2 max-w-xl">
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 bg-white/20 border border-white/30 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider">
-                  <Sparkles className="w-3 h-3 text-[#FFD700]" />
-                  Innovation · Promotions · Discounts
+                  <Flame className="w-3 h-3 text-[#FFD700]" />
+                  Active Product Offers &amp; Discounts
                 </span>
                 <span className="bg-[#FFD700] text-[#171728] text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wide animate-pulse">
-                  Live
+                  {promoProducts.length} Live Offers
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold font-display">
-                Offers &amp; Updates from Our Online Store
+                Special Offers from Our Online Store
               </h2>
               <p className="text-xs sm:text-sm text-white/85">
-                Seasonal case bonuses, volume discounts and new e-commerce features — synced live from the Bessich platform.
+                Exclusive limited-time discounts on selected bottles and cases — synced live from the Bessich platform.
               </p>
             </div>
 
@@ -224,36 +233,52 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               onClick={() => setIsPromoOpen(true)}
               className="self-start md:self-auto inline-flex items-center gap-1.5 bg-white text-[#0E01B5] hover:bg-[#F5F5DC] px-4 py-2.5 rounded-xl text-xs font-extrabold transition-colors cursor-pointer active:scale-95 shrink-0"
             >
-              View All Offers
+              View All {promoProducts.length} Offers
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
-            {promotions.slice(0, 3).map((promo) => {
-              const Icon = PROMO_KIND_ICON[promo.kind];
+            {promoProducts.slice(0, 3).map((p) => {
+              const bottlePrice = p.bottlePriceKes;
+              const rawCompare = p.compareAtBottlePriceKes || (p.compareAtPriceKes ? Math.round(p.compareAtPriceKes / p.casePack) : undefined);
+              const compareAt = rawCompare && rawCompare > bottlePrice ? rawCompare : Math.round(bottlePrice / (1 - (p.savingsPercentage || 15) / 100));
               return (
-                <button
-                  key={promo.id}
-                  type="button"
-                  onClick={() => setIsPromoOpen(true)}
-                  className="text-left bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl p-3.5 transition-colors cursor-pointer"
+                <div
+                  key={p.id}
+                  onClick={() => onOpenDetails(p)}
+                  className="text-left bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl p-3.5 transition-all cursor-pointer flex items-center gap-3.5 group shadow-sm hover:shadow-md"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-[#FFD700]" />
-                    </span>
-                    <span className="font-bold text-xs leading-tight">{promo.title}</span>
+                  <div className="w-14 h-18 bg-white/15 dark:bg-black/20 rounded-xl p-1.5 flex items-center justify-center shrink-0 overflow-hidden">
+                    <img
+                      src={getProductImageUrl(p.image)}
+                      alt={p.name}
+                      onError={(e) => handleImageError(e, p.fallbackImage)}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                    />
                   </div>
-                  <p className="text-[11px] text-white/80 leading-relaxed mt-2 line-clamp-2">
-                    {promo.description}
-                  </p>
-                  {promo.value && (
-                    <span className="inline-block mt-2 text-[11px] font-extrabold text-[#FFD700]">
-                      {promo.value}
+                  <div className="min-w-0 flex-1">
+                    <span className="bg-[#FFD700] text-[#171728] text-[9px] font-extrabold px-1.5 py-0.2 rounded uppercase">
+                      {p.promoBadgeText || `-${p.savingsPercentage || 15}% OFF`}
                     </span>
-                  )}
-                </button>
+                    <h4 className="font-bold text-xs text-white truncate mt-1">
+                      {p.name}
+                    </h4>
+                    <div className="flex items-baseline gap-1.5 mt-1">
+                      <span className="text-sm font-black text-[#FFD700]">
+                        {formatKes(bottlePrice)}
+                      </span>
+                      {compareAt > bottlePrice && (
+                        <span className="text-[10px] text-white/60 line-through">
+                          {formatKes(compareAt)}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-white/70 block mt-0.5 truncate">
+                      {formatKes(p.casePriceKes)}/case ({p.casePack} btls)
+                    </span>
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -350,9 +375,9 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] dark:text-[#FFD700] flex items-center justify-center font-bold">
                 <Percent className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Transparent Wholesale Margins</h3>
+              <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Bespoke Bulk & Commercial Supply</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                Published tiered pricing with built-in volume incentives that safeguard profitability for bar owners and retail merchants.
+                Contact our shop directly for volume incentives and bespoke supply contracts tailored for commercial operators.
               </p>
             </div>
           </div>
@@ -625,7 +650,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </h2>
           
           <p className="text-xs sm:text-sm text-gray-200 max-w-xl mx-auto leading-relaxed">
-            Browse our full 150+ beverage portfolio or register your licensed venue today to access wholesale credit facilities and direct depot fulfillment.
+            Browse our full 150+ beverage portfolio or contact our shop directly for bulk wholesale supply and depot fulfillment.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -634,7 +659,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               onClick={() => onNavigate('catalog')}
               className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] px-6 py-3.5 rounded-xl font-bold text-xs transition-all shadow-lg active:scale-95 cursor-pointer flex items-center justify-center gap-2"
             >
-              Explore Wholesale Catalog
+              Explore Catalog
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -669,8 +694,18 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         </div>
       </section>
 
-      {/* Innovation, Promotions & Discounts pop-out */}
-      <PromotionsPopout isOpen={isPromoOpen} onClose={closePromo} promotions={promotions} />
+      {/* Product Offers pop-out modal */}
+      <PromotionsPopout
+        isOpen={isPromoOpen}
+        onClose={closePromo}
+        products={products}
+        onOpenDetails={onOpenDetails}
+        onAddToCart={onAddToCart}
+        onNavigateToCatalog={() => {
+          closePromo();
+          onNavigate('catalog');
+        }}
+      />
     </div>
   );
 };

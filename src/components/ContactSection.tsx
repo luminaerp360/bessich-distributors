@@ -101,7 +101,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigate }) =>
               <Phone className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-gray-900 dark:text-white">Wholesale Hotline</h3>
+              <h3 className="font-bold text-sm text-gray-900 dark:text-white">Customer Hotline</h3>
               <p className="text-[11px] text-gray-500 dark:text-gray-400">Order placement & inquiries</p>
             </div>
             <div className="space-y-1 text-xs">

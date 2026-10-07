@@ -82,7 +82,7 @@ export const MyOrdersSection: React.FC<MyOrdersSectionProps> = ({
             My Orders &amp; History
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-xl">
-            Track your wholesale consignments, reorder favourites, and monitor your purchasing statistics.
+            Track your order deliveries, reorder favourites, and monitor your purchasing statistics.
           </p>
         </div>
       </div>
@@ -150,7 +150,7 @@ export const MyOrdersSection: React.FC<MyOrdersSectionProps> = ({
           <h3 className="font-bold text-gray-900 dark:text-white text-sm">No orders found</h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
             {orders.length === 0
-              ? 'You have not placed any orders yet. Browse the catalog and place your first wholesale order.'
+              ? 'You have not placed any orders yet. Browse the catalog and place your first order.'
               : 'No orders match the selected filter.'}
           </p>
           {orders.length === 0 && onNavigateCatalog && (

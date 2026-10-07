@@ -186,10 +186,10 @@ function buildSampleOrders(products: Product[]): B2BOrder[] {
 export default function App() {
   const { user: authUser, logout: handleLogout } = useAuth();
 
-  // Pricing tier: registered customers get wholesale pricing by default;
-  // guests (one-time buyers) see normal retail pricing.
-  const pricingTier: PricingTier = authUser ? 'wholesale' : 'retail';
-  const isWholesale = pricingTier === 'wholesale';
+  // Pricing tier: standard customer pricing is retail.
+  // For commercial wholesale & bulk rates, customers contact the shop directly.
+  const pricingTier: PricingTier = 'retail';
+  const isWholesale = false;
 
   // Auth modal state
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -472,6 +472,9 @@ export default function App() {
             onAddToCart={handleAddToCart}
             isWholesale={isWholesale}
             onOpenAuth={handleOpenAuth}
+            cartItems={cartItems}
+            onUpdateCartQuantity={handleUpdateQuantity}
+            onNavigate={handleNavigate}
           />
         )}
 
@@ -582,6 +585,7 @@ export default function App() {
         product={selectedProductDetail}
         onClose={() => setSelectedProductDetail(null)}
         onAddToCart={handleAddToCart}
+        onNavigate={handleNavigate}
       />
 
       {/* Cart Drawer */}
