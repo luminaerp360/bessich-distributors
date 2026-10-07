@@ -80,18 +80,38 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
     };
   }, []);
 
-  // Auto pop-out promotions on first landing-page visit.
+  // Auto pop-out promotions on first landing-page visit, BUT ONLY after statutory age verification!
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    try {
-      if (!localStorage.getItem(PROMO_POPOUT_SEEN_KEY)) {
-        timer = setTimeout(() => setIsPromoOpen(true), 900);
+
+    const maybeOpenPromo = () => {
+      try {
+        const isAgeVerified = localStorage.getItem('bessich_age_verified');
+        const alreadySeenPromo = localStorage.getItem(PROMO_POPOUT_SEEN_KEY);
+
+        // Under 18 / not yet age verified — NEVER show alcohol promotions!
+        if (!isAgeVerified) return;
+
+        if (!alreadySeenPromo) {
+          timer = setTimeout(() => setIsPromoOpen(true), 700);
+        }
+      } catch {
+        // Storage unavailable — skip auto pop-out.
       }
-    } catch {
-      // Storage unavailable — skip auto pop-out.
-    }
+    };
+
+    // If user has already verified their age in a previous session
+    maybeOpenPromo();
+
+    // Listen for age verification completion if user verifies now
+    const handleAgeVerified = () => {
+      maybeOpenPromo();
+    };
+
+    window.addEventListener('bessich_age_verified', handleAgeVerified);
     return () => {
       if (timer) clearTimeout(timer);
+      window.removeEventListener('bessich_age_verified', handleAgeVerified);
     };
   }, []);
 
