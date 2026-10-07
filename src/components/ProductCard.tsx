@@ -41,7 +41,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!product.inStock) return;
     onAddToCart(product, 'bottle', 1);
     setJustAddedAnim(Date.now());
   };
@@ -55,11 +54,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       transition={{ duration: 0.35, delay: Math.min(index * 0.03, 0.2) }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
       onClick={handleCardClick}
-      className={`group flex flex-col bg-white dark:bg-[#171728] rounded-2xl border transition-all duration-300 overflow-hidden relative select-none cursor-pointer ${
-        product.inStock
-          ? 'hover:border-[#3AA88C] dark:hover:border-[#3AA88C] shadow-xs hover:shadow-xl'
-          : 'opacity-85 border-neutral-200 dark:border-neutral-800'
-      } ${
+      className={`group flex flex-col bg-white dark:bg-[#171728] rounded-2xl border transition-all duration-300 overflow-hidden relative select-none cursor-pointer hover:border-[#3AA88C] dark:hover:border-[#3AA88C] shadow-xs hover:shadow-xl ${
         cartQuantity > 0
           ? 'border-[#3AA88C] ring-2 ring-[#3AA88C]/20 shadow-sm'
           : 'border-neutral-200/90 dark:border-neutral-800'
@@ -118,12 +113,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <span />
         )}
 
-        {/* Right Badge: Stock Status or In-Cart or KRA Stamp */}
-        {!product.inStock ? (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-900/80 text-white backdrop-blur-xs shadow-xs">
-            Out of Stock
-          </span>
-        ) : cartQuantity > 0 ? (
+        {/* Right Badge: In-Cart or KRA Stamp */}
+        {cartQuantity > 0 ? (
           <motion.span
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
@@ -254,11 +245,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* ADD BUTTON OR STEPPER */}
-          {!product.inStock ? (
-            <span className="px-2.5 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 font-semibold text-xs whitespace-nowrap">
-              Unavailable
-            </span>
-          ) : cartQuantity > 0 ? (
+          {cartQuantity > 0 ? (
             <div
               className="flex items-center gap-1.5 shrink-0"
               onClick={(e) => e.stopPropagation()}

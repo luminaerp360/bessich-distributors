@@ -57,7 +57,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedBrand, setSelectedBrand] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc'>('featured');
-  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [offersOnly, setOffersOnly] = useState<boolean>(false);
 
   // Pagination states
@@ -79,7 +78,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, selectedBrand, sortBy, inStockOnly, offersOnly]);
+  }, [searchQuery, selectedCategory, selectedBrand, sortBy, offersOnly]);
 
   // Category matching helper
   const matchesCategory = (product: Product, cat: string) => {
@@ -145,11 +144,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
           return false;
         }
 
-        // In Stock Only toggle
-        if (inStockOnly && !product.inStock) {
-          return false;
-        }
-
         // Offers Only toggle (Active promotions / discounts)
         if (offersOnly && !product.isPromoActive) {
           return false;
@@ -168,7 +162,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
         }
         return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
       });
-  }, [products, searchQuery, selectedCategory, selectedBrand, inStockOnly, offersOnly, sortBy]);
+  }, [products, searchQuery, selectedCategory, selectedBrand, offersOnly, sortBy]);
 
   // Paginated product slice
   const paginatedProducts = useMemo(() => {
@@ -181,7 +175,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
     setSelectedCategory('All');
     setSelectedBrand('All');
     setSearchQuery('');
-    setInStockOnly(false);
     setOffersOnly(false);
     setSortBy('featured');
   };
@@ -190,7 +183,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
     selectedCategory !== 'All' ||
     selectedBrand !== 'All' ||
     searchQuery.trim() !== '' ||
-    inStockOnly ||
     offersOnly ||
     sortBy !== 'featured';
 
@@ -278,21 +270,6 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
                   <option value="name-desc">Name: Z to A</option>
                 </select>
               </div>
-
-              {/* In-Stock Only Toggle */}
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                type="button"
-                onClick={() => setInStockOnly(!inStockOnly)}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold border flex items-center gap-1.5 cursor-pointer transition-colors ${
-                  inStockOnly
-                    ? 'bg-[#3AA88C] text-white border-[#3AA88C]'
-                    : 'bg-[#F8F7F4] dark:bg-[#1b1b2d] text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-[#25253d]'
-                }`}
-              >
-                <Check className={`w-3.5 h-3.5 ${inStockOnly ? 'opacity-100' : 'opacity-0'}`} />
-                <span>In Stock Only</span>
-              </motion.button>
 
               {/* 🔥 Offers / Promotions Quick Toggle */}
               <motion.button

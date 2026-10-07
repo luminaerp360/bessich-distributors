@@ -6,7 +6,6 @@ import {
   Package, 
   Globe, 
   Percent, 
-  Warehouse,
   ShoppingCart
 } from 'lucide-react';
 import { Product } from '../types';
@@ -196,13 +195,6 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Stock */}
-            <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-[#12121e] p-2 rounded-lg">
-              <Warehouse className="w-4 h-4 text-[#0E01B5] dark:text-[#8c82ff]" />
-              <span>Central Depot Inventory: </span>
-              <span className="font-bold text-emerald-700 dark:text-emerald-400">{product.stockCases} Cases Available</span>
-            </div>
 
             {/* Order CTA — Add to Cart */}
             <div className="pt-3 border-t border-gray-200 dark:border-gray-800 space-y-3">
