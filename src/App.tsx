@@ -472,6 +472,8 @@ export default function App() {
             onAddToCart={handleAddToCart}
             isWholesale={isWholesale}
             onOpenAuth={handleOpenAuth}
+            cartItems={cartItems}
+            onUpdateCartQuantity={handleUpdateQuantity}
           />
         )}
 

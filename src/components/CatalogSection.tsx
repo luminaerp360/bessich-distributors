@@ -1,17 +1,16 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
+  Search, 
+  RotateCcw, 
+  Check, 
   Wine, 
-  Flame, 
-  GlassWater, 
-  Beer, 
-  Sparkles, 
-  Filter, 
-  SlidersHorizontal,
-  X,
-  Layers,
-  Globe
+  Sparkles,
+  Flame,
+  ChevronRight,
+  Layers
 } from 'lucide-react';
-import { Product, ProductCategory } from '../types';
+import { Product, CartItem } from '../types';
 import { ProductCard } from './ProductCard';
 import { Pagination } from './Pagination';
 
@@ -23,7 +22,25 @@ interface CatalogSectionProps {
   onAddToCart: (product: Product, orderType: 'case' | 'bottle', quantity: number) => void;
   isWholesale?: boolean;
   onOpenAuth?: (mode?: 'login' | 'signup') => void;
+  cartItems?: CartItem[];
+  onUpdateCartQuantity?: (index: number, quantity: number) => void;
 }
+
+const CATEGORIES = [
+  'All',
+  'Whiskey',
+  'Gin',
+  'Vodka',
+  'Rum',
+  'Brandy & Cognac',
+  'Liqueur',
+  'Spirits',
+  'Beer & Cider',
+  'Wine',
+  'Champagne',
+  'Tequila',
+  'Ready To Drink',
+];
 
 export const CatalogSection: React.FC<CatalogSectionProps> = ({
   products,
@@ -33,70 +50,125 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   onAddToCart,
   isWholesale = false,
   onOpenAuth,
+  cartItems = [],
+  onUpdateCartQuantity,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('all');
-  const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'abv'>('featured');
-  const [onlyKRA, setOnlyKRA] = useState<boolean>(false);
-  const [showFilters, setShowFilters] = useState<boolean>(false);
+  // Filter States matching Cyden Catalogue
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedBrand, setSelectedBrand] = useState<string>('All');
+  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc'>('featured');
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
+  const [offersOnly, setOffersOnly] = useState<boolean>(false);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(24);
   const resultsGridRef = useRef<HTMLDivElement>(null);
 
-  // Reset to page 1 whenever any search or filter criteria change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategory, selectedOrigin, onlyKRA, sortBy]);
-
-  // Extract unique origins
-  const origins = useMemo(() => {
-    const list = Array.from(new Set(products.map(p => p.origin.split(',')[p.origin.split(',').length - 1].trim())));
-    return ['all', ...list];
+  // Extract unique available brands
+  const availableBrands = useMemo(() => {
+    const brandsSet = new Set<string>();
+    products.forEach((p) => {
+      if (p.brand && p.brand.trim()) {
+        brandsSet.add(p.brand.trim());
+      }
+    });
+    return Array.from(brandsSet).sort();
   }, [products]);
 
-  // Filter products
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, selectedBrand, sortBy, inStockOnly, offersOnly]);
+
+  // Category matching helper
+  const matchesCategory = (product: Product, cat: string) => {
+    if (cat === 'All') return true;
+    const name = product.name.toLowerCase();
+    const sub = (product.subcategory || '').toLowerCase();
+    const brand = (product.brand || '').toLowerCase();
+    const pCat = product.category;
+
+    switch (cat) {
+      case 'Whiskey':
+        return pCat === 'whiskey' || name.includes('whisky') || name.includes('whiskey') || sub.includes('whiskey') || sub.includes('whisky');
+      case 'Gin':
+        return pCat === 'gin' || name.includes('gin') || sub.includes('gin');
+      case 'Vodka':
+        return pCat === 'vodka' || name.includes('vodka') || sub.includes('vodka');
+      case 'Rum':
+        return pCat === 'rum' || name.includes('rum') || sub.includes('rum');
+      case 'Brandy & Cognac':
+        return pCat === 'brandy' || name.includes('brandy') || name.includes('cognac') || sub.includes('brandy') || sub.includes('cognac');
+      case 'Liqueur':
+        return pCat === 'liqueur' || name.includes('liqueur') || sub.includes('liqueur');
+      case 'Spirits':
+        return pCat === 'spirits' || sub.includes('spirit');
+      case 'Beer & Cider':
+        return pCat === 'beer_cider' || name.includes('beer') || name.includes('cider') || name.includes('stout') || sub.includes('beer') || sub.includes('cider');
+      case 'Wine':
+        return pCat === 'wine' || name.includes('wine') || sub.includes('wine');
+      case 'Champagne':
+        return pCat === 'champagne' || name.includes('champagne') || name.includes('sparkling') || sub.includes('champagne');
+      case 'Tequila':
+        return name.includes('tequila') || sub.includes('tequila') || brand.includes('don julio') || brand.includes('patron');
+      case 'Ready To Drink':
+        return name.includes('rtd') || name.includes('ready to drink') || name.includes('smirnoff ice') || name.includes('snapp') || name.includes('guinness smooth') || sub.includes('rtd');
+      default:
+        return true;
+    }
+  };
+
+  // Filter & sort products
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      // Search query check
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchesName = product.name.toLowerCase().includes(q);
-        const matchesBrand = product.brand.toLowerCase().includes(q);
-        const matchesSku = product.sku.toLowerCase().includes(q);
-        const matchesCategory = product.subcategory.toLowerCase().includes(q);
-        if (!matchesName && !matchesBrand && !matchesSku && !matchesCategory) {
+    return products
+      .filter((product) => {
+        // Keyword Search query
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const matchesName = product.name.toLowerCase().includes(q);
+          const matchesBrand = product.brand.toLowerCase().includes(q);
+          const matchesSku = product.sku.toLowerCase().includes(q);
+          const matchesSub = (product.subcategory || '').toLowerCase().includes(q);
+          if (!matchesName && !matchesBrand && !matchesSku && !matchesSub) {
+            return false;
+          }
+        }
+
+        // Category filter
+        if (!matchesCategory(product, selectedCategory)) {
           return false;
         }
-      }
 
-      // Category check
-      if (selectedCategory !== 'all' && product.category !== selectedCategory) {
-        return false;
-      }
-
-      // Origin check
-      if (selectedOrigin !== 'all') {
-        if (!product.origin.toLowerCase().includes(selectedOrigin.toLowerCase())) {
+        // Brand filter
+        if (selectedBrand !== 'All' && product.brand !== selectedBrand) {
           return false;
         }
-      }
 
-      // KRA check
-      if (onlyKRA && !product.kraStampVerified) {
-        return false;
-      }
+        // In Stock Only toggle
+        if (inStockOnly && !product.inStock) {
+          return false;
+        }
 
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.casePriceKes - b.casePriceKes;
-      if (sortBy === 'price-desc') return b.casePriceKes - a.casePriceKes;
-      if (sortBy === 'abv') return b.abv - a.abv;
-      // Default: featured first
-      return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-    });
-  }, [products, searchQuery, selectedCategory, selectedOrigin, onlyKRA, sortBy]);
+        // Offers Only toggle (Active promotions / discounts)
+        if (offersOnly && !product.isPromoActive) {
+          return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'price-asc') return a.casePriceKes - b.casePriceKes;
+        if (sortBy === 'price-desc') return b.casePriceKes - a.casePriceKes;
+        if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
+        if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
+        // Default: featured first, then active promos first
+        if (a.isPromoActive !== b.isPromoActive) {
+          return a.isPromoActive ? -1 : 1;
+        }
+        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      });
+  }, [products, searchQuery, selectedCategory, selectedBrand, inStockOnly, offersOnly, sortBy]);
 
   // Paginated product slice
   const paginatedProducts = useMemo(() => {
@@ -104,11 +176,29 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
     return filteredProducts.slice(start, start + pageSize);
   }, [filteredProducts, currentPage, pageSize]);
 
-  // Handle page navigation with smooth scroll
+  // Reset all filters
+  const handleResetFilters = () => {
+    setSelectedCategory('All');
+    setSelectedBrand('All');
+    setSearchQuery('');
+    setInStockOnly(false);
+    setOffersOnly(false);
+    setSortBy('featured');
+  };
+
+  const isFilterActive =
+    selectedCategory !== 'All' ||
+    selectedBrand !== 'All' ||
+    searchQuery.trim() !== '' ||
+    inStockOnly ||
+    offersOnly ||
+    sortBy !== 'featured';
+
+  // Smooth scroll page change
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     if (resultsGridRef.current) {
-      const targetY = resultsGridRef.current.getBoundingClientRect().top + window.pageYOffset - 110;
+      const targetY = resultsGridRef.current.getBoundingClientRect().top + window.pageYOffset - 90;
       window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
     }
   };
@@ -117,319 +207,257 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
     setPageSize(newSize);
     setCurrentPage(1);
     if (resultsGridRef.current) {
-      const targetY = resultsGridRef.current.getBoundingClientRect().top + window.pageYOffset - 110;
+      const targetY = resultsGridRef.current.getBoundingClientRect().top + window.pageYOffset - 90;
       window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
     }
   };
 
-  const categories = [
-    { id: 'all' as ProductCategory, label: 'All Beverages', icon: Layers },
-    { id: 'whiskey' as ProductCategory, label: 'Whiskies', icon: Flame },
-    { id: 'gin' as ProductCategory, label: 'Gins', icon: Sparkles },
-    { id: 'vodka' as ProductCategory, label: 'Vodkas', icon: GlassWater },
-    { id: 'wine' as ProductCategory, label: 'Fine Wines', icon: Wine },
-    { id: 'beer_cider' as ProductCategory, label: 'Beers & Ciders', icon: Beer },
-    { id: 'rum' as ProductCategory, label: 'Rums', icon: Flame },
-    { id: 'brandy' as ProductCategory, label: 'Brandy & Cognac', icon: Sparkles },
-    { id: 'champagne' as ProductCategory, label: 'Champagne', icon: Sparkles },
-    { id: 'liqueur' as ProductCategory, label: 'Liqueurs', icon: Sparkles },
-    { id: 'spirits' as ProductCategory, label: 'Spirits', icon: GlassWater },
-  ];
-
   return (
-    <section id="catalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-4 sm:space-y-6">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-gray-200 dark:border-gray-800 pb-3.5">
-        <div>
-          <div className="text-[11px] sm:text-xs font-bold text-[#0E01B5] dark:text-[#8c82ff] uppercase tracking-wider mb-0.5">
-            Direct Importer & Wholesale Supply
-          </div>
-          <h2 className="hero-heading text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#171728] dark:text-white font-display">
-            Online Beverage Catalog
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-xl">
-            Browse our authenticated inventory of wines, spirits, and beers with tiered case wholesale rates and real-time depot availability.
-          </p>
-        </div>
+    <div className="space-y-6 pb-16 overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      {/* 1. FILTER & SEARCH CONTROL BAR (CYDEN STYLE) */}
+      <section>
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="bg-white dark:bg-[#171728] rounded-2xl p-4 sm:p-5 border border-neutral-200/90 dark:border-neutral-800 shadow-xs space-y-4"
+        >
+          {/* Top Row: Search Input & Dropdowns & Toggles */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-80">
+              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search Tusker, Blue Label, Gin..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-9 py-2.5 bg-[#F8F7F4] dark:bg-[#1b1b2d] border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm text-[#222222] dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#3AA88C] transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 text-xs cursor-pointer p-1"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1b1b2d] text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#25253d] cursor-pointer transition-colors"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#0E01B5] dark:text-[#8c82ff]" />
-            <span>Filters</span>
-            {(selectedOrigin !== 'all' || onlyKRA) && (
-              <span className="w-2 h-2 rounded-full bg-[#0E01B5] dark:bg-[#8c82ff]" />
-            )}
-          </button>
+            {/* Brand Dropdown, Sort Dropdown & Toggles */}
+            <div className="w-full sm:w-auto flex flex-wrap items-center gap-2.5">
+              {/* Brand Selector */}
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-neutral-500 dark:text-neutral-400 font-semibold hidden md:inline">Brand:</span>
+                <select
+                  value={selectedBrand}
+                  onChange={(e) => setSelectedBrand(e.target.value)}
+                  className="px-3 py-2 bg-[#F8F7F4] dark:bg-[#1b1b2d] border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-medium text-[#222222] dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#3AA88C] cursor-pointer"
+                >
+                  <option value="All">All Brands</option>
+                  {availableBrands.map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400">
-            <span className="hidden sm:inline">Sort:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-white dark:bg-[#1b1b2d] border border-gray-300 dark:border-gray-700 rounded-lg px-2.5 py-2 text-xs font-medium text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-[#0E01B5] dark:focus:ring-[#8c82ff] focus:outline-hidden"
-            >
-              <option value="featured">Featured / Top Velocity</option>
-              <option value="price-asc">Wholesale Case: Low to High</option>
-              <option value="price-desc">Wholesale Case: High to Low</option>
-              <option value="abv">Alcohol Volume (ABV %)</option>
-            </select>
-          </div>
-        </div>
-      </div>
+              {/* Sort Selector */}
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-neutral-500 dark:text-neutral-400 font-semibold hidden md:inline">Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="px-3 py-2 bg-[#F8F7F4] dark:bg-[#1b1b2d] border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-medium text-[#222222] dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#3AA88C] cursor-pointer"
+                >
+                  <option value="featured">Featured / Popular</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="name-asc">Name: A to Z</option>
+                  <option value="name-desc">Name: Z to A</option>
+                </select>
+              </div>
 
-      {/* Pricing Tier Banner */}
-      {!isWholesale && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 rounded-xl bg-[#F5F5DC]/40 dark:bg-[#23233a] border border-[#F5F5DC] dark:border-gray-700 text-xs">
-          <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-            <Sparkles className="w-4 h-4 text-[#FFD700] shrink-0 mt-0.5" />
-            <p className="leading-relaxed">
-              You are viewing <b>normal retail pricing</b>. Registered wholesale customers automatically receive{' '}
-              <b>lower wholesale trade prices</b> — create an account or sign in to unlock them.
-            </p>
-          </div>
-          {onOpenAuth && (
-            <button
-              type="button"
-              onClick={() => onOpenAuth('signup')}
-              className="shrink-0 bg-[#0E01B5] hover:bg-[#09007A] text-white px-4 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors"
-            >
-              Unlock Wholesale Prices
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Category Pills Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
-        {categories.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = selectedCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                isActive
-                  ? 'bg-[#0E01B5] text-white shadow-md'
-                  : 'bg-white dark:bg-[#1b1b2d] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#0E01B5]/30 hover:bg-gray-50 dark:hover:bg-[#25253d]'
-              }`}
-            >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#FFD700]' : 'text-gray-500 dark:text-gray-400'}`} />
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Expanded Filter Panel */}
-      {showFilters && (
-        <div className="bg-white dark:bg-[#171728] p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xs space-y-4 animate-in fade-in duration-150">
-          <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-2">
-            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
-              <Filter className="w-3.5 h-3.5 text-[#0E01B5] dark:text-[#8c82ff]" />
-              Refine Wholesale Selection
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedOrigin('all');
-                setOnlyKRA(false);
-              }}
-              className="text-[11px] text-[#0E01B5] dark:text-[#8c82ff] hover:underline font-semibold"
-            >
-              Reset Filters
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
-            {/* Country of Origin */}
-            <div>
-              <label className="font-semibold text-gray-700 dark:text-gray-300 block mb-1.5">
-                Country / Region of Origin:
-              </label>
-              <select
-                value={selectedOrigin}
-                onChange={(e) => setSelectedOrigin(e.target.value)}
-                className="w-full bg-[#FAF9F6] dark:bg-[#12121e] border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-xs text-gray-800 dark:text-gray-200"
+              {/* In-Stock Only Toggle */}
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                type="button"
+                onClick={() => setInStockOnly(!inStockOnly)}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold border flex items-center gap-1.5 cursor-pointer transition-colors ${
+                  inStockOnly
+                    ? 'bg-[#3AA88C] text-white border-[#3AA88C]'
+                    : 'bg-[#F8F7F4] dark:bg-[#1b1b2d] text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-[#25253d]'
+                }`}
               >
-                <option value="all">All Origins</option>
-                {origins.filter(o => o !== 'all').map((orig) => (
-                  <option key={orig} value={orig}>{orig}</option>
-                ))}
-              </select>
-            </div>
+                <Check className={`w-3.5 h-3.5 ${inStockOnly ? 'opacity-100' : 'opacity-0'}`} />
+                <span>In Stock Only</span>
+              </motion.button>
 
-            {/* KRA Stamp toggle */}
-            <div className="flex items-center gap-3 pt-6">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={onlyKRA}
-                  onChange={(e) => setOnlyKRA(e.target.checked)}
-                  className="rounded border-gray-300 dark:border-gray-600 text-[#0E01B5] focus:ring-[#0E01B5]"
-                />
-                <span className="font-semibold text-gray-700 dark:text-gray-300 text-xs">
-                  Only KRA Stamp Verified Stock
-                </span>
-              </label>
+              {/* 🔥 Offers / Promotions Quick Toggle */}
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                type="button"
+                onClick={() => setOffersOnly(!offersOnly)}
+                className={`px-3 py-2 rounded-xl text-xs font-bold border flex items-center gap-1.5 cursor-pointer transition-all ${
+                  offersOnly
+                    ? 'bg-gradient-to-r from-rose-600 to-amber-500 text-white border-transparent shadow-sm'
+                    : 'bg-[#F8F7F4] dark:bg-[#1b1b2d] text-rose-600 dark:text-rose-400 border-neutral-200 dark:border-neutral-700 hover:bg-rose-50/50 dark:hover:bg-rose-950/30'
+                }`}
+                title="Filter products on promotional offer"
+              >
+                <span>🔥</span>
+                <span>Offers Only</span>
+              </motion.button>
+
+              {/* Reset Button */}
+              {isFilterActive && (
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="px-3 py-2 text-xs text-[#E8582F] hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                  title="Reset all filters"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset</span>
+                </motion.button>
+              )}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Active Search & Filters Pill Bar */}
-      {(searchQuery || selectedCategory !== 'all' || selectedOrigin !== 'all' || onlyKRA) && (
-        <div className="flex flex-wrap items-center gap-2 text-xs bg-[#F5F5DC]/40 dark:bg-[#1b1b2d] p-2.5 rounded-lg border border-[#F5F5DC] dark:border-gray-700">
-          <span className="font-semibold text-gray-600 dark:text-gray-300">Active filters:</span>
-          {searchQuery && (
-            <span className="bg-white dark:bg-[#25253d] px-2 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 flex items-center gap-1 font-medium text-gray-800 dark:text-gray-200">
-              Keyword: "{searchQuery}"
-              <button type="button" onClick={() => setSearchQuery('')}>
-                <X className="w-3 h-3 text-gray-400 hover:text-gray-700 dark:hover:text-white" />
-              </button>
+          {/* Bottom Row: Category Pills Strip */}
+          <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider flex-shrink-0 mr-1">
+              CATEGORY:
             </span>
-          )}
-          {selectedCategory !== 'all' && (
-            <span className="bg-white dark:bg-[#25253d] px-2 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 flex items-center gap-1 font-medium text-gray-800 dark:text-gray-200">
-              Category: {selectedCategory}
-              <button type="button" onClick={() => setSelectedCategory('all')}>
-                <X className="w-3 h-3 text-gray-400 hover:text-gray-700 dark:hover:text-white" />
-              </button>
-            </span>
-          )}
-          {selectedOrigin !== 'all' && (
-            <span className="bg-white dark:bg-[#25253d] px-2 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 flex items-center gap-1 font-medium text-gray-800 dark:text-gray-200">
-              Origin: {selectedOrigin}
-              <button type="button" onClick={() => setSelectedOrigin('all')}>
-                <X className="w-3 h-3 text-gray-400 hover:text-gray-700 dark:hover:text-white" />
-              </button>
-            </span>
-          )}
-          {onlyKRA && (
-            <span className="bg-white dark:bg-[#25253d] px-2 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 flex items-center gap-1 font-medium text-gray-800 dark:text-gray-200">
-              KRA Verified Only
-              <button type="button" onClick={() => setOnlyKRA(false)}>
-                <X className="w-3 h-3 text-gray-400 hover:text-gray-700 dark:hover:text-white" />
-              </button>
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-              setSelectedOrigin('all');
-              setOnlyKRA(false);
-            }}
-            className="text-[11px] text-[#0E01B5] dark:text-[#8c82ff] font-bold hover:underline ml-auto"
-          >
-            Clear All
-          </button>
-        </div>
-      )}
+            {CATEGORIES.map((cat) => {
+              const isSelected = selectedCategory === cat;
+              return (
+                <motion.button
+                  key={cat}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#1B3E6F] text-white shadow-xs'
+                      : 'bg-neutral-100 dark:bg-[#1f1f33] text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-[#282844]'
+                  }`}
+                >
+                  {cat}
+                </motion.button>
+              );
+            })}
+          </div>
+        </motion.div>
+      </section>
 
       {/* Anchor Ref for smooth scroll */}
       <div ref={resultsGridRef} className="scroll-mt-28" />
 
-      {/* Top Pagination Summary & Quick Nav when products are available */}
-      {filteredProducts.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-gray-600 dark:text-gray-300 pb-1">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-900 dark:text-white">
-              Showing {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredProducts.length)}
-            </span>
-            <span>of</span>
-            <span className="font-bold text-gray-900 dark:text-white">{filteredProducts.length}</span>
-            <span>products</span>
-            {Math.ceil(filteredProducts.length / pageSize) > 1 && (
-              <span className="bg-gray-100 dark:bg-[#232338] text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full text-[11px] font-semibold border border-gray-200 dark:border-gray-700">
-                Page {currentPage} of {Math.ceil(filteredProducts.length / pageSize)}
-              </span>
-            )}
+      {/* Wholesale Account Prompt Banner */}
+      {!isWholesale && onOpenAuth && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-[#F5F5DC]/40 dark:bg-[#1b1b2d] border border-[#F5F5DC] dark:border-neutral-700 text-xs">
+          <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+            <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              Viewing <b>normal retail & case prices</b>. Registered hospitality & retail venues unlock{' '}
+              <b>trade tier discounts</b>.
+            </p>
           </div>
-
-          {filteredProducts.length > pageSize && (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                id="catalog-top-prev-btn"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-2.5 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1b1b2d] font-semibold text-[11px] text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-[#25253d] transition-colors"
-              >
-                ← Prev
-              </button>
-              <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">
-                {currentPage} / {Math.ceil(filteredProducts.length / pageSize)}
-              </span>
-              <button
-                type="button"
-                id="catalog-top-next-btn"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= Math.ceil(filteredProducts.length / pageSize)}
-                className="px-2.5 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1b1b2d] font-semibold text-[11px] text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-[#25253d] transition-colors"
-              >
-                Next →
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Product Results Grid */}
-      {filteredProducts.length > 0 ? (
-        <>
-          <div id="catalog-products-grid" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            {paginatedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onOpenDetails={onOpenDetails}
-                onAddToCart={onAddToCart}
-              />
-            ))}
-          </div>
-
-          {/* Bottom Pagination Controls */}
-          <Pagination
-            currentPage={currentPage}
-            totalItems={filteredProducts.length}
-            pageSize={pageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
-            pageSizeOptions={[12, 24, 48, 96]}
-            itemLabel="products"
-            idPrefix="catalog-bottom"
-            className="mt-6"
-          />
-        </>
-      ) : (
-        <div className="text-center py-10 sm:py-14 bg-white dark:bg-[#171728] rounded-2xl border border-gray-200 dark:border-gray-800 p-5 sm:p-8 space-y-3">
-          <Wine className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto" />
-          <h3 className="font-bold text-gray-900 dark:text-white text-sm sm:text-base">No beverages found matching your criteria</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-            Try adjusting your search keywords, origin selection, or category filter to view our available stock.
-          </p>
           <button
             type="button"
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-              setSelectedOrigin('all');
-              setOnlyKRA(false);
-            }}
-            className="bg-[#0E01B5] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#09007A] transition-colors cursor-pointer"
+            onClick={() => onOpenAuth('signup')}
+            className="shrink-0 bg-[#1B3E6F] hover:bg-[#142e53] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-xs"
           >
-            View Entire Inventory
+            Unlock Trade Rates
           </button>
         </div>
       )}
-    </section>
+
+      {/* 2. RESULTS COUNTER & SUMMARY ROW */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+            Showing <strong className="text-neutral-900 dark:text-white font-bold">{filteredProducts.length}</strong> items in catalogue
+            {selectedCategory !== 'All' && ` (${selectedCategory})`}
+            {offersOnly && ' • Active Offers Only'}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-neutral-400 hidden sm:inline">Pricing currency: KSH</span>
+          </div>
+        </div>
+
+        {/* 3. PRODUCT RESULTS GRID (4 COLUMNS CYDEN STYLE) */}
+        {filteredProducts.length > 0 ? (
+          <>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${selectedCategory}-${selectedBrand}-${currentPage}-${offersOnly}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                id="catalog-products-grid"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              >
+                {paginatedProducts.map((product, idx) => {
+                  const cartItemIndex = cartItems.findIndex(
+                    (item) => item.product.id === product.id
+                  );
+                  const cartQty = cartItemIndex >= 0 ? cartItems[cartItemIndex].quantity : 0;
+
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onOpenDetails={onOpenDetails}
+                      onAddToCart={onAddToCart}
+                      cartQuantity={cartQty}
+                      cartIndex={cartItemIndex}
+                      onUpdateCartQuantity={onUpdateCartQuantity}
+                      index={idx}
+                    />
+                  );
+                })}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Bottom Pagination Controls */}
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredProducts.length}
+              pageSize={pageSize}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              pageSizeOptions={[12, 24, 48, 96]}
+              itemLabel="items"
+              idPrefix="catalog-bottom"
+              className="mt-8"
+            />
+          </>
+        ) : (
+          <div className="text-center py-12 sm:py-16 bg-white dark:bg-[#171728] rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 sm:p-10 space-y-3">
+            <Wine className="w-12 h-12 text-neutral-300 dark:text-neutral-600 mx-auto" />
+            <h3 className="font-bold text-neutral-900 dark:text-white text-base">
+              No beverages found matching your criteria
+            </h3>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">
+              Try adjusting your search query, clearing filters, or resetting category to view the full inventory.
+            </p>
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="bg-[#3AA88C] text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#2F8D75] transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Filters</span>
+            </button>
+          </div>
+        )}
+      </section>
+    </div>
   );
 };
