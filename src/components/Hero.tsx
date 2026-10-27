@@ -22,7 +22,7 @@ export const Hero: React.FC<HeroProps> = ({
   // b2bProfile,          // TODO: Admin-only
 }) => {
   return (
-    <div className="relative bg-[#171728] text-white overflow-hidden border-b border-white/10">
+    <div className="relative bg-white dark:bg-[#171728] text-gray-900 dark:text-white overflow-hidden border-b border-gray-200 dark:border-white/10 transition-colors duration-200">
       {/* Subtle brand glow effects */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#0E01B5]/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#D4AF37]/15 rounded-full blur-3xl pointer-events-none" />
@@ -37,12 +37,12 @@ export const Hero: React.FC<HeroProps> = ({
               Official Beverage Catalog • 2026 Collection
             </div>
 
-            <h1 className="hero-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
+            <h1 className="hero-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-tight font-display">
               Elevating the Beverage <br />
               <span className="text-[#FFD700]">Experience in Kenya</span>
             </h1>
 
-            <p className="text-xs sm:text-sm lg:text-base text-[#F5F5DC]/80 max-w-2xl leading-relaxed font-sans">
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-[#F5F5DC]/80 max-w-2xl leading-relaxed font-sans">
               Bessich Distributors is the premier licensed supply chain partner connecting world-class wines, 
               single malt whiskies, premium spirits, and craft beers with leading hotels, lounges, 
               restaurants, and retail stores across Eldoret, the Rift Valley, and Western Kenya.
@@ -50,15 +50,15 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* Value Props Pills */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 pt-1">
-              <div className="flex items-center gap-2 text-xs font-medium text-[#FAF9F6] bg-white/5 border border-white/10 rounded-lg p-2.5">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-[#FAF9F6] bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg p-2.5">
                 <ShieldCheck className="w-4 h-4 text-[#FFD700] shrink-0" />
                 <span>100% Genuine KRA Stamped</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-[#FAF9F6] bg-white/5 border border-white/10 rounded-lg p-2.5">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-[#FAF9F6] bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg p-2.5">
                 <Truck className="w-4 h-4 text-[#F2693F] shrink-0" />
                 <span>10 Regional Depots (24H Dispatch)</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-[#FAF9F6] bg-white/5 border border-white/10 rounded-lg p-2.5">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-[#FAF9F6] bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg p-2.5">
                 <Percent className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>For Wholesale: Contact Shop</span>
               </div>
@@ -110,37 +110,37 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Right Hero - Outlet Info Card (replaces B2B Account Card) */}
           <div className="lg:col-span-5">
-            <div className="bg-[#1f1f35]/90 border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl relative backdrop-blur-xs">
-              <div className="border-b border-white/10 pb-3 mb-3">
+            <div className="bg-gray-50 dark:bg-[#1f1f35]/90 border border-gray-200 dark:border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl relative backdrop-blur-xs transition-colors duration-200">
+              <div className="border-b border-gray-200 dark:border-white/10 pb-3 mb-3">
                 <span className="text-[10px] font-bold tracking-wider uppercase text-[#D4AF37]">
                   Bessich Wholesale Supply
                 </span>
-                <h3 className="font-bold text-base sm:text-lg text-white mt-1">
+                <h3 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white mt-1">
                   Direct from Bessich Distributors
                 </h3>
-                <p className="text-[11px] text-gray-400 mt-0.5">Eldoret, Rift Valley &amp; Nationwide</p>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Eldoret, Rift Valley &amp; Nationwide</p>
               </div>
 
               <div className="space-y-2.5 text-xs">
-                <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">Catalog Source:</span>
+                <div className="flex justify-between py-0.5 border-b border-gray-200 dark:border-white/5">
+                  <span className="text-gray-500 dark:text-gray-400">Catalog Source:</span>
                   <span className="font-semibold text-[#FFD700]">Live E-Commerce Inventory</span>
                 </div>
-                <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">Product Range:</span>
-                  <span className="font-semibold text-[#FAF9F6]">220+ Premium SKUs</span>
+                <div className="flex justify-between py-0.5 border-b border-gray-200 dark:border-white/5">
+                  <span className="text-gray-500 dark:text-gray-400">Product Range:</span>
+                  <span className="font-semibold text-gray-800 dark:text-[#FAF9F6]">220+ Premium SKUs</span>
+                </div>
+                <div className="flex justify-between py-0.5 border-b border-gray-200 dark:border-white/5">
+                  <span className="text-gray-500 dark:text-gray-400">Categories:</span>
+                  <span className="font-semibold text-gray-800 dark:text-[#FAF9F6]">Spirits, Beer, Wine</span>
                 </div>
                 <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">Categories:</span>
-                  <span className="font-semibold text-[#FAF9F6]">Spirits, Beer, Wine</span>
-                </div>
-                <div className="flex justify-between py-0.5 border-b border-white/5">
-                  <span className="text-gray-400">Coverage:</span>
+                  <span className="text-gray-500 dark:text-gray-400">Coverage:</span>
                   <span className="font-semibold text-emerald-400">Eldoret & Western Kenya</span>
                 </div>
               </div>
 
-              <div className="mt-3.5 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] text-gray-400">
+              <div className="mt-3.5 pt-2.5 border-t border-gray-200 dark:border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">
                 <span className="flex items-center gap-1">
                   <Truck className="w-3 h-3 text-[#F2693F]" /> Same-day dispatch available
                 </span>

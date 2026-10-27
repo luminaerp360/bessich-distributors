@@ -31,7 +31,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
 
         {/* Hero Banner for About Us */}
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#171728] text-white p-5 sm:p-8 lg:p-10 border border-white/10 shadow-2xl">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-[#171728] text-gray-900 dark:text-white p-5 sm:p-8 lg:p-10 border border-gray-200 dark:border-white/10 shadow-xl transition-colors duration-200">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#0E01B5]/30 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-[#FFD700]/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -41,12 +41,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               <span>Founded in Eldoret, Kenya • Certified Wholesale Distributor</span>
             </div>
 
-            <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight font-display text-white leading-tight">
+            <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight font-display text-gray-900 dark:text-white leading-tight">
               Elevating the Beverage <br />
               <span className="text-[#FFD700]">Experience in Kenya</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
               Bessich Distributors Limited is Kenya's premier licensed supply chain partner, specializing in the wholesale distribution of world-class wines, single malt whiskies, premium spirits, and craft beers. Headquartered at Jumbo House along Iten Road in Eldoret, we anchor the hospitality and retail beverage supply across the North Rift, Western Kenya, and beyond.
             </p>
 
@@ -62,7 +62,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('branches')}
-                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-200 dark:border-white/20 px-5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
               >
                 <MapPin className="w-4 h-4 text-[#F2693F]" />
                 Explore 10 Regional Branches
@@ -186,36 +186,36 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
         </div>
 
         {/* Logistics & Warehousing Advantage */}
-        <div className="bg-[#171728] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 shadow-xl space-y-6">
+        <div className="bg-white dark:bg-[#171728] text-gray-900 dark:text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-200 dark:border-white/10 shadow-xl space-y-6 transition-colors duration-200">
           <div className="max-w-2xl space-y-1">
-            <span className="text-[11px] sm:text-xs uppercase font-bold tracking-widest text-[#FFD700] block">
+            <span className="text-[11px] sm:text-xs uppercase font-bold tracking-widest text-[#0E01B5] dark:text-[#FFD700] block">
               Supply Chain & Infrastructure
             </span>
             <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold font-display">
               The Bessich Logistics Backbone
             </h3>
-            <p className="text-xs sm:text-sm text-gray-300">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
               From our flagship Jumbo House central hub in Eldoret to 9 secondary distribution hubs across the region, we operate a dedicated fleet of insulated transport vehicles.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
-            <div className="bg-[#23233a] p-4 sm:p-5 rounded-xl border border-white/10 space-y-2">
+            <div className="bg-gray-50 dark:bg-[#23233a] p-4 sm:p-5 rounded-xl border border-gray-200 dark:border-white/10 space-y-2">
               <div className="w-9 h-9 rounded-lg bg-[#0E01B5] text-white flex items-center justify-center">
                 <Truck className="w-4 h-4" />
               </div>
-              <h4 className="font-bold text-sm sm:text-base text-white">Direct Distribution Fleet</h4>
-              <p className="text-[11px] sm:text-xs text-gray-300 leading-relaxed">
+              <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Direct Distribution Fleet</h4>
+              <p className="text-[11px] sm:text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                 Over 25 dedicated delivery vans and heavy haul trucks operating scheduled daily runs across Eldoret CBD, Kimumu, Langas, Kapsowar, Nandi Hills, Burnt Forest, Kesses, and Turbo.
               </p>
             </div>
 
-            <div className="bg-[#23233a] p-4 sm:p-5 rounded-xl border border-white/10 space-y-2">
+            <div className="bg-gray-50 dark:bg-[#23233a] p-4 sm:p-5 rounded-xl border border-gray-200 dark:border-white/10 space-y-2">
               <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
                 <FileCheck className="w-4 h-4" />
               </div>
-              <h4 className="font-bold text-sm sm:text-base text-white">Automated B2B Portals</h4>
-              <p className="text-[11px] sm:text-xs text-gray-300 leading-relaxed">
+              <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">Automated B2B Portals</h4>
+              <p className="text-[11px] sm:text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                 Our digital ordering platform enables real-time pallet assembly, live pro-forma invoicing, official KRA tax invoices, and instant M-PESA Till / B2B Paybill reconciliation.
               </p>
             </div>
@@ -223,12 +223,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
         </div>
 
         {/* Corporate Call to Action */}
-        <div className="bg-linear-to-r from-[#0E01B5] to-[#171728] text-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-linear-to-r from-[#eef0ff] to-[#fff3ec] dark:from-[#0E01B5] dark:to-[#171728] text-gray-900 dark:text-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-gray-200 dark:border-white/10 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 transition-colors duration-200">
           <div className="space-y-2 max-w-xl text-center md:text-left">
             <h3 className="text-xl sm:text-2xl font-bold font-display">
               Ready to Upgrade Your Establishment's Beverage Supply?
             </h3>
-            <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-white/80 leading-relaxed">
               Open a verified commercial trade account today. Benefit from guaranteed KRA stamps, dependable branch fulfillment, and commercial delivery straight to your cellar.
             </p>
           </div>
@@ -253,7 +253,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('contact')}
-              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer text-center"
+              className="w-full sm:w-auto bg-white/70 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer text-center"
             >
               Contact Our Sales Team
             </button>

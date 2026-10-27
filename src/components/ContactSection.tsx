@@ -141,7 +141,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigate }) =>
               <p className="text-[11px] text-gray-500 dark:text-gray-400">Warehouse & executive offices</p>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-300 leading-snug">
-              Jumbo House, Iten Road, Opp. Fire Station, Eldoret Town, Kenya
+              Elgeyo Road, Eldoret, Kenya
             </p>
           </div>
 
@@ -371,33 +371,28 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigate }) =>
 
               <div className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">
-                  Jumbo House Distribution Terminal
+                  Bessich Distributors
                 </h3>
-                <p>Iten Road, Opposite Eldoret Fire Station, Eldoret Town</p>
+                <p>Elgeyo Road, Eldoret</p>
                 <p className="text-gray-500 dark:text-gray-400">
                   Uasin Gishu County, Republic of Kenya
                 </p>
               </div>
 
-              {/* Map Illustration / Visual representation */}
-              <div className="relative h-36 sm:h-40 rounded-xl bg-slate-900 overflow-hidden border border-gray-200 dark:border-white/10 flex items-center justify-center text-center p-3">
-                <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
-                <div className="relative z-10 space-y-1.5">
-                  <div className="w-9 h-9 rounded-full bg-[#0E01B5] text-white flex items-center justify-center mx-auto shadow-lg ring-4 ring-[#FFD700]/30 animate-bounce">
-                    <MapPin className="w-4 h-4 text-[#FFD700]" />
-                  </div>
-                  <span className="text-xs font-bold text-white block">
-                    Bessich Central Logistics Hub
-                  </span>
-                  <span className="text-[10px] text-gray-300 block">
-                    GPS: 0.5143° N, 35.2698° E • Central Loading Dock
-                  </span>
-                </div>
+              <div className="h-56 sm:h-64 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
+                <iframe
+                  title="Map showing Bessich Distributors on Elgeyo Road, Eldoret"
+                  src="https://www.google.com/maps?q=Bessich+Distributors,+Elgeyo+Road,+Eldoret,+Kenya&output=embed"
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 pt-1 text-xs">
                 <a
-                  href="https://maps.google.com/?q=Eldoret,Kenya"
+                  href="https://www.google.com/maps/search/?api=1&query=Bessich+Distributors%2C+Elgeyo+Road%2C+Eldoret%2C+Kenya"
                   target="_blank"
                   rel="noreferrer"
                   className="py-2 px-3 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-center font-semibold text-gray-800 dark:text-gray-200 transition-colors"
