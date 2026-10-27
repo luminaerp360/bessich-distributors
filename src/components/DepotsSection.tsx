@@ -174,31 +174,31 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Branches Section Header */}
-      <div className="bg-[#171728] text-white p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-white/10 shadow-xl space-y-5">
+      <div className="bg-white dark:bg-[#171728] text-gray-900 dark:text-white p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl space-y-5 transition-colors duration-200">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E01B5]/50 border border-[#0E01B5] text-[11px] sm:text-xs font-semibold text-[#FFD700]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E01B5]/10 dark:bg-[#0E01B5]/50 border border-[#0E01B5]/20 dark:border-[#0E01B5] text-[11px] sm:text-xs font-semibold text-[#0E01B5] dark:text-[#FFD700]">
               <Truck className="w-3.5 h-3.5 text-[#F2693F]" />
               <span>10 Strategic Branches Across Kenya</span>
             </div>
-            <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-white">
+            <h1 className="hero-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-gray-900 dark:text-white">
               Bessich Branch Network
             </h1>
-            <p className="text-xs sm:text-sm text-[#F5F5DC]/80 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-[#F5F5DC]/80 max-w-2xl leading-relaxed">
               Bessich operates ten company-owned distribution hubs strategically situated across Eldoret, Uasin Gishu, Nandi, Elgeyo Marakwet, and the Western corridor, ensuring rapid 24-hour turnaround on bulk beverage orders and emergency restocks.
             </p>
           </div>
 
-          <div className="bg-[#23233a] p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-white/15 text-xs shrink-0 max-w-xs">
-            <span className="text-gray-400 block text-[10px] uppercase font-bold tracking-wider">Your Active Dispatch Branch:</span>
-            <span className="font-bold text-white text-xs sm:text-sm block mt-0.5">{activeDepot.name}</span>
-            <span className="text-[#FFD700] text-[11px] sm:text-xs block mt-0.5">{activeDepot.address}</span>
+          <div className="bg-gray-50 dark:bg-[#23233a] p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/15 text-xs shrink-0 max-w-xs">
+            <span className="text-gray-500 dark:text-gray-400 block text-[10px] uppercase font-bold tracking-wider">Your Active Dispatch Branch:</span>
+            <span className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm block mt-0.5">{activeDepot.name}</span>
+            <span className="text-[#0E01B5] dark:text-[#FFD700] text-[11px] sm:text-xs block mt-0.5">{activeDepot.address}</span>
             <span className="text-[10px] sm:text-[11px] text-emerald-400 block mt-1 font-medium">✓ Fleet Assigned for Direct Delivery</span>
           </div>
         </div>
 
         {/* Search Bar */}
-        <div className="pt-3 border-t border-white/10">
+        <div className="pt-3 border-t border-gray-200 dark:border-white/10">
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -206,7 +206,7 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
               value={branchSearch}
               onChange={(e) => setBranchSearch(e.target.value)}
               placeholder="Search branch, town or area..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/10 border border-white/15 text-xs text-white placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-[#FFD700]"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-white dark:bg-white/10 border border-gray-300 dark:border-white/15 text-xs text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-[#0E01B5] dark:focus:ring-[#FFD700]"
             />
           </div>
         </div>
@@ -477,4 +477,3 @@ export const DepotsSection: React.FC<DepotsSectionProps> = ({
     </div>
   );
 };
-
