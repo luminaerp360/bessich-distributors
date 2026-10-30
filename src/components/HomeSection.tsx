@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion } from 'motion/react';
-import { CountUp } from './CountUp';
 import { 
   Wine, 
   Beer, 
@@ -402,7 +401,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                 className="space-y-1"
               >
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0E01B5] dark:text-[#8c82ff] font-display">
-                  <CountUp value={stat.value} delay={idx * 120} />
+                  {stat.value}
                 </div>
                 <div className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">
                   {stat.label}
@@ -838,7 +837,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-[#FFD700]">
             <Sparkles className="w-3.5 h-3.5" />
-            Join <CountUp value="450+" /> Premier Establishments
+            Join 450+ Premier Establishments
           </div>
           
           <h2 className="text-2xl sm:text-4xl font-black font-display max-w-2xl mx-auto">
@@ -846,7 +845,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </h2>
           
           <p className="text-xs sm:text-sm text-gray-200 max-w-xl mx-auto leading-relaxed">
-            Browse our full <CountUp value="150+" /> beverage portfolio or contact our shop directly for bulk wholesale supply and depot fulfillment.
+            Browse our full 150+ beverage portfolio or contact our shop directly for bulk wholesale supply and depot fulfillment.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
