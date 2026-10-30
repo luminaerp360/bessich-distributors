@@ -338,23 +338,48 @@ export const Hero: React.FC<HeroProps> = ({
             </AnimatePresence>
           </div>
 
-          {/* Right Column: Free-Standing Transparent Bottle Packshot (No Card Container) */}
-          <div className="w-full md:w-[46%] h-[220px] sm:h-[260px] md:h-[82%] lg:h-[88%] max-h-[380px] md:max-h-[440px] lg:max-h-[490px] flex items-center justify-center relative">
+          {/* Right Column: Uniform Showcase Card Stage (Same Uniform White Background across all bottles) */}
+          <div className="w-full md:w-[46%] h-[240px] sm:h-[280px] md:h-[84%] lg:h-[90%] max-h-[380px] md:max-h-[440px] lg:max-h-[480px] flex items-center justify-center relative">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={activeSlide.id}
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="relative w-full h-full flex items-center justify-center"
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+                className="relative h-full flex items-center justify-center"
               >
-                {/* Floating Starburst Seal Badge */}
+                {/* Uniform White Showcase Stage Container */}
+                <div 
+                  onClick={() => onExploreCatalog(activeSlide.category)}
+                  className="relative h-full aspect-[4/5] bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 md:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.5)] border border-white/30 flex items-center justify-center overflow-hidden cursor-pointer group transition-transform duration-300 hover:scale-[1.02]"
+                >
+                  {/* Subtle Podium Ambient Glow on the Floor of the Card */}
+                  <div className="absolute -bottom-6 inset-x-0 h-20 bg-gradient-to-t from-gray-100 to-transparent pointer-events-none" />
+                  
+                  {/* Contact Shadow under the Bottle */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-3/4 h-3.5 bg-black/15 rounded-[100%] blur-[6px] pointer-events-none" />
+
+                  {/* Product Packshot Image - Centered and Uniformly Scaled */}
+                  <img
+                    src={activeSlide.packshot}
+                    onError={(e) => {
+                      if (e.currentTarget.src !== activeSlide.fallbackPackshot) {
+                        e.currentTarget.src = activeSlide.fallbackPackshot;
+                      }
+                    }}
+                    alt={`${activeSlide.headlineLine1} ${activeSlide.headlineLine2}`}
+                    loading="eager"
+                    className="relative z-10 max-h-full max-w-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                {/* Floating Starburst Seal Badge - Anchored to Top-Right of the Uniform Card */}
                 <motion.div
                   initial={{ scale: 0.7, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute top-0 right-2 sm:top-2 sm:right-4 md:top-4 md:right-2 lg:right-4 z-20 pointer-events-none"
+                  transition={{ duration: 0.18, delay: 0.05 }}
+                  className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 md:-top-4 md:-right-4 z-20 pointer-events-none"
                 >
                   <StarburstBadge
                     top={activeSlide.badgeTop}
@@ -362,25 +387,6 @@ export const Hero: React.FC<HeroProps> = ({
                     color={activeSlide.badgeColor}
                   />
                 </motion.div>
-
-                {/* Realistic Ground Contact Shadow under the Bottle */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-56 sm:w-72 md:w-88 h-6 bg-black/90 rounded-[100%] blur-[11px] pointer-events-none" />
-
-                {/* Free-Standing Bottle Cutout */}
-                <img
-                  src={activeSlide.packshot}
-                  onError={(e) => {
-                    if (e.currentTarget.src !== activeSlide.fallbackPackshot) {
-                      e.currentTarget.src = activeSlide.fallbackPackshot;
-                    }
-                  }}
-                  alt={`${activeSlide.headlineLine1} ${activeSlide.headlineLine2}`}
-                  loading="eager"
-                  onClick={() => onExploreCatalog(activeSlide.category)}
-                  className={`relative z-10 max-h-full max-w-full object-contain drop-shadow-[0_35px_55px_rgba(0,0,0,0.92)] transition-transform duration-500 cursor-pointer ${
-                    activeSlide.scaleClass || 'scale-100'
-                  } hover:brightness-105`}
-                />
               </motion.div>
             </AnimatePresence>
           </div>
