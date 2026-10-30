@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { motion } from 'motion/react';
 import { 
   Wine, 
   Beer, 
@@ -43,6 +44,73 @@ const PROMO_KIND_ICON: Record<Promotion['kind'], React.ElementType> = {
   promotion: Gift,
   discount: BadgePercent,
 };
+
+const MandalaDecor: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
+      className="absolute -right-24 -bottom-24 w-96 h-96 opacity-15"
+    >
+      <svg viewBox="0 0 400 400" fill="none" className="w-full h-full text-amber-300">
+        <circle cx="200" cy="200" r="190" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 6" />
+        <circle cx="200" cy="200" r="160" stroke="currentColor" strokeWidth="1" />
+        <circle cx="200" cy="200" r="130" stroke="currentColor" strokeWidth="1" strokeDasharray="8 8" />
+        <circle cx="200" cy="200" r="100" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="200" cy="200" r="70" stroke="currentColor" strokeWidth="1" strokeDasharray="3 5" />
+        <circle cx="200" cy="200" r="40" stroke="currentColor" strokeWidth="2" />
+        {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
+          <line
+            key={deg}
+            x1="200"
+            y1="20"
+            x2="200"
+            y2="380"
+            stroke="currentColor"
+            strokeWidth="0.75"
+            strokeOpacity="0.4"
+            transform={`rotate(${deg} 200 200)`}
+          />
+        ))}
+      </svg>
+    </motion.div>
+    <motion.div
+      animate={{ y: [0, -12, 0], opacity: [0.3, 0.7, 0.3] }}
+      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      className="absolute top-10 right-1/3 w-2 h-2 rounded-full bg-amber-400"
+    />
+    <motion.div
+      animate={{ y: [0, 14, 0], opacity: [0.2, 0.6, 0.2] }}
+      transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+      className="absolute bottom-12 left-1/4 w-1.5 h-1.5 rounded-full bg-[#FFD700]"
+    />
+  </div>
+);
+
+const WaveDecor: React.FC = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <svg viewBox="0 0 1000 300" fill="none" preserveAspectRatio="none" className="w-full h-full opacity-15">
+      <motion.path
+        animate={{
+          d: [
+            'M0,150 C300,50 600,250 1000,120 L1000,300 L0,300 Z',
+            'M0,120 C300,220 600,80 1000,180 L1000,300 L0,300 Z',
+            'M0,150 C300,50 600,250 1000,120 L1000,300 L0,300 Z',
+          ],
+        }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        fill="url(#bessich-cta-gradient)"
+      />
+      <defs>
+        <linearGradient id="bessich-cta-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="#FFD700" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#F2693F" stopOpacity="0.15" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+);
 
 interface HomeSectionProps {
   products: Product[];
@@ -219,17 +287,24 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   ];
 
   return (
-    <div className="bg-[#FAF9F6] dark:bg-[#0c0c14] text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <div className="bg-[#FAF9F6] dark:bg-[#0c0c14] text-gray-900 dark:text-gray-100 transition-colors duration-200 overflow-hidden">
       
       {/* 1. Hero Corporate Introduction */}
       <Hero
-        onExploreCatalog={() => onNavigate('catalog')}
+        onExploreCatalog={(category) => onNavigate('catalog', category)}
       />
 
       {/* 1b. Promotions & Innovation Highlights */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-linear-to-r from-[#0E01B5] via-[#7c3aed] to-[#F2693F] text-white p-5 sm:p-7 shadow-xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-linear-to-r from-[#0E01B5] via-[#7c3aed] to-[#F2693F] text-white p-5 sm:p-8 shadow-xl"
+        >
+          <MandalaDecor />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2 max-w-xl">
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 bg-white/20 border border-white/30 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider">
@@ -248,26 +323,33 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               </p>
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={() => setIsPromoOpen(true)}
-              className="self-start md:self-auto inline-flex items-center gap-1.5 bg-white text-[#0E01B5] hover:bg-[#F5F5DC] px-4 py-2.5 rounded-xl text-xs font-extrabold transition-colors cursor-pointer active:scale-95 shrink-0"
+              className="self-start md:self-auto inline-flex items-center gap-1.5 bg-white text-[#0E01B5] hover:bg-[#F5F5DC] px-4 py-2.5 rounded-xl text-xs font-extrabold transition-colors cursor-pointer shrink-0 shadow-md"
             >
               View All {promoProducts.length} Offers
               <ChevronRight className="w-4 h-4" />
-            </button>
+            </motion.button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
-            {promoProducts.slice(0, 3).map((p) => {
+          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            {promoProducts.slice(0, 3).map((p, idx) => {
               const bottlePrice = p.bottlePriceKes;
               const rawCompare = p.compareAtBottlePriceKes || (p.compareAtPriceKes ? Math.round(p.compareAtPriceKes / p.casePack) : undefined);
               const compareAt = rawCompare && rawCompare > bottlePrice ? rawCompare : Math.round(bottlePrice / (1 - (p.savingsPercentage || 15) / 100));
               return (
-                <div
+                <motion.div
                   key={p.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  whileHover={{ y: -4, scale: 1.01 }}
                   onClick={() => onOpenDetails(p)}
-                  className="text-left bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl p-3.5 transition-all cursor-pointer flex items-center gap-3.5 group shadow-sm hover:shadow-md"
+                  className="text-left bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-xs rounded-2xl p-3.5 transition-all cursor-pointer flex items-center gap-3.5 group shadow-sm hover:shadow-md"
                 >
                   <div className="w-14 h-18 bg-white/15 dark:bg-black/20 rounded-xl p-1.5 flex items-center justify-center shrink-0 overflow-hidden">
                     <img
@@ -298,11 +380,11 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                       {formatKes(p.casePriceKes)}/case ({p.casePack} btls)
                     </span>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 2. Operational Metrics Ribbon */}
@@ -310,7 +392,14 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {operationalStats.map((stat, idx) => (
-              <div key={idx} className="space-y-1">
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.45, delay: idx * 0.07 }}
+                className="space-y-1"
+              >
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0E01B5] dark:text-[#8c82ff] font-display">
                   {stat.value}
                 </div>
@@ -320,7 +409,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                 <div className="text-[11px] text-gray-500 dark:text-gray-400">
                   {stat.detail}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -330,7 +419,13 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 sm:space-y-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
           
-          <div className="lg:col-span-6 space-y-5">
+          <motion.div
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.55 }}
+            className="lg:col-span-6 space-y-5"
+          >
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E01B5]/10 text-[#0E01B5] dark:text-[#8c82ff] text-xs font-bold uppercase tracking-wider">
               <Building2 className="w-3.5 h-3.5" />
               The Supply Chain Authority
@@ -349,29 +444,40 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
                 onClick={() => onNavigate('about')}
-                className="px-5 py-3 rounded-xl bg-[#0E01B5] hover:bg-[#0a018f] text-white font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-2"
+                className="px-5 py-3 rounded-xl bg-[#0E01B5] hover:bg-[#0a018f] text-white font-bold text-xs transition-all shadow-md cursor-pointer flex items-center gap-2"
               >
                 Learn More About Our Story
                 <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
                 onClick={() => onNavigate('branches')}
-                className="px-5 py-3 rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-gray-900 dark:text-white font-bold text-xs transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+                className="px-5 py-3 rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-gray-900 dark:text-white font-bold text-xs transition-all cursor-pointer flex items-center gap-2"
               >
                 <MapPin className="w-3.5 h-3.5 text-[#F2693F]" />
                 Explore 10 Regional Branches
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Core Pillars Bento */}
           <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-2.5">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: 0.05 }}
+              whileHover={{ y: -5 }}
+              className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs hover:shadow-lg transition-all space-y-2.5"
+            >
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -379,9 +485,16 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 Zero grey-market imports. Every case features authenticated digital excise stamps and full ETR invoice compliance.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-2.5">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: 0.12 }}
+              whileHover={{ y: -5 }}
+              className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs hover:shadow-lg transition-all space-y-2.5"
+            >
               <div className="w-10 h-10 rounded-xl bg-[#0E01B5]/10 text-[#0E01B5] dark:text-[#8c82ff] flex items-center justify-center font-bold">
                 <Truck className="w-5 h-5" />
               </div>
@@ -389,9 +502,16 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 Temperature-safe distribution trucks operating scheduled daily routes across Eldoret CBD, Nandi, and Western counties.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-2.5">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: 0.18 }}
+              whileHover={{ y: -5 }}
+              className="bg-white dark:bg-[#171728] p-5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs hover:shadow-lg transition-all space-y-2.5 sm:col-span-2"
+            >
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] dark:text-[#FFD700] flex items-center justify-center font-bold">
                 <Percent className="w-5 h-5" />
               </div>
@@ -399,17 +519,23 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 Contact our shop directly for volume incentives and bespoke supply contracts tailored for commercial operators.
               </p>
-            </div>
+            </motion.div>
           </div>
 
         </div>
       </section>
 
-      {/* 4. Portfolio Architecture: What We Distribute (No individual items) */}
+      {/* 4. Portfolio Architecture: What We Distribute */}
       <section className="bg-gray-50 dark:bg-[#12121e] border-y border-gray-200 dark:border-white/10 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
           
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-4"
+          >
             <div className="space-y-1.5">
               <span className="text-xs font-bold uppercase tracking-wider text-[#0E01B5] dark:text-[#8c82ff]">
                 Portfolio Categories
@@ -422,23 +548,30 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               </p>
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={() => onNavigate('catalog')}
               className="self-start md:self-auto px-4 py-2.5 rounded-xl bg-[#0E01B5] hover:bg-[#0a018f] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer"
             >
               Open Full Product Catalog
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {categoryHighlights.map((cat) => {
+            {categoryHighlights.map((cat, idx) => {
               const Icon = cat.icon;
               return (
-                <div
+                <motion.div
                   key={cat.id}
-                  className="bg-white dark:bg-[#171728] rounded-2xl p-6 border border-gray-200 dark:border-white/10 hover:border-[#0E01B5] dark:hover:border-[#8c82ff] transition-all hover:shadow-lg flex flex-col justify-between group"
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{ duration: 0.45, delay: idx * 0.06 }}
+                  whileHover={{ y: -6 }}
+                  className="bg-white dark:bg-[#171728] rounded-2xl p-6 border border-gray-200 dark:border-white/10 hover:border-[#0E01B5] dark:hover:border-[#8c82ff] transition-all hover:shadow-xl flex flex-col justify-between group"
                 >
                   <div className="space-y-3.5">
                     <div className="flex items-center justify-between">
@@ -486,13 +619,21 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                       Cases & Bottles
                     </span>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
 
             {/* Quick Order Pad CTA card */}
-            <div className="bg-linear-to-br from-[#171728] to-[#0E01B5] rounded-2xl p-6 text-white flex flex-col justify-between shadow-md">
-              <div className="space-y-3">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: 0.3 }}
+              whileHover={{ y: -6 }}
+              className="bg-linear-to-br from-[#171728] to-[#0E01B5] rounded-2xl p-6 text-white flex flex-col justify-between shadow-md relative overflow-hidden"
+            >
+              <MandalaDecor />
+              <div className="space-y-3 relative z-10">
                 <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-[#FFD700]">
                   <Boxes className="w-5 h-5" />
                 </div>
@@ -502,7 +643,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                 </p>
               </div>
 
-              <div className="pt-6">
+              <div className="pt-6 relative z-10">
                 {/* TODO: Admin-only - Matrix Order Pad
                 <button
                   type="button"
@@ -522,7 +663,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
 
         </div>
@@ -530,7 +671,13 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 
       {/* 5. How Commercial Ordering Works */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10 sm:space-y-12">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto space-y-2"
+        >
           <span className="text-xs font-bold uppercase tracking-wider text-[#0E01B5] dark:text-[#8c82ff]">
             Frictionless Procurement
           </span>
@@ -540,13 +687,18 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             A seamless, professional onboarding and ordering pipeline designed to keep your taps flowing and cellars filled.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {operationalSteps.map((stepItem, index) => (
-            <div 
+            <motion.div 
               key={index}
-              className="bg-white dark:bg-[#171728] p-5 sm:p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs relative flex flex-col justify-between space-y-4"
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: index * 0.08 }}
+              whileHover={{ y: -5 }}
+              className="bg-white dark:bg-[#171728] p-5 sm:p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs hover:shadow-lg transition-all relative flex flex-col justify-between space-y-4"
             >
               <div>
                 <span className="text-3xl font-black text-[#0E01B5]/20 dark:text-white/20 font-display block mb-2">
@@ -560,7 +712,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                 </p>
               </div>
               <div className="h-1 w-12 bg-[#0E01B5] dark:bg-[#8c82ff] rounded-full" />
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -568,20 +720,31 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
       {/* 6. Authorized Brand Houses & Producers */}
       <section className="bg-white dark:bg-[#151524] border-y border-gray-200 dark:border-white/10 py-10 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="text-center max-w-xl mx-auto space-y-1">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+            className="text-center max-w-xl mx-auto space-y-1"
+          >
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37]">
               Authorized Brand Alliances
             </span>
             <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">
               Official Importers & National Bottlers
             </h3>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {brandPartners.map((bp, idx) => (
-              <div 
+              <motion.div 
                 key={idx}
-                className="bg-gray-50 dark:bg-[#1c1c30] p-4 rounded-xl border border-gray-100 dark:border-white/5 text-center flex flex-col justify-center items-center gap-1 hover:border-[#0E01B5]/40 transition-colors"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.04 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="bg-gray-50 dark:bg-[#1c1c30] p-4 rounded-xl border border-gray-100 dark:border-white/5 text-center flex flex-col justify-center items-center gap-1 hover:border-[#0E01B5]/40 hover:shadow-md transition-all"
               >
                 <span className="font-extrabold text-xs sm:text-sm text-gray-900 dark:text-white">
                   {bp.name}
@@ -592,7 +755,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                 <span className="text-[9px] font-mono text-[#0E01B5] dark:text-[#8c82ff]">
                   {bp.region}
                 </span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -600,66 +763,78 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 
       {/* 7. Commercial Client Endorsements */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-8">
-        <div className="text-center max-w-xl mx-auto space-y-1.5">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+          className="text-center max-w-xl mx-auto space-y-1.5"
+        >
           <span className="text-xs uppercase font-bold tracking-wider text-[#D4AF37] dark:text-[#FFD700]">
             Partners in Hospitality
           </span>
           <h2 className="hero-heading text-2xl sm:text-3xl font-extrabold font-display text-gray-900 dark:text-white">
             Trusted by the Rift Valley’s Leading Venues
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="bg-white dark:bg-[#171728] p-5 sm:p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-3">
-            <div className="flex items-center gap-1 text-[#FFD700]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-[#FFD700]" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 italic leading-relaxed">
-              "Bessich has transformed our beverage operations at Rupa Mall. Their weekend emergency dispatch saved our lounge during peak festive nights, and having genuine KRA stamps gives our guests 100% confidence."
-            </p>
-            <div className="border-t border-gray-100 dark:border-white/10 pt-3">
-              <h4 className="font-bold text-xs text-gray-900 dark:text-white">Brian K.</h4>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">Beverage Manager, The Loft Lounge & Grill (Eldoret)</p>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-[#171728] p-5 sm:p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-3">
-            <div className="flex items-center gap-1 text-[#FFD700]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-[#FFD700]" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 italic leading-relaxed">
-              "As a retail liquor merchant in town, consistent wholesale pricing and 24-hour delivery from Jumbo House keep our shelves stocked without tying up all our working capital. Their Net-14 terms are unmatched."
-            </p>
-            <div className="border-t border-gray-100 dark:border-white/10 pt-3">
-              <h4 className="font-bold text-xs text-gray-900 dark:text-white">Mercy J.</h4>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">Proprietor, Rift Valley Spirits Wholesalers</p>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-[#171728] p-5 sm:p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs space-y-3">
-            <div className="flex items-center gap-1 text-[#FFD700]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-[#FFD700]" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 italic leading-relaxed">
-              "The sommelier training and wine cellar support Bessich provided for our banquet team significantly elevated our conference banquet beverage sales. A dependable corporate distribution partner."
-            </p>
-            <div className="border-t border-gray-100 dark:border-white/10 pt-3">
-              <h4 className="font-bold text-xs text-gray-900 dark:text-white">Evans T.</h4>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">F&B Director, Highland Grand Resort</p>
-            </div>
-          </div>
+          {[
+            {
+              quote:
+                '"Bessich has transformed our beverage operations at Rupa Mall. Their weekend emergency dispatch saved our lounge during peak festive nights, and having genuine KRA stamps gives our guests 100% confidence."',
+              author: 'Brian K.',
+              role: 'Beverage Manager, The Loft Lounge & Grill (Eldoret)',
+            },
+            {
+              quote:
+                '"As a retail liquor merchant in town, consistent wholesale pricing and 24-hour delivery from Jumbo House keep our shelves stocked without tying up all our working capital. Their Net-14 terms are unmatched."',
+              author: 'Mercy J.',
+              role: 'Proprietor, Rift Valley Spirits Wholesalers',
+            },
+            {
+              quote:
+                '"The sommelier training and wine cellar support Bessich provided for our banquet team significantly elevated our conference banquet beverage sales. A dependable corporate distribution partner."',
+              author: 'Evans T.',
+              role: 'F&B Director, Highland Grand Resort',
+            },
+          ].map((item, idx) => (
+            <motion.div
+              key={item.author}
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: idx * 0.08 }}
+              whileHover={{ y: -5 }}
+              className="bg-white dark:bg-[#171728] p-5 sm:p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs hover:shadow-lg transition-all space-y-3"
+            >
+              <div className="flex items-center gap-1 text-[#FFD700]">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-[#FFD700]" />
+                ))}
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-300 italic leading-relaxed">
+                {item.quote}
+              </p>
+              <div className="border-t border-gray-100 dark:border-white/10 pt-3">
+                <h4 className="font-bold text-xs text-gray-900 dark:text-white">{item.author}</h4>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">{item.role}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* 8. Bottom CTA Banner: Catalog & Credit Account */}
-      <section className="bg-linear-to-r from-[#171728] via-[#0E01B5] to-[#171728] text-white py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+      <section className="relative overflow-hidden bg-linear-to-r from-[#171728] via-[#0E01B5] to-[#171728] text-white py-12 sm:py-16">
+        <WaveDecor />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 20 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.55 }}
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-[#FFD700]">
             <Sparkles className="w-3.5 h-3.5" />
             Join 450+ Premier Establishments
@@ -674,14 +849,16 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={() => onNavigate('catalog')}
-              className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] px-6 py-3.5 rounded-xl font-bold text-xs transition-all shadow-lg active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#e6c200] text-[#171728] px-6 py-3.5 rounded-xl font-bold text-xs transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2"
             >
               Explore Catalog
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </motion.button>
 
             {/* TODO: Admin-only - Trade Credit Application
             <button
@@ -694,24 +871,28 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             </button>
             */}
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={() => onNavigate('catalog')}
               className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               Order Now
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               type="button"
               onClick={() => onNavigate('contact')}
               className="w-full sm:w-auto text-gray-300 hover:text-white px-4 py-3.5 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <PhoneCall className="w-3.5 h-3.5 text-[#F2693F]" />
               Speak with a Beverage Executive
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Product Offers pop-out modal */}
