@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'motion/react';
+import { CountUp } from './CountUp';
 import { 
   Building2, 
   ShieldCheck, 
@@ -154,10 +156,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                       <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
                       Direct Principal Allocations
                     </span>
-                    <span className="text-[#0E01B5] dark:text-[#8c82ff] text-[11px]">KRA Stamp 100%</span>
+                    <span className="text-[#0E01B5] dark:text-[#8c82ff] text-[11px]">KRA Stamp <CountUp value="100%" /></span>
                   </div>
                   <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-snug">
-                    Bonded logistics network supplying 450+ verified hospitality venues and licensed stores across 6 counties daily.
+                    Bonded logistics network supplying <CountUp value="450+" /> verified hospitality venues and licensed stores across <CountUp value="6" /> counties daily.
                   </p>
                 </div>
 
@@ -183,45 +185,69 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
 
         {/* 2. Corporate Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
-          <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#0E01B5]/30 hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0 }}
+            className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#0E01B5]/30 hover:shadow-md transition-all"
+          >
             <span className="text-2xl sm:text-3xl font-extrabold text-[#0E01B5] dark:text-[#8c82ff] block mb-0.5 font-display">
-              10+
+              <CountUp value="10+" delay={0} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Regional Branches
             </span>
             <p className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">Eldoret HQ & North Rift</p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#D4AF37]/30 hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.08 }}
+            className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#D4AF37]/30 hover:shadow-md transition-all"
+          >
             <span className="text-2xl sm:text-3xl font-extrabold text-[#D4AF37] dark:text-[#FFD700] block mb-0.5 font-display">
-              100%
+              <CountUp value="100%" delay={100} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               KRA Tax Compliant
             </span>
             <p className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">Verified brand principals</p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-emerald-500/30 hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.16 }}
+            className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-emerald-500/30 hover:shadow-md transition-all"
+          >
             <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 block mb-0.5 font-display">
-              &lt; 24H
+              <CountUp value="< 24H" delay={200} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Dispatch Guarantee
             </span>
             <p className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">Fleet across 6 counties</p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#F2693F]/30 hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.24 }}
+            className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#F2693F]/30 hover:shadow-md transition-all"
+          >
             <span className="text-2xl sm:text-3xl font-extrabold text-[#F2693F] block mb-0.5 font-display">
-              450+
+              <CountUp value="450+" delay={300} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Commercial Partners
             </span>
             <p className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">Hotels, lounges & retail</p>
-          </div>
+          </motion.div>
         </div>
 
         {/* 3. Our Mission, Vision & Heritage */}

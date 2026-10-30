@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { CountUp } from './CountUp';
 import { 
   Truck, 
   ShieldCheck, 
@@ -299,11 +300,11 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2 pt-0.5 text-left">
                   <div className="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2 sm:p-2.5 shadow-sm">
                     <ShieldCheck className="w-4 h-4 text-[#FFD700] shrink-0" />
-                    <span>100% Genuine KRA Stamped</span>
+                    <span><CountUp value="100%" /> Genuine KRA Stamped</span>
                   </div>
                   <div className="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2 sm:p-2.5 shadow-sm">
                     <Truck className="w-4 h-4 text-[#F2693F] shrink-0" />
-                    <span>10 Regional Depots (24H)</span>
+                    <span><CountUp value="10" /> Regional Depots (<CountUp value="24H" />)</span>
                   </div>
                   <div className="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2 sm:p-2.5 shadow-sm">
                     <Percent className="w-4 h-4 text-emerald-400 shrink-0" />
