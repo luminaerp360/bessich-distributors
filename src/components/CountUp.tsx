@@ -5,17 +5,19 @@ interface CountUpProps {
   duration?: number;
   delay?: number;
   className?: string;
+  once?: boolean;
 }
 
 export const CountUp: React.FC<CountUpProps> = ({
   value,
-  duration = 1600,
+  duration = 1400,
   delay = 0,
   className = '',
+  once = false,
 }) => {
   const ref = useRef<HTMLSpanElement>(null);
 
-  // Parse prefix, number, and suffix
+  // Parse prefix, number, and suffix (e.g. "< 24H", "150+", "100%", "< 4 hrs", "10")
   const parse = (val: string | number) => {
     const str = String(val).trim();
     const match = str.match(/^([^0-9.]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
@@ -30,56 +32,57 @@ export const CountUp: React.FC<CountUpProps> = ({
 
   const { prefix, target, suffix, isFloat, decimals } = parse(value);
 
-  const [displayValue, setDisplayValue] = useState<string>(() => {
-    return `${prefix}0${suffix}`;
-  });
-
-  const [hasStarted, setHasStarted] = useState(false);
+  const [displayValue, setDisplayValue] = useState<string>(() => `${prefix}0${suffix}`);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || hasStarted) return;
+    if (!el) return;
+
+    let animationFrameId: number;
+    let timeoutId: number;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         if (entry && entry.isIntersecting) {
-          setHasStarted(true);
-          observer.disconnect();
+          // Cancel previous animation if any
+          cancelAnimationFrame(animationFrameId);
+          clearTimeout(timeoutId);
 
-          let animationFrameId: number;
-          let startTime: number | null = null;
+          timeoutId = window.setTimeout(() => {
+            let startTime: number | null = null;
 
-          const step = (timestamp: number) => {
-            if (!startTime) startTime = timestamp + delay;
+            const step = (timestamp: number) => {
+              if (!startTime) startTime = timestamp;
 
-            if (timestamp < startTime) {
-              animationFrameId = requestAnimationFrame(step);
-              return;
-            }
+              const elapsed = timestamp - startTime;
+              const progress = Math.min(elapsed / duration, 1);
 
-            const elapsed = timestamp - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+              // Smooth easeOutCubic curve
+              const easeOut = 1 - Math.pow(1 - progress, 3);
+              const current = target * easeOut;
 
-            // easeOutCubic curve: 1 - (1 - progress)^3
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const current = target * easeOut;
+              if (progress < 1) {
+                const formatted = isFloat
+                  ? current.toFixed(decimals)
+                  : Math.floor(current).toLocaleString();
+                setDisplayValue(`${prefix}${formatted}${suffix}`);
+                animationFrameId = requestAnimationFrame(step);
+              } else {
+                const finalFormatted = isFloat
+                  ? target.toFixed(decimals)
+                  : target.toLocaleString();
+                setDisplayValue(`${prefix}${finalFormatted}${suffix}`);
+              }
+            };
 
-            if (progress < 1) {
-              const formatted = isFloat
-                ? current.toFixed(decimals)
-                : Math.floor(current).toLocaleString();
-              setDisplayValue(`${prefix}${formatted}${suffix}`);
-              animationFrameId = requestAnimationFrame(step);
-            } else {
-              const finalFormatted = isFloat
-                ? target.toFixed(decimals)
-                : target.toLocaleString();
-              setDisplayValue(`${prefix}${finalFormatted}${suffix}`);
-            }
-          };
-
-          animationFrameId = requestAnimationFrame(step);
+            animationFrameId = requestAnimationFrame(step);
+          }, delay);
+        } else if (!once && entry && !entry.isIntersecting) {
+          // Scrolled out of view: reset to 0 so it animates each time scrolled to
+          cancelAnimationFrame(animationFrameId);
+          clearTimeout(timeoutId);
+          setDisplayValue(`${prefix}0${suffix}`);
         }
       },
       {
@@ -92,8 +95,10 @@ export const CountUp: React.FC<CountUpProps> = ({
 
     return () => {
       observer.disconnect();
+      cancelAnimationFrame(animationFrameId);
+      clearTimeout(timeoutId);
     };
-  }, [target, prefix, suffix, isFloat, decimals, duration, delay, hasStarted]);
+  }, [target, prefix, suffix, isFloat, decimals, duration, delay, once]);
 
   return (
     <span ref={ref} className={`inline-block tabular-nums ${className}`}>

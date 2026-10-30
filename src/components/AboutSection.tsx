@@ -188,12 +188,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-30px' }}
+            viewport={{ once: false, margin: '-30px' }}
             transition={{ duration: 0.45, delay: 0 }}
             className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#0E01B5]/30 hover:shadow-md transition-all"
           >
             <span className="text-2xl sm:text-3xl font-extrabold text-[#0E01B5] dark:text-[#8c82ff] block mb-0.5 font-display">
-              <CountUp value="10+" delay={0} />
+              <CountUp value="10+" delay={0} once={false} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Regional Branches
@@ -204,12 +204,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-30px' }}
+            viewport={{ once: false, margin: '-30px' }}
             transition={{ duration: 0.45, delay: 0.08 }}
             className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#D4AF37]/30 hover:shadow-md transition-all"
           >
             <span className="text-2xl sm:text-3xl font-extrabold text-[#D4AF37] dark:text-[#FFD700] block mb-0.5 font-display">
-              <CountUp value="100%" delay={100} />
+              <CountUp value="100%" delay={100} once={false} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               KRA Tax Compliant
@@ -220,12 +220,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-30px' }}
+            viewport={{ once: false, margin: '-30px' }}
             transition={{ duration: 0.45, delay: 0.16 }}
             className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-emerald-500/30 hover:shadow-md transition-all"
           >
             <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 block mb-0.5 font-display">
-              <CountUp value="< 24H" delay={200} />
+              <CountUp value="< 24H" delay={200} once={false} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Dispatch Guarantee
@@ -236,12 +236,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-30px' }}
+            viewport={{ once: false, margin: '-30px' }}
             transition={{ duration: 0.45, delay: 0.24 }}
             className="bg-white dark:bg-[#171728] p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-white/10 shadow-xs text-center hover:border-[#F2693F]/30 hover:shadow-md transition-all"
           >
             <span className="text-2xl sm:text-3xl font-extrabold text-[#F2693F] block mb-0.5 font-display">
-              <CountUp value="450+" delay={300} />
+              <CountUp value="450+" delay={300} once={false} />
             </span>
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Commercial Partners

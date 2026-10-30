@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion } from 'motion/react';
+import { CountUp } from './CountUp';
 import { 
   Wine, 
   Beer, 
@@ -396,12 +397,12 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                 key={idx}
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-30px' }}
+                viewport={{ once: false, margin: '-30px' }}
                 transition={{ duration: 0.45, delay: idx * 0.07 }}
                 className="space-y-1"
               >
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0E01B5] dark:text-[#8c82ff] font-display">
-                  {stat.value}
+                  <CountUp value={stat.value} delay={idx * 100} once={false} />
                 </div>
                 <div className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">
                   {stat.label}
