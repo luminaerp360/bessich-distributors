@@ -269,45 +269,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-[#171728] border-t border-gray-200 dark:border-white/10 px-4 pt-3 pb-6 space-y-4 shadow-xl animate-in slide-in-from-top-2">
-          
-          {/* Mobile Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="Search wine, whisky, gin, beer..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#23233a] text-xs text-gray-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#0E01B5]"
-            />
-          </div>
-
-          {/* Fulfillment Branch Selector */}
-          <div className="bg-gray-50 dark:bg-[#23233a] rounded-xl p-3 border border-gray-200 dark:border-gray-700">
-            <div className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 font-bold">
-                <MapPin className="w-3.5 h-3.5 text-[#F2693F]" />
-                Fulfillment Branch
-              </span>
-              <span className="text-[10px] text-[#0E01B5] dark:text-[#8c82ff] font-bold">10 Hubs</span>
-            </div>
-            <select
-              value={activeDepot.id}
-              onChange={(e) => {
-                const found = allDepots.find((d) => d.id === e.target.value);
-                if (found) onSelectDepot(found);
-              }}
-              className="w-full bg-white dark:bg-[#1b1b2d] border border-gray-300 dark:border-gray-600 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-gray-900 dark:text-white focus:outline-hidden"
-            >
-              {allDepots.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name} {d.isCentralHub ? '(Central HQ)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        <div className="md:hidden bg-white dark:bg-[#171728] border-t border-gray-200 dark:border-white/10 px-4 pt-3.5 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2">
           {/* Navigation Links */}
           <div className="space-y-1">
             {navLinks.map((link) => {
