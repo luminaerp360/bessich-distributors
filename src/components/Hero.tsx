@@ -42,114 +42,109 @@ interface HeroSlide {
 
 const HERO_SLIDES: HeroSlide[] = [
   {
-    id: 'jw-black',
-    tag: 'PRESTIGE SCOTCH WHISKY • 2026 COLLECTION',
-    headlineLine1: 'IGNITE THE',
-    headlineLine2: 'SMOLDERING RICHNESS',
+    id: 'aberlour-16',
+    tag: 'PRESTIGE SPEYSIDE SINGLE MALT • AGED 16 YEARS',
+    headlineLine1: 'DOUBLE CASK',
+    headlineLine2: 'SPEYSIDE PERFECTION',
     subtitle:
-      'Iconic 12-year-old blended Scotch whisky with layers of dark fruits, sweet vanilla, and signature peat smoke — supplied direct to leading hotels, lounges, and retail stores across Eldoret and Western Kenya.',
-    packshot: '/hero/packshots/jw-black.png',
-    fallbackPackshot:
-      'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/cyden/products/636862_johnnie_walker_black_label_375ml_bottle_.png',
-    heroBg: '/hero/johnnie-walker-hero.jpg',
+      'Matured in first-fill American oak ex-bourbon casks and the finest seasoned Oloroso sherry butts — delivering rich floral aromas, sweet raisin nectar, and a velvety smooth spicy finish.',
+    packshot: 'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/bessich-dist/products/1793117617928-aberlour-16yr-dbl-cask-700ml-g3oau.jpg',
+    fallbackPackshot: 'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/bessich-dist/products/1793117617928-aberlour-16yr-dbl-cask-700ml-g3oau.jpg',
+    heroBg: 'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/bessich-dist/products/1793117617928-aberlour-16yr-dbl-cask-700ml-g3oau.jpg',
     category: 'whiskey',
-    scaleClass: 'scale-[1.2] sm:scale-[1.35] md:scale-[1.52] lg:scale-[1.62]',
-    badgeTop: 'TOP',
-    badgeBottom: 'SCOTCH',
-    badgeColor: '#F2693F',
+    scaleClass: 'scale-[1.0] sm:scale-[1.05] md:scale-[1.08] lg:scale-[1.12]',
+    badgeTop: '16 YR',
+    badgeBottom: 'SPEYSIDE',
+    badgeColor: '#D97706',
     bgGradient:
       'radial-gradient(ellipse at 70% 50%, rgba(245, 158, 11, 0.42) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(9, 0, 56, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #170e4a 48%, #261205 100%)',
     curtainColor: 'rgba(255, 215, 0, 0.07)',
     accentColor: '#FFD700',
-    legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • 100% KRA EXCISE STAMPED GENUINE STOCK',
+    legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • 100% KRA EXCISE STAMPED GENUINE ALLOCATIONS',
   },
   {
-    id: 'tusker',
-    tag: "KENYA'S FLAGSHIP LAGER • COLD-CHAIN DISPATCH",
-    headlineLine1: 'CRAFTED KENYAN',
-    headlineLine2: 'GOLD HERITAGE',
+    id: 'absolut-vodka',
+    tag: 'SWEDISH WINTER WHEAT • CONTINUOUS DISTILLATION',
+    headlineLine1: 'ICONIC PURITY',
+    headlineLine2: 'WINTER WHEAT SMOOTH',
     subtitle:
-      'Brewed with 100% African ingredients: locally malted equatorial barley and pure Aberdare mountain water. Dispatched daily from our 10 regional depots to keep your coolers stocked.',
-    packshot: '/hero/packshots/tusker.png',
-    fallbackPackshot:
-      'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/cyden/products/P764354_tusker_lager_500ml_bottle_x6.png',
-    heroBg: '/hero/tusker-hero.jpg',
-    category: 'beer_cider',
-    scaleClass: 'scale-[1.02] sm:scale-[1.08] md:scale-[1.15]',
-    badgeTop: 'KENYA',
-    badgeBottom: 'NO. 1',
-    badgeColor: '#F2693F',
+      'Crafted in Åhus from rich southern Swedish winter wheat and pristine deep-well water with zero added sugar — the definitive bar essential for modern cocktail venues across Kenya.',
+    packshot: 'https://glovo.dhmedia.io/image/pim-glovo/671a37c1f023cfb7853197b2.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    fallbackPackshot: 'https://glovo.dhmedia.io/image/pim-glovo/671a37c1f023cfb7853197b2.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    heroBg: 'https://glovo.dhmedia.io/image/pim-glovo/671a37c1f023cfb7853197b2.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    category: 'vodka',
+    scaleClass: 'scale-[1.0] sm:scale-[1.04] md:scale-[1.06] lg:scale-[1.1]',
+    badgeTop: '1000ML',
+    badgeBottom: 'ORIGINAL',
+    badgeColor: '#0E01B5',
     bgGradient:
-      'radial-gradient(ellipse at 70% 50%, rgba(251, 191, 36, 0.42) 0%, rgba(14, 1, 181, 0.42) 48%, rgba(10, 8, 36, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #1a1842 50%, #2b1a04 100%)',
-    curtainColor: 'rgba(255, 215, 0, 0.08)',
-    accentColor: '#FFD700',
+      'radial-gradient(ellipse at 70% 50%, rgba(59, 130, 246, 0.42) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(8, 12, 40, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #0d1e4c 50%, #03122c 100%)',
+    curtainColor: 'rgba(255, 255, 255, 0.08)',
+    accentColor: '#60A5FA',
     legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • DIRECT REGIONAL DEPOT DISPATCH',
   },
   {
-    id: 'gilbeys',
-    tag: 'DISTILLED LONDON DRY GIN • MIXOLOGY FAVORITE',
-    headlineLine1: 'DISTILLED BOTANICAL',
-    headlineLine2: 'PERFECTION',
+    id: 'jagermeister',
+    tag: '56 BOTANICAL HERBAL LIQUEUR • SERVE ICE COLD -18°C',
+    headlineLine1: 'MASTER THE NIGHT',
+    headlineLine2: '56 BOTANICAL HARMONY',
     subtitle:
-      'Crafted from 12 classic natural botanicals delivering crisp juniper elegance and a refreshing citrus finish — engineered for high-velocity cocktail bars, lounges, and retail shelves.',
-    packshot: '/hero/packshots/gilbeys.png',
-    fallbackPackshot:
-      'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/cyden/products/604021_gilbey_s_special_dry_gin_750ml_bottle_.png',
-    heroBg: '/hero/gilbeys-hero.jpg',
-    category: 'gin',
-    scaleClass: 'scale-[1.2] sm:scale-[1.35] md:scale-[1.52] lg:scale-[1.62]',
-    badgeTop: 'TOP',
-    badgeBottom: 'SELLER',
+      'A legendary elixir blended from 56 hand-picked herbs, blossoms, roots, and fruits, aged in oak barrels for extraordinary depth and unmatched nightlife velocity across Rift Valley venues.',
+    packshot: 'https://glovo.dhmedia.io/image/pim-glovo/671a380ff023cfb7853198e2.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    fallbackPackshot: 'https://glovo.dhmedia.io/image/pim-glovo/671a380ff023cfb7853198e2.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    heroBg: 'https://glovo.dhmedia.io/image/pim-glovo/671a380ff023cfb7853198e2.jpg?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    category: 'liqueur',
+    scaleClass: 'scale-[1.0] sm:scale-[1.04] md:scale-[1.06] lg:scale-[1.1]',
+    badgeTop: 'ICE COLD',
+    badgeBottom: '-18°C',
     badgeColor: '#F2693F',
     bgGradient:
-      'radial-gradient(ellipse at 70% 50%, rgba(58, 168, 140, 0.45) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(5, 16, 38, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #0b2447 50%, #05261d 100%)',
-    curtainColor: 'rgba(255, 255, 255, 0.07)',
-    accentColor: '#5fd1b4',
-    legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • VERIFIED IMPORTER & DISTILLERY ALLOCATIONS',
-  },
-  {
-    id: 'smirnoff',
-    tag: 'TRIPLE DISTILLED & 10X CHARCOAL FILTERED',
-    headlineLine1: 'ULTRA SMOOTH',
-    headlineLine2: 'CHARCOAL PURITY',
-    subtitle:
-      'Triple distilled and filtered ten times through seven columns of sustainably sourced charcoal for unmatched smoothness, versatility, and guaranteed commercial bar velocity.',
-    packshot: '/hero/packshots/smirnoff.png',
-    fallbackPackshot:
-      'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/cyden/products/650278_smirnoff_red_vodka_750ml_bottle_.png',
-    heroBg: '/hero/smirnoff-hero.jpg',
-    category: 'vodka',
-    scaleClass: 'scale-[1.05] sm:scale-[1.12] md:scale-[1.2]',
-    badgeTop: 'PURE',
-    badgeBottom: 'NO. 21',
-    badgeColor: '#F2693F',
-    bgGradient:
-      'radial-gradient(ellipse at 70% 50%, rgba(239, 68, 68, 0.42) 0%, rgba(14, 1, 181, 0.48) 48%, rgba(16, 4, 32, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #1d0c46 50%, #360812 100%)',
-    curtainColor: 'rgba(255, 255, 255, 0.07)',
-    accentColor: '#FFD700',
+      'radial-gradient(ellipse at 70% 50%, rgba(16, 185, 129, 0.38) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(5, 24, 18, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #08281e 50%, #03140d 100%)',
+    curtainColor: 'rgba(52, 211, 153, 0.08)',
+    accentColor: '#34D399',
     legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • 100% AUTHENTIC FACTORY-SEALED BOTTLES',
   },
   {
-    id: 'guinness',
-    tag: 'ROASTED BARLEY STOUT • ICONIC POUR',
-    headlineLine1: 'DEEP ROASTED',
-    headlineLine2: 'EXTRA STOUT',
+    id: '4th-street',
+    tag: 'NATURAL SWEET WINE • CELEBRATION FAVORITE',
+    headlineLine1: 'BURSTING WITH FRUIT',
+    headlineLine2: 'NATURALLY SWEET',
     subtitle:
-      'Exclusively brewed with roasted unmalted barley and hops delivering its unmistakable dark ruby character, bold aroma, and rich creamy head across Rift Valley hospitality venues.',
-    packshot: '/hero/packshots/guinness.png',
-    fallbackPackshot:
-      'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/cyden/products/P764356_guinness_foreign_extra_stout_500ml_bottl.png',
-    heroBg: '/hero/guinness-hero.jpg',
-    category: 'beer_cider',
-    scaleClass: 'scale-[1.05] sm:scale-[1.12] md:scale-[1.2]',
-    badgeTop: 'EXTRA',
-    badgeBottom: 'STOUT',
+      'Fresh, vibrant, and effortlessly enjoyable — crafted from fresh varietal grapes bursting with floral aromas and crisp tropical notes for celebrations and everyday hospitality moments.',
+    packshot: 'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/bessich-dist/products/1793165444567-4th-street-white-750ml-r2krk.png',
+    fallbackPackshot: 'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/bessich-dist/products/1793165444567-4th-street-white-750ml-r2krk.png',
+    heroBg: 'https://lumina360.sfo3.digitaloceanspaces.com/eccomerse/bessich-dist/products/1793165444567-4th-street-white-750ml-r2krk.png',
+    category: 'wine',
+    scaleClass: 'scale-[1.0] sm:scale-[1.05] md:scale-[1.08] lg:scale-[1.12]',
+    badgeTop: 'BEST',
+    badgeBottom: 'SELLER',
     badgeColor: '#F2693F',
     bgGradient:
-      'radial-gradient(ellipse at 70% 50%, rgba(217, 119, 6, 0.42) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(12, 8, 28, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #18123e 50%, #261203 100%)',
+      'radial-gradient(ellipse at 70% 50%, rgba(244, 63, 94, 0.42) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(24, 6, 28, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #2e0828 50%, #1a0314 100%)',
+    curtainColor: 'rgba(244, 63, 94, 0.08)',
+    accentColor: '#FB7185',
+    legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • VERIFIED REGIONAL DISTRIBUTOR STAMPED',
+  },
+  {
+    id: 'asconi-pastoral',
+    tag: 'MOLDOVAN HERITAGE SELECTION • VELVET DESSERT RED',
+    headlineLine1: 'RICH & LUSCIOUS',
+    headlineLine2: 'PASTORAL RED RESERVE',
+    subtitle:
+      'Full-bodied dessert red wine crafted from select Cabernet Sauvignon grapes, presenting opulent aromas of blackcurrant, dried plum, and chocolate nuances for fine dining establishments.',
+    packshot: 'https://glovo.dhmedia.io/image/pim-glovo/671a3795f023cfb7853196dd?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    fallbackPackshot: 'https://glovo.dhmedia.io/image/pim-glovo/671a3795f023cfb7853196dd?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    heroBg: 'https://glovo.dhmedia.io/image/pim-glovo/671a3795f023cfb7853196dd?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==',
+    category: 'wine',
+    scaleClass: 'scale-[1.0] sm:scale-[1.05] md:scale-[1.08] lg:scale-[1.12]',
+    badgeTop: 'ESTATE',
+    badgeBottom: 'RED',
+    badgeColor: '#B91C1C',
+    bgGradient:
+      'radial-gradient(ellipse at 70% 50%, rgba(185, 28, 28, 0.42) 0%, rgba(14, 1, 181, 0.45) 48%, rgba(20, 4, 16, 0.98) 88%), linear-gradient(125deg, #09007a 0%, #2d0a1b 50%, #150209 100%)',
     curtainColor: 'rgba(255, 215, 0, 0.07)',
-    accentColor: '#FFD700',
-    legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • JUMBO HOUSE ELDORET & 10 REGIONAL DEPOTS',
+    accentColor: '#F87171',
+    legalText: 'ENJOY RESPONSIBLY | 18+ ONLY • ELDORET CENTRAL HQ & ALL BRANCHES',
   },
 ];
 
@@ -158,7 +153,7 @@ const StarburstBadge: React.FC<{ top: string; bottom: string; color?: string }> 
   bottom,
   color = '#F2693F',
 }) => (
-  <div className="relative w-16 h-16 sm:w-22 sm:h-22 md:w-28 md:h-28 lg:w-34 lg:h-34 flex items-center justify-center filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.65)] select-none">
+  <div className="relative w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 flex items-center justify-center filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] select-none">
     <svg viewBox="0 0 100 100" className="w-full h-full transform-gpu">
       <path
         d="M50 0 L58 12 L72 7 L76 21 L90 20 L89 35 L100 40 L94 53 L100 64 L89 71 L90 85 L76 84 L72 98 L58 92 L50 104 L42 92 L28 98 L24 84 L10 85 L11 71 L0 64 L6 53 L0 40 L11 35 L10 20 L24 21 L28 7 L42 12 Z"
@@ -227,7 +222,7 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <div className="relative w-full overflow-hidden select-none bg-[#09007a] text-white border-b border-[#171728]">
       {/* Main Extended Hero Stage */}
-      <div className="relative w-full min-h-[620px] sm:min-h-[660px] md:h-[680px] lg:h-[730px] xl:h-[760px] overflow-hidden flex items-center">
+      <div className="relative w-full min-h-[560px] md:min-h-[520px] md:h-[calc(100vh-64px)] md:max-h-[650px] lg:max-h-[700px] xl:max-h-[740px] overflow-hidden flex items-center">
         {/* Background Slides Layer */}
         {HERO_SLIDES.map((slide, index) => {
           const isCurrent = index === currentSlideIndex;
@@ -245,13 +240,13 @@ export const Hero: React.FC<HeroProps> = ({
                 <img
                   src={slide.heroBg}
                   alt=""
-                  className="h-[46%] sm:h-[56%] md:h-[64%] lg:h-[70%] max-h-[440px] w-auto max-w-[220px] sm:max-w-[280px] md:max-w-[340px] object-contain opacity-18 sm:opacity-20 mix-blend-luminosity filter blur-[0.5px] -rotate-6 transform-gpu"
+                  className="h-[42%] sm:h-[50%] md:h-[58%] lg:h-[64%] max-h-[360px] w-auto max-w-[190px] sm:max-w-[240px] md:max-w-[300px] object-contain opacity-18 sm:opacity-20 mix-blend-luminosity filter blur-[0.5px] -rotate-6 transform-gpu"
                 />
                 {/* Right Duplicated Backdrop Bottle */}
                 <img
                   src={slide.heroBg}
                   alt=""
-                  className="h-[50%] sm:h-[60%] md:h-[70%] lg:h-[76%] max-h-[480px] w-auto max-w-[240px] sm:max-w-[300px] md:max-w-[380px] object-contain opacity-22 sm:opacity-25 mix-blend-luminosity filter blur-[0.5px] rotate-6 transform-gpu"
+                  className="h-[46%] sm:h-[54%] md:h-[62%] lg:h-[68%] max-h-[390px] w-auto max-w-[210px] sm:max-w-[260px] md:max-w-[320px] object-contain opacity-22 sm:opacity-25 mix-blend-luminosity filter blur-[0.5px] rotate-6 transform-gpu"
                 />
               </div>
               {/* Curtain Light Rays */}
@@ -269,7 +264,7 @@ export const Hero: React.FC<HeroProps> = ({
         })}
 
         {/* Content & Unboxed Bottle Packshot Grid */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 py-10 sm:py-12 md:py-0 h-full flex flex-col-reverse md:flex-row items-center justify-between gap-6 md:gap-8">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-14 py-4 md:py-2 h-full flex flex-col-reverse md:flex-row items-center justify-between gap-3 md:gap-6">
           
           {/* Left Column: Synchronized Changing / Flipping Hero Copy */}
           <div className="w-full md:w-[54%] flex flex-col items-center md:items-start text-center md:text-left justify-center [perspective:1200px]">
@@ -280,7 +275,7 @@ export const Hero: React.FC<HeroProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="space-y-3.5 sm:space-y-4 md:space-y-5 origin-center w-full"
+                className="space-y-2.5 sm:space-y-3 md:space-y-3 lg:space-y-3.5 origin-center w-full"
               >
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-xs text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#FFD700]">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -288,39 +283,39 @@ export const Hero: React.FC<HeroProps> = ({
                   <span>{activeSlide.tag}</span>
                 </div>
 
-                <h1 className="text-white font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.15rem] tracking-tight leading-[0.98] uppercase font-display drop-shadow-2xl">
+                <h1 className="text-white font-black text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-[3.25rem] tracking-tight leading-[1.02] uppercase font-display drop-shadow-2xl">
                   <span>{activeSlide.headlineLine1}</span>
                   <br />
                   <span style={{ color: activeSlide.accentColor }}>{activeSlide.headlineLine2}</span>
                 </h1>
 
-                <p className="text-xs sm:text-sm lg:text-base text-white/85 max-w-xl font-medium leading-relaxed drop-shadow-md">
+                <p className="text-xs sm:text-sm text-white/85 max-w-xl font-medium leading-relaxed drop-shadow-md line-clamp-3 md:line-clamp-none">
                   {activeSlide.subtitle}
                 </p>
 
                 {/* Value Props Pills */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 pt-1 text-left">
-                  <div className="flex items-center gap-2 text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2.5 sm:p-3 shadow-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2 pt-0.5 text-left">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2 sm:p-2.5 shadow-sm">
                     <ShieldCheck className="w-4 h-4 text-[#FFD700] shrink-0" />
                     <span>100% Genuine KRA Stamped</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2.5 sm:p-3 shadow-sm">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2 sm:p-2.5 shadow-sm">
                     <Truck className="w-4 h-4 text-[#F2693F] shrink-0" />
                     <span>10 Regional Depots (24H)</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2.5 sm:p-3 shadow-sm">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs font-medium text-white/90 bg-white/10 border border-white/20 backdrop-blur-xs rounded-xl p-2 sm:p-2.5 shadow-sm">
                     <Percent className="w-4 h-4 text-emerald-400 shrink-0" />
                     <span>For Wholesale: Contact Shop</span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="pt-1 sm:pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
+                <div className="pt-0.5 sm:pt-1 flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3">
                   <button
                     id="hero-btn-explore"
                     type="button"
                     onClick={() => onExploreCatalog(activeSlide.category)}
-                    className="px-6 py-3 sm:px-7 sm:py-3.5 rounded-xl bg-[#0E01B5] hover:bg-[#2516e0] text-white font-black text-xs sm:text-sm tracking-wide transition-all shadow-xl shadow-black/35 border border-white/20 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                    className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-[#0E01B5] hover:bg-[#2516e0] text-white font-black text-xs sm:text-sm tracking-wide transition-all shadow-xl shadow-black/35 border border-white/20 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
                   >
                     <span>Browse Full Catalog</span>
                     <ArrowRight className="w-4 h-4" />
@@ -329,14 +324,14 @@ export const Hero: React.FC<HeroProps> = ({
                   <button
                     type="button"
                     onClick={() => onExploreCatalog()}
-                    className="px-6 py-3 sm:px-7 sm:py-3.5 rounded-xl bg-[#F2693F] hover:bg-[#d9562e] text-white font-black text-xs sm:text-sm tracking-wide transition-all shadow-xl flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                    className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-[#F2693F] hover:bg-[#d9562e] text-white font-black text-xs sm:text-sm tracking-wide transition-all shadow-xl flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
                   >
                     <span>Start Your Order</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="pt-1 text-[10px] sm:text-xs text-white/75 font-bold uppercase tracking-wider">
+                <div className="pt-0.5 text-[9px] sm:text-[10px] md:text-[11px] text-white/70 font-bold uppercase tracking-wider">
                   {activeSlide.legalText}
                 </div>
               </motion.div>
@@ -344,7 +339,7 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           {/* Right Column: Free-Standing Transparent Bottle Packshot (No Card Container) */}
-          <div className="w-full md:w-[46%] h-[250px] sm:h-[300px] md:h-[480px] lg:h-[540px] flex items-center justify-center relative">
+          <div className="w-full md:w-[46%] h-[220px] sm:h-[260px] md:h-[82%] lg:h-[88%] max-h-[380px] md:max-h-[440px] lg:max-h-[490px] flex items-center justify-center relative">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={activeSlide.id}
@@ -359,7 +354,7 @@ export const Hero: React.FC<HeroProps> = ({
                   initial={{ scale: 0.7, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.18 }}
-                  className="absolute top-1 right-4 sm:top-4 sm:right-8 md:top-10 md:right-2 lg:right-6 z-20 pointer-events-none"
+                  className="absolute top-0 right-2 sm:top-2 sm:right-4 md:top-4 md:right-2 lg:right-4 z-20 pointer-events-none"
                 >
                   <StarburstBadge
                     top={activeSlide.badgeTop}
@@ -413,7 +408,7 @@ export const Hero: React.FC<HeroProps> = ({
 
         {/* Bottom Slide Indicator Pills */}
         <div
-          className="absolute bottom-4 inset-x-0 z-20 flex items-center justify-center gap-2 pointer-events-auto"
+          className="absolute bottom-2 sm:bottom-3 inset-x-0 z-20 flex items-center justify-center gap-1.5 sm:gap-2 pointer-events-auto"
           aria-label="Hero background slides"
         >
           {HERO_SLIDES.map((slide, index) => (
